@@ -1,0 +1,28 @@
+YAMLclass:
+  class_name: 友情链接
+  link_list:
+    1:
+      name: 小康博客
+      link: https://www.antmoe.com
+      avatar: https://img.antmoe.com/avatar.png
+      descr: 每天进步一点点
+    2:
+      name: test
+      link: https://www.xxxxxxcn/
+      avatar: https://xxxxx/avatar.png
+      descr: test
+
+
+class2:
+  class_name: 链接无效
+  link_list:
+    1:
+      name: test
+      link: https://blog.xxx.com
+      avatar: https://img.antmoe.com/avatar.png
+      descr: test
+    2:
+      name: test
+      link: https://www.axxxx.cn/
+      avatar: https://img.antmoe.com/avatar.png
+      descr: test

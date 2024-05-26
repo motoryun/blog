@@ -580,10 +580,10 @@ microsoft_clarity:
 
 # Google Adsense (谷歌廣告)
 google_adsense:
-  enable: false
+  enable: true
   auto_ads: true
   js: https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js
-  client:
+  client: ca-pub-3578075519463317
   enable_page_level_ads: true
 
 # Insert ads manually (手動插入廣告)
@@ -914,8 +914,8 @@ css_prefix: true
 inject:
   head:
     # - <link rel="stylesheet" href="/xxx.css">
-    - <link rel="stylesheet" href="./css/transparent.css">
-    - <link rel="stylesheet" href="./css/footer.css">
+    - <link rel="stylesheet" href="/css/transparent.css">
+    - <link rel="stylesheet" href="/css/footer.css">
 #    - <link rel="stylesheet" href="./css/universe.css">
 
   bottom:

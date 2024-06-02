@@ -1,0 +1,454 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Mysql为什么用B+树不用跳表 | 繁华流年间</title><meta name="author" content="周五打工人"><meta name="copyright" content="周五打工人"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="ffffff"><meta name="description" content="字节面试： Mysql为什么用B+树，不用跳表？最近有小伙伴在蚂蚁、面试字节，都问到了相关的面试题，可以说是逢面必问。 小伙伴没有系统的去梳理和总结，所以支支吾吾的说了几句，面试官不满意，面试挂了。 索引的作用和重要性索引是帮助MySQL高效获取数据的数据结构，注意，是帮助高性能的获取数据 索引好比是一本书的目录，可以直接根据页码找到对应的内容，目的就是为了加快数据库的查询速度。  索引是对数据库">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Mysql为什么用B+树不用跳表">
+<meta property="og:url" content="http://flowtime.asia/2024/06/02/Mysql%E4%B8%BA%E4%BB%80%E4%B9%88%E7%94%A8B+%E6%A0%91%E4%B8%8D%E7%94%A8%E8%B7%B3%E8%A1%A8/index.html">
+<meta property="og:site_name" content="繁华流年间">
+<meta property="og:description" content="字节面试： Mysql为什么用B+树，不用跳表？最近有小伙伴在蚂蚁、面试字节，都问到了相关的面试题，可以说是逢面必问。 小伙伴没有系统的去梳理和总结，所以支支吾吾的说了几句，面试官不满意，面试挂了。 索引的作用和重要性索引是帮助MySQL高效获取数据的数据结构，注意，是帮助高性能的获取数据 索引好比是一本书的目录，可以直接根据页码找到对应的内容，目的就是为了加快数据库的查询速度。  索引是对数据库">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://flowtime.asia/img/hubian.png">
+<meta property="article:published_time" content="2024-06-02T09:33:50.000Z">
+<meta property="article:modified_time" content="2024-06-02T10:39:17.654Z">
+<meta property="article:author" content="周五打工人">
+<meta property="article:tag" content="数据库">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://flowtime.asia/img/hubian.png"><link rel="shortcut icon" href="/img/index.jpg"><link rel="canonical" href="http://flowtime.asia/2024/06/02/Mysql%E4%B8%BA%E4%BB%80%E4%B9%88%E7%94%A8B+%E6%A0%91%E4%B8%8D%E7%94%A8%E8%B7%B3%E8%A1%A8/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=4.13.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script async="async" src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><script>(adsbygoogle = window.adsbygoogle || []).push({
+  google_ad_client: 'ca-pub-3578075519463317',
+  enable_page_level_ads: 'true'
+});</script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.11.1/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Mysql为什么用B+树不用跳表',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2024-06-02 18:39:17'
+}</script><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+    
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
+    
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+    
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', 'ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+        if (t === 'dark') activateDarkMode()
+        else if (t === 'light') activateLightMode()
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/transparent.css"><link rel="stylesheet" href="/css/footer.css"><meta name="generator" content="Hexo 7.2.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/nav.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">11</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">10</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">3</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/img/hubian.png')"><nav id="nav"><span id="blog-info"><a href="/" title="繁华流年间"></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Mysql为什么用B+树不用跳表</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="fa-fw post-meta-icon far fa-calendar-alt"></i><span class="post-meta-label">发表于</span><time datetime="2024-06-02T09:33:50.000Z" title="发表于 2024-06-02 17:33:50">2024-06-02</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E9%9D%A2%E8%AF%95/">面试</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Mysql为什么用B+树不用跳表"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="字节面试：-Mysql为什么用B-树，不用跳表？"><a href="#字节面试：-Mysql为什么用B-树，不用跳表？" class="headerlink" title="字节面试： Mysql为什么用B+树，不用跳表？"></a>字节面试： Mysql为什么用B+树，不用跳表？</h1><p><strong>最近有小伙伴在蚂蚁、面试字节，都问到了相关的面试题，可以说是逢面必问。</strong></p>
+<p>小伙伴没有系统的去梳理和总结，所以支支吾吾的说了几句，面试官不满意，面试挂了。</p>
+<h2 id="索引的作用和重要性"><a href="#索引的作用和重要性" class="headerlink" title="索引的作用和重要性"></a>索引的作用和重要性</h2><p>索引是帮助MySQL高效获取数据的数据结构，注意，是帮助高性能的获取数据</p>
+<p>索引好比是一本书的目录，可以直接根据页码找到对应的内容，目的就是为了<code>加快数据库的查询速度</code>。</p>
+<ul>
+<li><p>索引是对数据库表中一列或多列的值进行排序的一种结构，使用索引可快速访问数据库表中的特定信息。</p>
+</li>
+<li><p>索引是一种能帮助mysql提高了查询效率的数据结构：<strong>索引数据结构</strong>。</p>
+</li>
+</ul>
+<p>索引的存储原理大致可以概括为一句话：<strong>以空间换时间</strong>。</p>
+<p>数据库在未添加索引, 进行查询的时候默认是进行全文搜索，也就是说有多少数据就进行多少次查询，然后找到相应的数据就把它们放到结果集中，直到全文扫描完毕。</p>
+<p>数据库添加了索引之后，通过索引快速找到数据在磁盘上的位置，可以快速的读取数据，而不同从头开始全表扫描。</p>
+<p>一般来说索引本身也很大，不可能全部存储在内存中，因此索引往往是存储在磁盘上的文件中的（可能存储在单独的索引文件中，也可能和数据一起存储在数据文件中）。</p>
+<h3 id="索引的作用和重要性-1"><a href="#索引的作用和重要性-1" class="headerlink" title="索引的作用和重要性"></a>索引的作用和重要性</h3><ul>
+<li><p>加快数据检索速度</p>
+<p>索引允许数据库系统快速定位到符合查询条件的记录，从而显著提高查询操作的效率。</p>
+</li>
+<li><p>降低数据库IO成本</p>
+<p>通过索引，数据库在查询时需要读取的数据量减少，这样可以减少磁盘IO操作的次数和压力，进而提升整体的数据库性能。</p>
+</li>
+<li><p>保证数据的完整性</p>
+<p>索引可以包含唯一性约束，这有助于确保表中数据的唯一性，防止出现重复记录。</p>
+</li>
+<li><p>加速表连接</p>
+<p>在涉及多表查询时，索引可以帮助加速表与表之间的连接操作，实现表与表之间的参照完整性。</p>
+</li>
+<li><p>优化排序和分组操作</p>
+<p>当使用分组、排序等操作进行数据检索时，索引可以显著减少处理的数据量，从而提高这些操作的效率。</p>
+</li>
+</ul>
+<h2 id="B-数和跳表的整体结构"><a href="#B-数和跳表的整体结构" class="headerlink" title="B+数和跳表的整体结构"></a>B+数和跳表的整体结构</h2><p>整体上，B+数和跳表 都是 链表+ 多级索引组合 的结构</p>
+<p><img src="/./2024/06/02/Mysql%E4%B8%BA%E4%BB%80%E4%B9%88%E7%94%A8B+%E6%A0%91%E4%B8%8D%E7%94%A8%E8%B7%B3%E8%A1%A8/1.png"></p>
+<h4 id="什么是MySQL中的B-Tree"><a href="#什么是MySQL中的B-Tree" class="headerlink" title="什么是MySQL中的B+Tree"></a>什么是MySQL中的B+Tree</h4><p>MySQL中的B+Tree 原理</p>
+<ul>
+<li><p>B+Tree一般由多个页、多层级组成，在MySQL中每个页 16 KB。</p>
+</li>
+<li><p>主键索引的 B+ 树的叶子结点才是数据，非叶子结点（内节点）存放的是索引信息。</p>
+</li>
+<li><p>上下层的页通过单指针相连。</p>
+</li>
+<li><p>同一层级的相邻的数据页通过双指针相邻。</p>
+</li>
+<li><p>B+Tree的结构</p>
+</li>
+</ul>
+<p><img src="/./2024/06/02/Mysql%E4%B8%BA%E4%BB%80%E4%B9%88%E7%94%A8B+%E6%A0%91%E4%B8%8D%E7%94%A8%E8%B7%B3%E8%A1%A8/2.png"></p>
+<h3 id="B-Tree的查询过程"><a href="#B-Tree的查询过程" class="headerlink" title="B+Tree的查询过程"></a>B+Tree的查询过程</h3><p>B+Tree是由多个页组成的多层级结构，每个页16kb，对于主键索引来说，最末级的叶子节点放行数据，</p>
+<p>非叶子节点放的是索引信息(主键ID和页号),用于加速查询。</p>
+<p>我们想要查询数据5，会从顶层页的record开始，record里包含了主键Id和页号(页地址),</p>
+<p>顶层页 向左最小id是1，最右最小id是7，</p>
+<p>那id&#x3D;5的数据如果存在，那必定在顶层页 左边箭头，于是顺着的record的页地址就到了<code>6号</code>数据页里，</p>
+<p>再判断id&#x3D;5&gt;4，所以肯定在右边的数据页里，于是加载<code>105号</code>数据页。</p>
+<p>在<code>105号数据页</code>里，虽然有多行数据，但也<strong>不是挨个遍历的</strong>，数据页内还有个<strong>页目录</strong>的信息，里边是有序的。</p>
+<p>所以，数据页内可以通过<strong>二分查找</strong>的方式加速查询行数据，于是找到id&#x3D;5的数据行，完成查询。</p>
+<p>从上面可以看出，B+Tree利用了<strong>空间换时间的</strong>方式，**将查询时间复杂度从O(n)优化为O(lg(n))**。</p>
+<h3 id="B-Tree的优点和缺点"><a href="#B-Tree的优点和缺点" class="headerlink" title="B+Tree的优点和缺点"></a>B+Tree的优点和缺点</h3><ul>
+<li><p>B+Tree是一种平衡树结构，它具有根节点、内部节点和叶子节点。</p>
+</li>
+<li><p>每个节点包含一定数量的键值对，键值对按键值大小有序排列。</p>
+</li>
+<li><p>内部节点只包含键，叶子节点同时包含键和指向数据的指针。</p>
+</li>
+</ul>
+<p><strong>B+Tree的优点</strong></p>
+<ul>
+<li><p>范围查询效率高：B+Tree支持范围查询，因为在B+Tree中，相邻的叶子节点是有序的，所以在查找范围内的数据时非常高效。</p>
+</li>
+<li><p>事务支持：B+Tree是一种多版本并发控制（MVCC）友好的数据结构，适用于事务处理场景，能够保证事务的ACID属性。</p>
+</li>
+<li><p>数据持久性：B+Tree的叶子节点包含所有数据，这意味着数据非常容易持久化到磁盘上，支持高可靠性和数据恢复。</p>
+</li>
+</ul>
+<p><strong>B+Tree的缺点</strong></p>
+<ul>
+<li><p><strong>插入和删除开销较高</strong>：由于B+Tree的平衡性质，插入和删除操作可能需要进行节点的分裂和合并，这会导致性能开销较大。</p>
+</li>
+<li><p>高度不稳定：B+Tree的高度通常比较大，<strong>可能需要多次磁盘I&#x2F;O才</strong>能访问叶子节点，对于某些特定查询可能效率不高。</p>
+</li>
+</ul>
+<h2 id="跳表"><a href="#跳表" class="headerlink" title="跳表"></a>跳表</h2><h3 id="跳表的原理"><a href="#跳表的原理" class="headerlink" title="跳表的原理"></a>跳表的原理</h3><p>跳表是一种采用了用空间换时间思想的数据结构。</p>
+<p>跳表会随机地将一些节点提升到更高的层次，以创建一种逐层的数据结构，以提高操作的速度。</p>
+<h3 id="跳表的结构"><a href="#跳表的结构" class="headerlink" title="跳表的结构"></a>跳表的结构</h3><p>跳表的做法就是给链表做索引，而且是分层索引，</p>
+<h3 id="单层跳表"><a href="#单层跳表" class="headerlink" title="单层跳表"></a>单层跳表</h3><p>单层跳表, 可以退化到一个链表</p>
+<p>查找的时间复杂度是 O（N）</p>
+<p><img src="/./2024/06/02/Mysql%E4%B8%BA%E4%BB%80%E4%B9%88%E7%94%A8B+%E6%A0%91%E4%B8%8D%E7%94%A8%E8%B7%B3%E8%A1%A8/3.png"></p>
+<h3 id="两层跳表"><a href="#两层跳表" class="headerlink" title="两层跳表"></a>两层跳表</h3><p>两层跳表 &#x3D; 原始链表 + 一层索引</p>
+<p><img src="/./2024/06/02/Mysql%E4%B8%BA%E4%BB%80%E4%B9%88%E7%94%A8B+%E6%A0%91%E4%B8%8D%E7%94%A8%E8%B7%B3%E8%A1%A8/4.png"></p>
+<h3 id="两层跳表查询"><a href="#两层跳表查询" class="headerlink" title="两层跳表查询"></a>两层跳表查询</h3><p>如查询id&#x3D;11的数据，我们先在上层遍历，依次判断1,6,12，</p>
+<p>很快就可以判断出11在6到12之间，</p>
+<p>第二步，然后往下一跳，进入原始链表，就可以在遍历6,7,8,9,10,11之后，确定id&#x3D;11的位置。</p>
+<p>通过第一级索引，直接将查询范围从原来的1到11，缩小到现在的1,6,7,8,9,10,11。</p>
+<h3 id="三层跳表"><a href="#三层跳表" class="headerlink" title="三层跳表"></a>三层跳表</h3><p>三层跳表 &#x3D; 原始链表 + 第一层索引 + 第二层索引</p>
+<p><img src="/./2024/06/02/Mysql%E4%B8%BA%E4%BB%80%E4%B9%88%E7%94%A8B+%E6%A0%91%E4%B8%8D%E7%94%A8%E8%B7%B3%E8%A1%A8/5.png"></p>
+<h3 id="三层跳表查询"><a href="#三层跳表查询" class="headerlink" title="三层跳表查询"></a>三层跳表查询</h3><p>如果还是查询id&#x3D;11的数据，就只需要查询1,6,9,10,11就能找到，比两层的时候更快一些。</p>
+<p><img src="/./2024/06/02/Mysql%E4%B8%BA%E4%BB%80%E4%B9%88%E7%94%A8B+%E6%A0%91%E4%B8%8D%E7%94%A8%E8%B7%B3%E8%A1%A8/6.png"></p>
+<h3 id="跳表查找的时间复杂度"><a href="#跳表查找的时间复杂度" class="headerlink" title="跳表查找的时间复杂度"></a>跳表查找的时间复杂度</h3><p>在一个单链表中查询某个数据的时间复杂度是 O(n)。也就是说，单层的跳表， 时间复杂度是 O(n)。</p>
+<p>跳表 就是 为链表 增加多级索引， 完成空间换时间， 实现 时间复杂度是 O(logn)。</p>
+<p><img src="/./2024/06/02/Mysql%E4%B8%BA%E4%BB%80%E4%B9%88%E7%94%A8B+%E6%A0%91%E4%B8%8D%E7%94%A8%E8%B7%B3%E8%A1%A8/7.png"><br>这个时间复杂度的分析方法比较难想到。</p>
+<p>先问题分解一下，先来看这样一个问题，如果链表里有 n 个结点，会有多少级索引呢？</p>
+<p>在跳表中，假设每两个结点，会抽出一个结点作为上一级索引的结点。</p>
+<p>那么，索引有多少级，每一级有多少个node呢：</p>
+<ul>
+<li><p>第一级索引的结点个数大约就是 n&#x2F;2，</p>
+</li>
+<li><p>第二级索引的结点个数大约就是 n&#x2F;4，</p>
+</li>
+<li><p>第三级索引的结点个数大约就是 n&#x2F;8，</p>
+</li>
+</ul>
+<p>依次类推，也就是说，</p>
+<ul>
+<li><p>第 k 级索引的结点个数是第 k-1 级索引的结点个数的 1&#x2F;2，</p>
+</li>
+<li><p>那第 k级索引结点的个数就是 n&#x2F;(2的k次方)。</p>
+</li>
+</ul>
+<p><img src="/./2024/06/02/Mysql%E4%B8%BA%E4%BB%80%E4%B9%88%E7%94%A8B+%E6%A0%91%E4%B8%8D%E7%94%A8%E8%B7%B3%E8%A1%A8/8.png"><br>假设索引有 h 级，最高级的索引有 2 个结点。</p>
+<p>通过上面的公式，我们可以得到 n&#x2F;(2^h)&#x3D;2，从而求得 h&#x3D;log2n-1。</p>
+<p>如果包含原始链表这一层，整个跳表的高度就是 log2n。</p>
+<p>我们在跳表中查询某个数据的时候，如果每一层都要遍历 m 个结点，那在跳表中查询一个数据的时间复杂度就是 O(m*logn)。</p>
+<p>那m到底是多少呢?</p>
+<p>假设我们要查找的数据是 x，在第 k 级索引中，我们遍历到 y 结点之后，发现 x 大于 y，小于后面的结点 z，所以我们通过 y 的 down 指针，从第 k 级索引下降到第 k-1 级索引。</p>
+<p>在第 k-1 级索引中，y 和 z 之间只有 3 个结点（包含 y 和 z），所以，我们在 K-1 级索引中最多只需要遍历 3 个结点，依次类推，每一级索引都最多只需要遍历 3 个结点。</p>
+<p><img src="/./2024/06/02/Mysql%E4%B8%BA%E4%BB%80%E4%B9%88%E7%94%A8B+%E6%A0%91%E4%B8%8D%E7%94%A8%E8%B7%B3%E8%A1%A8/9.png"><br>过上面的分析，我们得到 m&#x3D;3，</p>
+<p>所以在跳表中查询任意数据的时间复杂度就是 O(logn)。</p>
+<p>这个查找的时间复杂度跟二分查找是一样的，这也体现了空间换时间的效率之高。</p>
+<h3 id="跳表-Skip-List-的优点和缺点"><a href="#跳表-Skip-List-的优点和缺点" class="headerlink" title="跳表(Skip List)的优点和缺点"></a>跳表(Skip List)的优点和缺点</h3><p>跳表是一种多层级的数据结构，每一层都是一个有序链表，</p>
+<p>最底层包含所有数据，而上层包含的数据是下层的子集，通过跳跃节点快速定位目标数据。</p>
+<p><strong>跳表(Skip List)的优点</strong></p>
+<ul>
+<li><p>平均<strong>查找时间较低</strong>：跳表的查询时间复杂度为O(log n)，与平衡树结构相似，但实现起来较为简单。</p>
+</li>
+<li><p>插入和删除操作相对较快：由于跳表不需要进行节点的频繁平衡调整，插入和删除操作的性能较好。</p>
+</li>
+</ul>
+<p><strong>跳表(Skip List)的缺点</strong></p>
+<ul>
+<li><p>难以实现<strong>事务和数据持久性</strong>：跳表的更新操作可能涉及多个层级，实现事务和数据持久性要求更复杂。</p>
+</li>
+<li><p>空间开销较大：跳表需要额外的指针来连接不同层级，占用的内存空间较多。</p>
+</li>
+</ul>
+<h2 id="B-Tree-和-跳表-Skip-List-的在数据结构上的区别"><a href="#B-Tree-和-跳表-Skip-List-的在数据结构上的区别" class="headerlink" title="B+Tree 和 跳表(Skip List) 的在数据结构上的区别"></a>B+Tree 和 跳表(Skip List) 的在数据结构上的区别</h2><p>都是 多级索引 +链表</p>
+<p><img src="/./2024/06/02/Mysql%E4%B8%BA%E4%BB%80%E4%B9%88%E7%94%A8B+%E6%A0%91%E4%B8%8D%E7%94%A8%E8%B7%B3%E8%A1%A8/10.png"></p>
+<h3 id="IO-操作的单位-不同"><a href="#IO-操作的单位-不同" class="headerlink" title="IO 操作的单位 不同"></a>IO 操作的单位 不同</h3><p>B+Tree 是page （16K）</p>
+<p>跳表(Skip List) 是 node 节点 ，一个node 几十个字节</p>
+<h3 id="树的高度-不同"><a href="#树的高度-不同" class="headerlink" title="树的高度 不同"></a>树的高度 不同</h3><p><strong>B+树</strong>是多叉树结构，每个结点都是一个<code>16k</code>的数据页，能存放较多索引信息。</p>
+<p>同样的数据，树的高度比较小。 三层B+左右就可以存储2kw左右的数据。</p>
+<p>如果，把三层B+树塞满，那大概需要2kw左右的数据。 也就是说查询一次数据，如果这些数据页都在磁盘里，那么<strong>最多需要查询三次磁盘IO</strong>。</p>
+<p>跳表是链表结构，一条数据一个结点，</p>
+<p>如果最底层要存放2kw数据，且每次查询都要能达到二分查找的效果，2kw大概在2的24次方 左右，</p>
+<p>所以，2kw数据的跳表大概高度在24层左右。 如果要一个节点要进行一次磁盘IO，大概要进行 24次。</p>
+<h2 id="B-Tree-和-跳表-Skip-List-的新增数据区别"><a href="#B-Tree-和-跳表-Skip-List-的新增数据区别" class="headerlink" title="B+Tree 和 跳表(Skip List) 的新增数据区别"></a>B+Tree 和 跳表(Skip List) 的新增数据区别</h2><p>了解了二者的基本情况之后，接下来，对B+Tree 和 跳表(Skip List) 的数据插入进行对比。</p>
+<p>B+Tree和跳表的叶子层，都包含了所有的数据，且叶子层都是顺序的，适合用于范围查询。</p>
+<p>来看看，B+Tree和跳表新增和删除数据的差异</p>
+<h3 id="B-Tree-新增数据"><a href="#B-Tree-新增数据" class="headerlink" title="B+Tree 新增数据"></a>B+Tree 新增数据</h3><p><strong>场景1： 叶子结点和索引结点都没满</strong></p>
+<p>B+Tree 直接插入到叶子结点中就好了。</p>
+<p><img src="/./2024/06/02/Mysql%E4%B8%BA%E4%BB%80%E4%B9%88%E7%94%A8B+%E6%A0%91%E4%B8%8D%E7%94%A8%E8%B7%B3%E8%A1%A8/11.png"><br><strong>场景2：叶子结点满了，但索引结点没满</strong></p>
+<p>B+Tree 需要拆分叶子结点，同时索引结点要增加新的索引信息。</p>
+<p><img src="/./2024/06/02/Mysql%E4%B8%BA%E4%BB%80%E4%B9%88%E7%94%A8B+%E6%A0%91%E4%B8%8D%E7%94%A8%E8%B7%B3%E8%A1%A8/12.png"><br><strong>场景3：叶子结点满了，且索引结点也满了</strong></p>
+<p>叶子和索引结点都要拆分，同时往上还要再<strong>加一层索引。</strong></p>
+<p><img src="/./2024/06/02/Mysql%E4%B8%BA%E4%BB%80%E4%B9%88%E7%94%A8B+%E6%A0%91%E4%B8%8D%E7%94%A8%E8%B7%B3%E8%A1%A8/13.png"><br>B+树是一种多叉平衡二叉树，要维护各个分支的高度差距，不能太大，平衡意味着子树们的高度层级尽量一致（一般最多差一个层级）。</p>
+<p>为啥要平衡呢？平衡意味着在搜索的时候，不管走哪个子树分支，搜索次数都差不了太多。</p>
+<p>所以，为了维持B+树的平衡，在插入新的数据时，B+树会不断将进行 <strong>数据页的 分裂</strong>。</p>
+<h3 id="跳表新增数据"><a href="#跳表新增数据" class="headerlink" title="跳表新增数据"></a>跳表新增数据</h3><p>跳表同样也是很多层，新增一个数据时，最底层的链表需要插入数据，</p>
+<p>然后，考虑是否需要在上面几层中加入数据做索引 ？ 这个就靠<strong>随机函数</strong>了。</p>
+<p>例如: 如果跳表中插入数据id&#x3D;6，且随机函数返回第三层（有25%的概率），那就需要在跳表的最底层到第三层都插入数据。</p>
+<p>跳表跟B+树不一样，跳表是否新增层数，纯粹靠随机函数，不太关心平衡的问题。</p>
+<h2 id="B-Tree和跳表的在新增数据上的区别"><a href="#B-Tree和跳表的在新增数据上的区别" class="headerlink" title="B+Tree和跳表的在新增数据上的区别"></a>B+Tree和跳表的在新增数据上的区别</h2><h4 id="B-Tree-需要维护-树的平衡"><a href="#B-Tree-需要维护-树的平衡" class="headerlink" title="B+Tree 需要维护 树的平衡"></a>B+Tree 需要维护 树的平衡</h4><p>为了维持B+树的平衡，在插入新的数据时，B+树会不断将进行 <strong>数据页的 分裂</strong>。</p>
+<p>维护平衡意味维护搜索的稳定性， 意味着着在搜索的时候，不管走哪个子树分支，搜索次数都差不了太多。</p>
+<h4 id="跳表-需要不太关心平衡问题"><a href="#跳表-需要不太关心平衡问题" class="headerlink" title="跳表 需要不太关心平衡问题"></a>跳表 需要不太关心平衡问题</h4><p>跳表在新增数据 时，不太关心平衡的问题。跳表插入数据的时候，跟B+树不一样，是否新增层数，纯粹靠随机函数去决定。</p>
+<h2 id="为什么B-Tree-采用Page作为-IO操作的单位？"><a href="#为什么B-Tree-采用Page作为-IO操作的单位？" class="headerlink" title="为什么B+Tree 采用Page作为 IO操作的单位？"></a>为什么B+Tree 采用Page作为 IO操作的单位？</h2><p>前面讲到，B+Tree和跳表 IO 操作的单位 不同</p>
+<ul>
+<li><p>B+Tree 是page （16K） ,粗粒度IO</p>
+</li>
+<li><p>跳表(Skip List) 是 node 节点 ，一个node 几十个字节 , 细粒度IO</p>
+</li>
+</ul>
+<p>这是和 Mysql的存储介质有关系， Mysql的数据需要持久化存储， 并且需要事务机制保证持久性，所以，必须存储在磁盘上。</p>
+<h3 id="内存和磁盘的访问速度对比"><a href="#内存和磁盘的访问速度对比" class="headerlink" title="内存和磁盘的访问速度对比"></a>内存和磁盘的访问速度对比</h3><p>机械硬盘的读写速度，大致如下</p>
+<p><img src="/./2024/06/02/Mysql%E4%B8%BA%E4%BB%80%E4%B9%88%E7%94%A8B+%E6%A0%91%E4%B8%8D%E7%94%A8%E8%B7%B3%E8%A1%A8/14.png"><br>固态硬盘的读写速度，大致如下</p>
+<p><img src="/./2024/06/02/Mysql%E4%B8%BA%E4%BB%80%E4%B9%88%E7%94%A8B+%E6%A0%91%E4%B8%8D%E7%94%A8%E8%B7%B3%E8%A1%A8/15.png"><br>内存的读写速度，和磁盘读写速度的对比</p>
+<p><img src="/./2024/06/02/Mysql%E4%B8%BA%E4%BB%80%E4%B9%88%E7%94%A8B+%E6%A0%91%E4%B8%8D%E7%94%A8%E8%B7%B3%E8%A1%A8/16.png"><br>为什么磁盘慢，和磁盘的结构有关。</p>
+<h3 id="机械硬盘的扇区（sector）"><a href="#机械硬盘的扇区（sector）" class="headerlink" title="机械硬盘的扇区（sector）"></a>机械硬盘的扇区（sector）</h3><p>机械硬盘的性能为啥那么慢？ 看看结构就知道：</p>
+<p><img src="/./2024/06/02/Mysql%E4%B8%BA%E4%BB%80%E4%B9%88%E7%94%A8B+%E6%A0%91%E4%B8%8D%E7%94%A8%E8%B7%B3%E8%A1%A8/17.png"><br>机械磁盘上的每个磁道被等分为若干个弧段，这些弧段称之为扇区。</p>
+<p>如何在磁盘中读&#x2F;写数据？ 需要 物理动作，去移动 “磁头” 到目标 扇区</p>
+<p><img src="/./2024/06/02/Mysql%E4%B8%BA%E4%BB%80%E4%B9%88%E7%94%A8B+%E6%A0%91%E4%B8%8D%E7%94%A8%E8%B7%B3%E8%A1%A8/18.png"><br>机械磁盘的读写以扇区为基本单位。</p>
+<p>硬盘的物理读写以扇区为基本单位。通常情况下每个扇区的大小是 512 字节。linux 下可以使用 <code>fdisk -l</code> 了解扇区大小：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ sudo /sbin/fdisk -l  </span><br><span class="line">Disk /dev/sda: 20 GiB, 21474836480 bytes, 41943040 sectors  </span><br><span class="line">Units: sectors of 1 * 512 = 512 bytes  </span><br><span class="line">Sector size (logical/physical): 512 bytes / 512 bytes  </span><br><span class="line">I/O size (minimum/optimal): 512 bytes / 512 bytes  </span><br><span class="line">Disklabel type: dos  </span><br><span class="line">Disk identifier: 0x7d9f5643  </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>其中 Sector size，就是扇区大小，本例中为 512 bytes。</p>
+<p>注意，扇区是磁盘物理层面的概念，不是操作系统的概率。</p>
+<p>操作系统是不直接与扇区交互的，而是与多个连续扇区组成的磁盘块交互。由于扇区是物理层面的概念，所以无法在系统中进行大小的更改。</p>
+<h3 id="操作系统-IO-块-Block"><a href="#操作系统-IO-块-Block" class="headerlink" title="操作系统 IO 块 Block"></a>操作系统 IO 块 Block</h3><p>文件系统读写数据的最小单位，也叫磁盘簇，IO区块 BLOC。</p>
+<p>什么是IO 块 Block？ 扇区是磁盘最小的物理存储单元，操作系统将相邻的扇区组合在一起，形成一个块，对块进行管理。</p>
+<p>每个Block 磁盘块可以包括 2、4、8、16、32 或 64 个扇区。</p>
+<p>所以，Block 磁盘块是操作系统所使用的逻辑概念，而非磁盘的物理概念。</p>
+<p>Block 磁盘块的大小可以通过命令 <code>stat /boot</code> 来查看：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ sudo stat /boot  </span><br><span class="line">  File: /boot  </span><br><span class="line">  Size: 4096        Blocks: 8          IO Block: 4096   directory  </span><br><span class="line">Device: 801h/2049d  Inode: 655361      Links: 3  </span><br><span class="line">Access: (0755/drwxr-xr-x)  Uid: (    0/    root)   Gid: (    0/    root)  </span><br><span class="line">Access: 2019-07-06 20:19:45.487160301 +0800  </span><br><span class="line">Modify: 2019-07-06 20:19:44.835160301 +0800  </span><br><span class="line">Change: 2019-07-06 20:19:44.835160301 +0800  </span><br><span class="line"> Birth: -  </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>其中 IO Block 就是磁盘块大小，本例中是 4096 Bytes，一般也是 4K。</p>
+<h3 id="Mysql的InnoDB-Page-数据页"><a href="#Mysql的InnoDB-Page-数据页" class="headerlink" title="Mysql的InnoDB Page 数据页"></a>Mysql的InnoDB Page 数据页</h3><p>磁盘IO是低性能的，如何提升性能， 最好是 减少IO， 基于时间局部性和空间局部性原理， 一次读取足够多的数据到内存。</p>
+<p>Mysql的 InnoDB将数据划分为若干页，以Page 页作为磁盘与内存交互的基本单位，一般页的大小为16KB。</p>
+<p>InnoDB，为了通过减少内存与磁盘的交互次数，把一次读取和写入的 数据量， 从4K 扩大到了16K，也就是一次操作 4个 OS Block，从而提升性能。</p>
+<p>这样的话，一次性至少读取1Page 页数据到内存中或者将1 Page页数据写入磁盘。而不是一个操作系统的block。</p>
+<p>Page 本质上就是一种典型的缓存设计思想，一般缓存的设计基本都是从时间局部性和空间局部性进行考量的：</p>
+<ul>
+<li><p>时间局部性：如果一条数据正在在被使用，那么在接下来一段时间内大概率还会再被使用。可以认为热点数据缓存都属于这种思路的实现。</p>
+</li>
+<li><p>空间局部性：如果一条数据正在在被使用，那么存储在它附近的数据大概率也会很快被使用。InnoDB的数据页和操作系统的页缓存则是这种思路的体现。</p>
+</li>
+</ul>
+<p>InnoDB Page 数据页的结构</p>
+<p><img src="/./2024/06/02/Mysql%E4%B8%BA%E4%BB%80%E4%B9%88%E7%94%A8B+%E6%A0%91%E4%B8%8D%E7%94%A8%E8%B7%B3%E8%A1%A8/19.png"><br>一开始生成页的时候，并没有User Records这个部分.</p>
+<p>每当我们插⼊⼀条记录，都会从Free Space部分，也就是尚未使⽤的存储空间中申请⼀个记录⼤⼩的空间划分到User Records部分，当Free Space部分的空间全部被User Records部分替代掉之后，也就意味着这个页使⽤完了，如果还有新的记录插⼊的话，就需要去申请新的页了。</p>
+<h3 id="一次IO一个page的优势"><a href="#一次IO一个page的优势" class="headerlink" title="一次IO一个page的优势"></a>一次IO一个page的优势</h3><p>MySQL的InnoDB存储引擎使用B+树而不是跳表，这是因为B+树一次IO一个page，大大节省了磁盘IO的操作。</p>
+<p>如果使用跳表，那么一个node节点一次io， 存储的性能 估计要下降1000倍以上。</p>
+<h2 id="总结：Mysql的索引为什么使用B-树而不使用跳表"><a href="#总结：Mysql的索引为什么使用B-树而不使用跳表" class="headerlink" title="总结：Mysql的索引为什么使用B+树而不使用跳表"></a>总结：Mysql的索引为什么使用B+树而不使用跳表</h2><h3 id="B-树更适合磁盘IO"><a href="#B-树更适合磁盘IO" class="headerlink" title="B+树更适合磁盘IO"></a>B+树更适合磁盘IO</h3><p><strong>B+Tree</strong>一个节点是一个page，是一种多叉树结构，每个结点都是一个16k的数据页，能存放较多索引信息。一次IO一个page，大大节省了磁盘IO的操作。</p>
+<p><strong>B+Tree</strong>一个page 能存放较多索引信息 ，所以树的层数比较低， <strong>三层</strong>左右就可以存储<code>2kw</code>左右的数据也就是说查询一次数据，如果这些数据页都在磁盘里，那么最多需要查询<strong>三次磁盘IO</strong>。</p>
+<h3 id="原生跳表不适合磁盘IO"><a href="#原生跳表不适合磁盘IO" class="headerlink" title="原生跳表不适合磁盘IO"></a>原生跳表不适合磁盘IO</h3><p><strong>跳表</strong>是链表结构，一条数据一个结点，那么一个node节点一次磁盘io， 一个page 页规模的IO存储的性能 估计要下降1000倍以上。</p>
+<p>原生跳表 一个node存放一个 索引信息 ，所以树的层数比较高</p>
+<p>如果最底层要存放2kw数据，且每次查询都要能达到二分查找的效果，2kw大概在2的24次方 左右，</p>
+<p>所以，2kw数据的跳表大概高度在24层左右。 如果要进行查找，大概要进行 24次磁盘IO。</p>
+<blockquote>
+<p>这里讲的是原生跳表， 如果经过各种改进，那个不在此文讨论范围。</p>
+</blockquote>
+<p>所以，虽然在理论上，跳表的时间复杂度和B+树相同 ，但是：</p>
+<ul>
+<li><p>B+树更适合 磁盘IO， 更合适MYSQL。</p>
+</li>
+<li><p>从反面来说， 跳表更适合内存IO， 更适合redis。</p>
+</li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="http://flowtime.asia">周五打工人</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="http://flowtime.asia/2024/06/02/Mysql%E4%B8%BA%E4%BB%80%E4%B9%88%E7%94%A8B+%E6%A0%91%E4%B8%8D%E7%94%A8%E8%B7%B3%E8%A1%A8/">http://flowtime.asia/2024/06/02/Mysql%E4%B8%BA%E4%BB%80%E4%B9%88%E7%94%A8B+%E6%A0%91%E4%B8%8D%E7%94%A8%E8%B7%B3%E8%A1%A8/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://flowtime.asia" target="_blank">繁华流年间</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a></div><div class="post_share"><div class="social-share" data-image="/img/hubian.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2024/06/02/%E7%BB%9F%E8%AE%A1%E5%85%A8%E5%9B%BD%E9%87%8D%E5%90%8D%E6%9C%80%E5%A4%9A%E7%9A%84%E5%89%8D100%E4%B8%AA/" title="统计全国重名最多的前100个"><img class="cover" src="/img/liushui.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">统计全国重名最多的前100个</div></div></a></div></nav><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div><div class="comment-switch"><span class="first-comment">Livere</span><span id="switch-btn"></span><span class="second-comment">Twikoo</span></div></div><div class="comment-wrap"><div><div id="lv-container" data-id="city" data-uid="MTAyMC81OTg1OS8zNjMyMQ=="></div></div><div><div id="twikoo-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/nav.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">周五打工人</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">11</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">10</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">3</div></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">无论你是追求知识的急先锋，还是对生活感悟充满好奇，亦或是渴望找到属于自己情感共鸣的灵魂，本博客都将竭诚欢迎你的加入。共同书写属于自己的精彩篇章。</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%AD%97%E8%8A%82%E9%9D%A2%E8%AF%95%EF%BC%9A-Mysql%E4%B8%BA%E4%BB%80%E4%B9%88%E7%94%A8B-%E6%A0%91%EF%BC%8C%E4%B8%8D%E7%94%A8%E8%B7%B3%E8%A1%A8%EF%BC%9F"><span class="toc-number">1.</span> <span class="toc-text">字节面试： Mysql为什么用B+树，不用跳表？</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B4%A2%E5%BC%95%E7%9A%84%E4%BD%9C%E7%94%A8%E5%92%8C%E9%87%8D%E8%A6%81%E6%80%A7"><span class="toc-number">1.1.</span> <span class="toc-text">索引的作用和重要性</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B4%A2%E5%BC%95%E7%9A%84%E4%BD%9C%E7%94%A8%E5%92%8C%E9%87%8D%E8%A6%81%E6%80%A7-1"><span class="toc-number">1.1.1.</span> <span class="toc-text">索引的作用和重要性</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#B-%E6%95%B0%E5%92%8C%E8%B7%B3%E8%A1%A8%E7%9A%84%E6%95%B4%E4%BD%93%E7%BB%93%E6%9E%84"><span class="toc-number">1.2.</span> <span class="toc-text">B+数和跳表的整体结构</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFMySQL%E4%B8%AD%E7%9A%84B-Tree"><span class="toc-number">1.2.0.1.</span> <span class="toc-text">什么是MySQL中的B+Tree</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#B-Tree%E7%9A%84%E6%9F%A5%E8%AF%A2%E8%BF%87%E7%A8%8B"><span class="toc-number">1.2.1.</span> <span class="toc-text">B+Tree的查询过程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#B-Tree%E7%9A%84%E4%BC%98%E7%82%B9%E5%92%8C%E7%BC%BA%E7%82%B9"><span class="toc-number">1.2.2.</span> <span class="toc-text">B+Tree的优点和缺点</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B7%B3%E8%A1%A8"><span class="toc-number">1.3.</span> <span class="toc-text">跳表</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B7%B3%E8%A1%A8%E7%9A%84%E5%8E%9F%E7%90%86"><span class="toc-number">1.3.1.</span> <span class="toc-text">跳表的原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B7%B3%E8%A1%A8%E7%9A%84%E7%BB%93%E6%9E%84"><span class="toc-number">1.3.2.</span> <span class="toc-text">跳表的结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8D%95%E5%B1%82%E8%B7%B3%E8%A1%A8"><span class="toc-number">1.3.3.</span> <span class="toc-text">单层跳表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%A4%E5%B1%82%E8%B7%B3%E8%A1%A8"><span class="toc-number">1.3.4.</span> <span class="toc-text">两层跳表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%A4%E5%B1%82%E8%B7%B3%E8%A1%A8%E6%9F%A5%E8%AF%A2"><span class="toc-number">1.3.5.</span> <span class="toc-text">两层跳表查询</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89%E5%B1%82%E8%B7%B3%E8%A1%A8"><span class="toc-number">1.3.6.</span> <span class="toc-text">三层跳表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89%E5%B1%82%E8%B7%B3%E8%A1%A8%E6%9F%A5%E8%AF%A2"><span class="toc-number">1.3.7.</span> <span class="toc-text">三层跳表查询</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B7%B3%E8%A1%A8%E6%9F%A5%E6%89%BE%E7%9A%84%E6%97%B6%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6"><span class="toc-number">1.3.8.</span> <span class="toc-text">跳表查找的时间复杂度</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B7%B3%E8%A1%A8-Skip-List-%E7%9A%84%E4%BC%98%E7%82%B9%E5%92%8C%E7%BC%BA%E7%82%B9"><span class="toc-number">1.3.9.</span> <span class="toc-text">跳表(Skip List)的优点和缺点</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#B-Tree-%E5%92%8C-%E8%B7%B3%E8%A1%A8-Skip-List-%E7%9A%84%E5%9C%A8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8A%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-number">1.4.</span> <span class="toc-text">B+Tree 和 跳表(Skip List) 的在数据结构上的区别</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#IO-%E6%93%8D%E4%BD%9C%E7%9A%84%E5%8D%95%E4%BD%8D-%E4%B8%8D%E5%90%8C"><span class="toc-number">1.4.1.</span> <span class="toc-text">IO 操作的单位 不同</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A0%91%E7%9A%84%E9%AB%98%E5%BA%A6-%E4%B8%8D%E5%90%8C"><span class="toc-number">1.4.2.</span> <span class="toc-text">树的高度 不同</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#B-Tree-%E5%92%8C-%E8%B7%B3%E8%A1%A8-Skip-List-%E7%9A%84%E6%96%B0%E5%A2%9E%E6%95%B0%E6%8D%AE%E5%8C%BA%E5%88%AB"><span class="toc-number">1.5.</span> <span class="toc-text">B+Tree 和 跳表(Skip List) 的新增数据区别</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#B-Tree-%E6%96%B0%E5%A2%9E%E6%95%B0%E6%8D%AE"><span class="toc-number">1.5.1.</span> <span class="toc-text">B+Tree 新增数据</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B7%B3%E8%A1%A8%E6%96%B0%E5%A2%9E%E6%95%B0%E6%8D%AE"><span class="toc-number">1.5.2.</span> <span class="toc-text">跳表新增数据</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#B-Tree%E5%92%8C%E8%B7%B3%E8%A1%A8%E7%9A%84%E5%9C%A8%E6%96%B0%E5%A2%9E%E6%95%B0%E6%8D%AE%E4%B8%8A%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-number">1.6.</span> <span class="toc-text">B+Tree和跳表的在新增数据上的区别</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#B-Tree-%E9%9C%80%E8%A6%81%E7%BB%B4%E6%8A%A4-%E6%A0%91%E7%9A%84%E5%B9%B3%E8%A1%A1"><span class="toc-number">1.6.0.1.</span> <span class="toc-text">B+Tree 需要维护 树的平衡</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%B7%B3%E8%A1%A8-%E9%9C%80%E8%A6%81%E4%B8%8D%E5%A4%AA%E5%85%B3%E5%BF%83%E5%B9%B3%E8%A1%A1%E9%97%AE%E9%A2%98"><span class="toc-number">1.6.0.2.</span> <span class="toc-text">跳表 需要不太关心平衡问题</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88B-Tree-%E9%87%87%E7%94%A8Page%E4%BD%9C%E4%B8%BA-IO%E6%93%8D%E4%BD%9C%E7%9A%84%E5%8D%95%E4%BD%8D%EF%BC%9F"><span class="toc-number">1.7.</span> <span class="toc-text">为什么B+Tree 采用Page作为 IO操作的单位？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%86%85%E5%AD%98%E5%92%8C%E7%A3%81%E7%9B%98%E7%9A%84%E8%AE%BF%E9%97%AE%E9%80%9F%E5%BA%A6%E5%AF%B9%E6%AF%94"><span class="toc-number">1.7.1.</span> <span class="toc-text">内存和磁盘的访问速度对比</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%BA%E6%A2%B0%E7%A1%AC%E7%9B%98%E7%9A%84%E6%89%87%E5%8C%BA%EF%BC%88sector%EF%BC%89"><span class="toc-number">1.7.2.</span> <span class="toc-text">机械硬盘的扇区（sector）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F-IO-%E5%9D%97-Block"><span class="toc-number">1.7.3.</span> <span class="toc-text">操作系统 IO 块 Block</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Mysql%E7%9A%84InnoDB-Page-%E6%95%B0%E6%8D%AE%E9%A1%B5"><span class="toc-number">1.7.4.</span> <span class="toc-text">Mysql的InnoDB Page 数据页</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E6%AC%A1IO%E4%B8%80%E4%B8%AApage%E7%9A%84%E4%BC%98%E5%8A%BF"><span class="toc-number">1.7.5.</span> <span class="toc-text">一次IO一个page的优势</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93%EF%BC%9AMysql%E7%9A%84%E7%B4%A2%E5%BC%95%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BD%BF%E7%94%A8B-%E6%A0%91%E8%80%8C%E4%B8%8D%E4%BD%BF%E7%94%A8%E8%B7%B3%E8%A1%A8"><span class="toc-number">1.8.</span> <span class="toc-text">总结：Mysql的索引为什么使用B+树而不使用跳表</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#B-%E6%A0%91%E6%9B%B4%E9%80%82%E5%90%88%E7%A3%81%E7%9B%98IO"><span class="toc-number">1.8.1.</span> <span class="toc-text">B+树更适合磁盘IO</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8E%9F%E7%94%9F%E8%B7%B3%E8%A1%A8%E4%B8%8D%E9%80%82%E5%90%88%E7%A3%81%E7%9B%98IO"><span class="toc-number">1.8.2.</span> <span class="toc-text">原生跳表不适合磁盘IO</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2024/06/02/Mysql%E4%B8%BA%E4%BB%80%E4%B9%88%E7%94%A8B+%E6%A0%91%E4%B8%8D%E7%94%A8%E8%B7%B3%E8%A1%A8/" title="Mysql为什么用B+树不用跳表"><img src="/img/hubian.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Mysql为什么用B+树不用跳表"/></a><div class="content"><a class="title" href="/2024/06/02/Mysql%E4%B8%BA%E4%BB%80%E4%B9%88%E7%94%A8B+%E6%A0%91%E4%B8%8D%E7%94%A8%E8%B7%B3%E8%A1%A8/" title="Mysql为什么用B+树不用跳表">Mysql为什么用B+树不用跳表</a><time datetime="2024-06-02T09:33:50.000Z" title="发表于 2024-06-02 17:33:50">2024-06-02</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/06/02/%E7%BB%9F%E8%AE%A1%E5%85%A8%E5%9B%BD%E9%87%8D%E5%90%8D%E6%9C%80%E5%A4%9A%E7%9A%84%E5%89%8D100%E4%B8%AA/" title="统计全国重名最多的前100个"><img src="/img/liushui.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="统计全国重名最多的前100个"/></a><div class="content"><a class="title" href="/2024/06/02/%E7%BB%9F%E8%AE%A1%E5%85%A8%E5%9B%BD%E9%87%8D%E5%90%8D%E6%9C%80%E5%A4%9A%E7%9A%84%E5%89%8D100%E4%B8%AA/" title="统计全国重名最多的前100个">统计全国重名最多的前100个</a><time datetime="2024-06-02T09:16:17.000Z" title="发表于 2024-06-02 17:16:17">2024-06-02</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/06/01/Edge%E6%B5%8F%E8%A7%88%E5%99%A8%E4%B8%AD%E4%BD%BF%E7%94%A8%E5%85%8D%E8%B4%B9%E7%9A%84ChatGPT/" title="Edge浏览器中使用免费的ChatGPT"><img src="/img/hubian.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Edge浏览器中使用免费的ChatGPT"/></a><div class="content"><a class="title" href="/2024/06/01/Edge%E6%B5%8F%E8%A7%88%E5%99%A8%E4%B8%AD%E4%BD%BF%E7%94%A8%E5%85%8D%E8%B4%B9%E7%9A%84ChatGPT/" title="Edge浏览器中使用免费的ChatGPT">Edge浏览器中使用免费的ChatGPT</a><time datetime="2024-06-01T04:20:56.000Z" title="发表于 2024-06-01 12:20:56">2024-06-01</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/05/28/%E7%99%BE%E4%BA%BF%E6%B5%81%E9%87%8F%E7%BA%A2%E5%8C%85%E7%B3%BB%E7%BB%9F/" title="百亿流量红包系统"><img src="/img/hubian.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="百亿流量红包系统"/></a><div class="content"><a class="title" href="/2024/05/28/%E7%99%BE%E4%BA%BF%E6%B5%81%E9%87%8F%E7%BA%A2%E5%8C%85%E7%B3%BB%E7%BB%9F/" title="百亿流量红包系统">百亿流量红包系统</a><time datetime="2024-05-28T12:40:48.000Z" title="发表于 2024-05-28 20:40:48">2024-05-28</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/05/26/%E5%9C%BA%E6%99%AF%E8%AE%BE%E8%AE%A1%E9%9D%A2%E8%AF%95%E9%A2%98/" title="场景设计面试题"><img src="/img/haibian.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="场景设计面试题"/></a><div class="content"><a class="title" href="/2024/05/26/%E5%9C%BA%E6%99%AF%E8%AE%BE%E8%AE%A1%E9%9D%A2%E8%AF%95%E9%A2%98/" title="场景设计面试题">场景设计面试题</a><time datetime="2024-05-26T15:11:48.000Z" title="发表于 2024-05-26 23:11:48">2024-05-26</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2024 By 周五打工人</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=4.13.0"></script><script src="/js/main.js?v=4.13.0"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"><script>(()=>{
+  const loadLivere = () => {
+    if (typeof LivereTower === 'object') window.LivereTower.init()
+    else {
+      (function(d, s) {
+          var j, e = d.getElementsByTagName(s)[0];
+          if (typeof LivereTower === 'function') { return; }
+          j = d.createElement(s);
+          j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+          j.async = true;
+          e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    }
+  }
+
+  if ('Livere' === 'Livere' || !false) {
+    if (false) btf.loadComment(document.getElementById('lv-container'), loadLivere)
+    else loadLivere()
+  } else {
+    window.loadOtherComment = loadLivere
+  }
+})()</script><script>(() => {
+  const getCount = () => {
+    const countELement = document.getElementById('twikoo-count')
+    if(!countELement) return
+    twikoo.getCommentsCount({
+      envId: 'https://mywaline-7unwzwfdi-motors-projects-a4d09e71.vercel.app/',
+      region: '',
+      urls: [window.location.pathname],
+      includeReply: false
+    }).then(res => {
+      countELement.textContent = res[0].count
+    }).catch(err => {
+      console.error(err)
+    })
+  }
+
+  const init = () => {
+    twikoo.init(Object.assign({
+      el: '#twikoo-wrap',
+      envId: 'https://mywaline-7unwzwfdi-motors-projects-a4d09e71.vercel.app/',
+      region: '',
+      onCommentLoaded: () => {
+        btf.loadLightbox(document.querySelectorAll('#twikoo .tk-content img:not(.tk-owo-emotion)'))
+      }
+    }, null))
+
+    
+  }
+
+  const loadTwikoo = () => {
+    if (typeof twikoo === 'object') setTimeout(init,0)
+    else getScript('https://cdn.jsdelivr.net/npm/twikoo@1.6.31/dist/twikoo.all.min.js').then(init)
+  }
+
+  if ('Livere' === 'Twikoo' || !false) {
+    if (false) btf.loadComment(document.getElementById('twikoo-wrap'), loadTwikoo)
+    else loadTwikoo()
+  } else {
+    window.loadOtherComment = loadTwikoo
+  }
+})()</script></div><canvas class="fireworks" mobile="false"></canvas><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/dist/fireworks.min.js"></script><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/dist/canvas-nest.min.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=4.13.0"></script></div></div></body></html>

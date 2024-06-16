@@ -5,6 +5,33 @@
     
     <entry>
       
+        <title>最强阿里自动化视频剪辑工具</title>
+      
+      <link href="/2024/06/16/%E6%9C%80%E5%BC%BA%E9%98%BF%E9%87%8C%E8%87%AA%E5%8A%A8%E5%8C%96%E8%A7%86%E9%A2%91%E5%89%AA%E8%BE%91%E5%B7%A5%E5%85%B7/"/>
+      <url>/2024/06/16/%E6%9C%80%E5%BC%BA%E9%98%BF%E9%87%8C%E8%87%AA%E5%8A%A8%E5%8C%96%E8%A7%86%E9%A2%91%E5%89%AA%E8%BE%91%E5%B7%A5%E5%85%B7/</url>
+      
+        <content type="html"><![CDATA[<p>这几年短视频非常火爆，尤其是抖音等短视频平台的崛起，很多人都可以把自己的日常生活或者工作发到网上，吸引很多人的关注，也有一些人因此赚到了人生第一桶金。</p><p>然后剪辑视频却是一件非常耗费精力的事情，经常要几个小时才能剪出来一个视频。</p><p>今天给大家推荐一个阿里开源的自动化视频剪辑工具—FunClip，可以帮助大家轻松剪辑视频。</p><p>FunClip是一款完全开源的自动化视频剪辑工具，可以安装在我们自己的电脑上，支持离线使用。还可以通过调用阿里巴巴通义实验室开源的 FunASR Paraformer 系列模型进行视频的语音识别，然后我们可以自由选择识别结果中的文本片段或说话人，点击裁剪按钮即可获取对应片段的视频。</p><p>所以使用 <strong>FunClip</strong> 剪辑视频非常的简单，不用像传统的视频剪辑软件，需要我们手动自己分割视频。</p><p>在上述基本功能的基础上，FunClip有以下特色：</p><ul><li><p>FunClip融合了众多高级语言模型的调用机制，并开放了灵活的prompt设置功能，旨在探索利用大型语言模型进行视频编辑的新方法。</p></li><li><p>FunClip采用了阿里巴巴开源的顶尖工业级语音识别模型——Paraformer-Large，它在开源中文ASR模型中表现出色，Modelscope的下载次数已超过1300万次，同时能够精确地预测出时间戳。</p></li><li><p>此外，FunClip还整合了SeACo-Paraformer的热词定制功能，在语音识别过程中可以特别指定实体词、人名等作为热词，从而显著提高识别的准确性。</p></li><li><p>FunClip还配备了CAM++的说话人识别模型，用户可以利用自动识别出的说话人ID作为编辑的依据，轻松裁剪出特定说话人的部分。</p></li><li><p>通过Gradio的交互界面，用户可以轻松实现上述功能，安装过程简洁，操作便捷，并且支持在服务器端部署，通过网页进行操作。</p></li><li><p>FunClip还支持多段视频的自由编辑，并且能够自动生成完整的视频SRT字幕文件以及目标剪辑片段的SRT字幕，简化了整个编辑流程。</p></li></ul><p>而且FunClip还加入了大语言模型智能裁剪功能，集成了qwen系列，gpt系列等模型，提供默认prompt，我们也可以训练自己的prompt，还支持通过FunASR开源的SeACo-Paraformer模型在视频剪辑中进一步支持热词定制化。</p><p><img src="/./2024/06/16/%E6%9C%80%E5%BC%BA%E9%98%BF%E9%87%8C%E8%87%AA%E5%8A%A8%E5%8C%96%E8%A7%86%E9%A2%91%E5%89%AA%E8%BE%91%E5%B7%A5%E5%85%B7/1.png"></p><h2 id="安装🔨"><a href="#安装🔨" class="headerlink" title="  安装🔨"></a>  <strong>安装🔨</strong></h2><p><strong><img src="https://res.wx.qq.com/t/wx_fed/we-emoji/res/v1.3.10/assets/newemoji/NoProb.png?tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"> 安装python环境</strong></p><p>FunClip的运行仅依赖python环境，所以我们只需要搭建好python环境就OK了。</p><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 克隆funclip仓库</span><br><span class="line">git clone https://github.com/alibaba-damo-academy/FunClip.git</span><br><span class="line">cd FunClip</span><br><span class="line"># 安装相关Python依赖</span><br><span class="line">pip install -r ./requirements.txt</span><br></pre></td></tr></table></figure><p><img src="https://res.wx.qq.com/t/wx_fed/we-emoji/res/v1.3.10/assets/newemoji/LetMeSee.png?tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"> 安装 imagemagick</p><p>希望使用自动生成字幕的视频裁剪功能，那么需要安装imagemagick：</p><ul><li>Ubuntu</li></ul><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">apt-get -y update &amp;&amp; apt-get -y install ffmpeg imagemagick</span><br><span class="line">sed -i &#x27;s/none/read,write/g&#x27; /etc/ImageMagick-6/policy.xml</span><br></pre></td></tr></table></figure><ul><li>MacOS</li></ul><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">brew install imagemagick</span><br><span class="line">sed -i &#x27;s/none/read,write/g&#x27; /usr/local/Cellar/imagemagick/7.1.1-8_1/etc/ImageMagick-7/policy.xml</span><br></pre></td></tr></table></figure><ul><li>Windows</li></ul><p>需要从下面的地址下载并安装imagemagick：</p><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">https://imagemagick.org/script/download.php#windows</span><br></pre></td></tr></table></figure><p>  <strong>使用FunClip</strong></p><p>首先使用下面的命令启动FunClip：</p><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">python funclip/launch.py</span><br></pre></td></tr></table></figure><p>随后在浏览器中访问localhost:7860 就能进入首页。</p><p>然后按如下步骤即可进行视频剪辑：</p><ul><li><p>上传你的视频（或使用下方的视频用例）</p></li><li><p>设置热词，设置文件输出路径（保存识别结果、视频等）</p></li><li><p>点击识别按钮获取识别结果，或点击识别+区分说话人在语音识别基础上识别说话人ID</p></li><li><p>将识别结果中的选段复制到对应位置，或者将说话人ID输入到对应为止</p></li><li><p>配置剪辑参数，偏移量与字幕设置等</p></li><li><p>点击“裁剪”或“裁剪+字幕”按钮</p></li></ul><p><img src="/./2024/06/16/%E6%9C%80%E5%BC%BA%E9%98%BF%E9%87%8C%E8%87%AA%E5%8A%A8%E5%8C%96%E8%A7%86%E9%A2%91%E5%89%AA%E8%BE%91%E5%B7%A5%E5%85%B7/2.png"><br>使用大语言模型裁剪请参考如下教程：</p><p><img src="/./2024/06/16/%E6%9C%80%E5%BC%BA%E9%98%BF%E9%87%8C%E8%87%AA%E5%8A%A8%E5%8C%96%E8%A7%86%E9%A2%91%E5%89%AA%E8%BE%91%E5%B7%A5%E5%85%B7/3.png"><br>FunClip 在魔塔社区部署了在线服务，可以通过下面的地址体验：</p><p><a href="https://modelscope.cn/studios/iic/funasr/_app/_clipvideo/summary">https://modelscope.cn/studios/iic/funasr\_app\_clipvideo/summary</a></p><p>我们可以上传自己的视频或者音频，也可以使用 FunClip 提供的demo：</p><p><img src="/./2024/06/16/%E6%9C%80%E5%BC%BA%E9%98%BF%E9%87%8C%E8%87%AA%E5%8A%A8%E5%8C%96%E8%A7%86%E9%A2%91%E5%89%AA%E8%BE%91%E5%B7%A5%E5%85%B7/4.png"><br>更多内容，可以到github了解：</p><p><a href="https://github.com/alibaba-damo-academy/FunClip">https://github.com/alibaba-damo-academy/FunClip</a></p><p>总的来说，FunClip是一款完全开源、本地部署的自动化视频剪辑工具，可以帮助我们更加轻松地剪辑视频，记录我们的美好生活。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 工具 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 视频工具 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      
         <title>Mysql为什么用B+树不用跳表</title>
       
       <link href="/2024/06/02/Mysql%E4%B8%BA%E4%BB%80%E4%B9%88%E7%94%A8B+%E6%A0%91%E4%B8%8D%E7%94%A8%E8%B7%B3%E8%A1%A8/"/>

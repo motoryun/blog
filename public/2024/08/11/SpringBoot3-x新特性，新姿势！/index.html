@@ -1,0 +1,247 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>SpringBoot3.x新特性，新姿势！ | 繁华流年间</title><meta name="author" content="周五打工人"><meta name="copyright" content="周五打工人"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="ffffff"><meta name="description" content="搞技术这么多年，说实话，我见过不少吹牛的，什么“这技术难度很高”、“你这活儿做不了”。春秋大梦！哥今天就给你们来点干货，告诉你SpringBoot 3.x是怎么回事。 别光看着流口水，拿好小本本，记好了！ 1. 快速入门先整明白Spring Boot 3.x咋用，这不难，就像初学骑自行车。你先了解下基础配置和依赖，写个简单的“Hello World”出来。就是在application.proper">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SpringBoot3.x新特性，新姿势！">
+<meta property="og:url" content="http://flowtime.asia/2024/08/11/SpringBoot3-x%E6%96%B0%E7%89%B9%E6%80%A7%EF%BC%8C%E6%96%B0%E5%A7%BF%E5%8A%BF%EF%BC%81/index.html">
+<meta property="og:site_name" content="繁华流年间">
+<meta property="og:description" content="搞技术这么多年，说实话，我见过不少吹牛的，什么“这技术难度很高”、“你这活儿做不了”。春秋大梦！哥今天就给你们来点干货，告诉你SpringBoot 3.x是怎么回事。 别光看着流口水，拿好小本本，记好了！ 1. 快速入门先整明白Spring Boot 3.x咋用，这不难，就像初学骑自行车。你先了解下基础配置和依赖，写个简单的“Hello World”出来。就是在application.proper">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://flowtime.asia/img/liushui.png">
+<meta property="article:published_time" content="2024-08-11T03:58:12.000Z">
+<meta property="article:modified_time" content="2024-08-11T03:59:58.252Z">
+<meta property="article:author" content="周五打工人">
+<meta property="article:tag" content="SpringBoot3.x新特性">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://flowtime.asia/img/liushui.png"><link rel="shortcut icon" href="/img/index.jpg"><link rel="canonical" href="http://flowtime.asia/2024/08/11/SpringBoot3-x%E6%96%B0%E7%89%B9%E6%80%A7%EF%BC%8C%E6%96%B0%E5%A7%BF%E5%8A%BF%EF%BC%81/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=4.13.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script async="async" src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><script>(adsbygoogle = window.adsbygoogle || []).push({
+  google_ad_client: 'ca-pub-3578075519463317',
+  enable_page_level_ads: 'true'
+});</script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.11.1/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'SpringBoot3.x新特性，新姿势！',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2024-08-11 11:59:58'
+}</script><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+    
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
+    
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+    
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', 'ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+        if (t === 'dark') activateDarkMode()
+        else if (t === 'light') activateLightMode()
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/transparent.css"><link rel="stylesheet" href="/css/footer.css"><meta name="generator" content="Hexo 7.2.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/nav.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">35</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">31</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/img/liushui.png')"><nav id="nav"><span id="blog-info"><a href="/" title="繁华流年间"></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">SpringBoot3.x新特性，新姿势！</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="fa-fw post-meta-icon far fa-calendar-alt"></i><span class="post-meta-label">发表于</span><time datetime="2024-08-11T03:58:12.000Z" title="发表于 2024-08-11 11:58:12">2024-08-11</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%95%99%E7%A8%8B/">教程</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="SpringBoot3.x新特性，新姿势！"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p>搞技术这么多年，说实话，我见过不少吹牛的，什么“这技术难度很高”、“你这活儿做不了”。春秋大梦！<strong>哥今天就给你们来点干货，告诉你SpringBoot 3.x是怎么回事</strong>。</p>
+<p>别光看着流口水，拿好小本本，记好了！</p>
+<h4 id="1-快速入门"><a href="#1-快速入门" class="headerlink" title="1. 快速入门"></a>1. 快速入门</h4><p>先整明白Spring Boot 3.x咋用，这不难，就像初学骑自行车。你先了解下基础配置和依赖，写个简单的“Hello World”出来。就是在<code>application.properties</code>里配置几个关键参数，启动项目，你就能在浏览器里看到“Hello Spring Boot 3.x”了。</p>
+<h4 id="2-最佳实践"><a href="#2-最佳实践" class="headerlink" title="2. 最佳实践"></a>2. 最佳实践</h4><p>要搞出高大上的东西，得有些规矩和套路。记住几个要点：模块化开发，配置文件分环境管理，使用注解减少样板代码。这样干，项目可维护性高，遇到锅甩起来也方便。</p>
+<h4 id="3-构建系统-Starters"><a href="#3-构建系统-Starters" class="headerlink" title="3. 构建系统&amp;Starters"></a>3. 构建系统&amp;Starters</h4><p>Starters就是一套速效救心丸，帮你快速集成各种功能。想用数据库？引入<code>spring-boot-starter-data-jpa</code>。要整Web项目？那就<code>spring-boot-starter-web</code>。这些玩意儿让你少写不少配置，省下时间去摸鱼。</p>
+<h4 id="4-DevTools-IDEA-热部署-远程调试-LiveReload"><a href="#4-DevTools-IDEA-热部署-远程调试-LiveReload" class="headerlink" title="4. DevTools(IDEA 热部署&amp;远程调试&amp;LiveReload)"></a>4. DevTools(IDEA 热部署&amp;远程调试&amp;LiveReload)</h4><p>IDEA热部署简直是神器，修改代码不重启服务器，效率杠杠的。远程调试也好使，能直接在服务器上断点调试。LiveReload能让前端页面实时刷新，前端小哥们可以边写边看效果，爱不释手。</p>
+<h4 id="5-特性-Spring-Application"><a href="#5-特性-Spring-Application" class="headerlink" title="5. 特性-Spring Application"></a>5. 特性-Spring Application</h4><p>Spring Boot的核心就是Spring Application，启动时各种组件自动装配，配置文件自动读取。你就当它是个大总管，管理着项目的方方面面，省心省力。</p>
+<h4 id="6-特性-自定义FailureAnalyzer"><a href="#6-特性-自定义FailureAnalyzer" class="headerlink" title="6. 特性-自定义FailureAnalyzer"></a>6. 特性-自定义FailureAnalyzer</h4><p>出了问题怎么办？自定义FailureAnalyzer能帮你定位问题原因，还能自定义报错信息。相当于项目里的“老中医”，哪里不对劲，一把脉就知道。</p>
+<h4 id="7-特性-事件与监听"><a href="#7-特性-事件与监听" class="headerlink" title="7. 特性-事件与监听"></a>7. 特性-事件与监听</h4><p>事件监听机制就像项目里的“大喇叭”，谁有事喊一嗓子，相关组件都知道了。用起来也简单，定义事件、发布事件、处理事件，分分钟搞定。</p>
+<h4 id="8-特性-配置与配置源"><a href="#8-特性-配置与配置源" class="headerlink" title="8. 特性-配置与配置源"></a>8. 特性-配置与配置源</h4><p>Spring Boot的配置文件支持多种格式，<code>properties</code>、<code>yaml</code>都行。多环境配置也很灵活，<code>application-dev.properties</code>、<code>application-prod.properties</code>，按环境加载。这样本地开发、线上部署互不干扰。</p>
+<h4 id="9-特性-类型安全的配置属性"><a href="#9-特性-类型安全的配置属性" class="headerlink" title="9. 特性-类型安全的配置属性"></a>9. 特性-类型安全的配置属性</h4><p>类型安全配置属性让你告别硬编码，把配置项变成强类型属性，写错了IDEA直接红线警告，妥妥的！</p>
+<h4 id="10-特性-Profiles-多环境配置"><a href="#10-特性-Profiles-多环境配置" class="headerlink" title="10. 特性-Profiles&amp;多环境配置"></a>10. 特性-Profiles&amp;多环境配置</h4><p>Profiles帮你管理不同环境的配置，开发、测试、生产环境各自独立。切换环境只要改下启动参数，项目能快速适应不同环境，部署起来爽到飞起。</p>
+<h4 id="11-特性-配置元数据"><a href="#11-特性-配置元数据" class="headerlink" title="11. 特性-配置元数据"></a>11. 特性-配置元数据</h4><p>配置元数据能让IDEA智能提示配置项，写配置文件时有提示，再也不用翻文档了。幸福感爆棚！</p>
+<h4 id="12-特性-自动配置和自定义Starter"><a href="#12-特性-自动配置和自定义Starter" class="headerlink" title="12. 特性-自动配置和自定义Starter"></a>12. 特性-自动配置和自定义Starter</h4><p>Spring Boot的自动配置机制让你少写配置，自定义Starter更是让你可以根据项目需要，封装自己的依赖和配置，一次配置，多次使用，简直不要太爽。</p>
+<h4 id="13-特性-日志"><a href="#13-特性-日志" class="headerlink" title="13. 特性-日志"></a>13. 特性-日志</h4><p>日志是项目的眼睛，Spring Boot默认用Logback，你可以根据需要切换到Log4j2。配置文件里写几行配置，日志级别、输出格式随心所欲。</p>
+<h4 id="14-特性-国际化"><a href="#14-特性-国际化" class="headerlink" title="14. 特性-国际化"></a>14. 特性-国际化</h4><p>项目要走向国际，国际化必须得搞。Spring Boot支持国际化配置，根据客户端语言自动切换，外语系的妹子都能看懂你的项目了。</p>
+<h4 id="15-特性-JSON-gson-jackson-json-b-fastjson"><a href="#15-特性-JSON-gson-jackson-json-b-fastjson" class="headerlink" title="15. 特性-JSON(gson, jackson, json-b, fastjson)"></a>15. 特性-JSON(gson, jackson, json-b, fastjson)</h4><p>JSON处理用Jackson最顺手，配置简单，性能也不错。需要更高性能可以考虑Fastjson，但要注意安全问题，别把裤子都赔了。</p>
+<h4 id="16-Servlet-Web应用程序开发-Spring-MVC"><a href="#16-Servlet-Web应用程序开发-Spring-MVC" class="headerlink" title="16. Servlet Web应用程序开发(Spring MVC)"></a>16. Servlet Web应用程序开发(Spring MVC)</h4><p>Spring MVC是Web开发的老朋友，Spring Boot把它集成得很好，写个Controller，配置好路由，前后端就能愉快地玩耍了。</p>
+<h4 id="17-Servlet-Web应用程序开发-嵌入式容器"><a href="#17-Servlet-Web应用程序开发-嵌入式容器" class="headerlink" title="17. Servlet Web应用程序开发(嵌入式容器)"></a>17. Servlet Web应用程序开发(嵌入式容器)</h4><p>Spring Boot默认用Tomcat，也支持Jetty、Undertow，配置文件里改下配置就行。嵌入式容器让你开发测试更方便，不用再去手动部署容器了。</p>
+<h4 id="18-SQL数据源配置"><a href="#18-SQL数据源配置" class="headerlink" title="18. SQL数据源配置"></a>18. SQL数据源配置</h4><p>配置数据库连接很简单，<code>application.properties</code>里写上数据库连接信息就行。HikariCP是默认连接池，性能好，配置也简单。</p>
+<h4 id="19-SQL数据连接池-HikariCP-Tomcat-pool-DBCP2-Druid"><a href="#19-SQL数据连接池-HikariCP-Tomcat-pool-DBCP2-Druid" class="headerlink" title="19. SQL数据连接池(HikariCP, Tomcat pool, DBCP2, Druid)"></a>19. SQL数据连接池(HikariCP, Tomcat pool, DBCP2, Druid)</h4><p>连接池选哪个好？HikariCP性能最佳，Tomcat pool稳健，DBCP2老牌，Druid功能丰富。根据项目需求选吧，反正都挺好用。</p>
+<h4 id="20-JdbcTemplate详解"><a href="#20-JdbcTemplate详解" class="headerlink" title="20. JdbcTemplate详解"></a>20. JdbcTemplate详解</h4><p>JdbcTemplate简化了JDBC操作，查询、更新、删除样样都行。你只要写SQL，别的交给JdbcTemplate，省时省力。</p>
+<h4 id="21-23-Spring-Data-JPA详解"><a href="#21-23-Spring-Data-JPA详解" class="headerlink" title="21-23. Spring Data JPA详解"></a>21-23. Spring Data JPA详解</h4><p>Spring Data JPA让你不写SQL也能操作数据库，接口+注解搞定CRUD。复杂查询用方法名定义，或者写<code>@Query</code>注解。数据源配置、初始化都简单，数据库搞错了改配置就行。</p>
+<h4 id="24-25-Spring-Data-JDBC详解"><a href="#24-25-Spring-Data-JDBC详解" class="headerlink" title="24-25. Spring Data JDBC详解"></a>24-25. Spring Data JDBC详解</h4><p>Spring Data JDBC是Spring Data JPA的轻量级替代，性能更高，配置也简单。接口+注解风格一致，用起来很顺手。</p>
+<h4 id="26-27-多数据源配置"><a href="#26-27-多数据源配置" class="headerlink" title="26-27. 多数据源配置"></a>26-27. 多数据源配置</h4><p>多数据源配置用<code>AbstractRoutingDataSource</code>，可以根据条件动态切换数据源。分包模式也很常用，每个数据源一个配置文件，互不干扰。</p>
+<h4 id="28-29-构建RESTful-API"><a href="#28-29-构建RESTful-API" class="headerlink" title="28-29. 构建RESTful API"></a>28-29. 构建RESTful API</h4><p>Spring Boot构建RESTful API简直是小菜一碟，写个Controller，注解<code>@RequestMapping</code>，前后端就能愉快互动了。集成Swagger-UI还能自动生成API文档，让前端小哥写起接口文档来也轻松。</p>
+<h4 id="30-MybatisPlus集成"><a href="#30-MybatisPlus集成" class="headerlink" title="30. MybatisPlus集成"></a>30. MybatisPlus集成</h4><p>MybatisPlus让你用Mybatis更爽，简化了CRUD操作，支持多数据源，性能也不错。整合Spring Boot后，配置文件里写几行配置，就能用上强大的MybatisPlus了。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="http://flowtime.asia">周五打工人</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="http://flowtime.asia/2024/08/11/SpringBoot3-x%E6%96%B0%E7%89%B9%E6%80%A7%EF%BC%8C%E6%96%B0%E5%A7%BF%E5%8A%BF%EF%BC%81/">http://flowtime.asia/2024/08/11/SpringBoot3-x%E6%96%B0%E7%89%B9%E6%80%A7%EF%BC%8C%E6%96%B0%E5%A7%BF%E5%8A%BF%EF%BC%81/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://flowtime.asia" target="_blank">繁华流年间</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/SpringBoot3-x%E6%96%B0%E7%89%B9%E6%80%A7/">SpringBoot3.x新特性</a></div><div class="post_share"><div class="social-share" data-image="/img/liushui.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2024/08/11/ava8%E7%9A%84Stream%E6%B5%81%E5%A4%AA%E9%9A%BE%E7%94%A8%E4%BA%86%EF%BC%9F%E7%9C%8B%E7%9C%8BJDFrame/" title="ava8的Stream流太难用了？看看JDFrame"><img class="cover" src="/img/haibian.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">ava8的Stream流太难用了？看看JDFrame</div></div></a></div><div class="next-post pull-right"><a href="/2024/07/14/Kali%E4%B8%AD%E4%BC%98%E7%A7%80Wifi%E6%B8%97%E9%80%8F%E5%B7%A5%E5%85%B7%E5%89%8D10/" title="Kali中优秀Wifi渗透工具前10"><img class="cover" src="/img/hubian.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Kali中优秀Wifi渗透工具前10</div></div></a></div></nav><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div><div class="comment-switch"><span class="first-comment">Livere</span><span id="switch-btn"></span><span class="second-comment">Twikoo</span></div></div><div class="comment-wrap"><div><div id="lv-container" data-id="city" data-uid="MTAyMC81OTg1OS8zNjMyMQ=="></div></div><div><div id="twikoo-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/nav.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">周五打工人</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">35</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">31</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">无论你是追求知识的急先锋，还是对生活感悟充满好奇，亦或是渴望找到属于自己情感共鸣的灵魂，本博客都将竭诚欢迎你的加入。共同书写属于自己的精彩篇章。</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8"><span class="toc-number">1.</span> <span class="toc-text">1. 快速入门</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5"><span class="toc-number">2.</span> <span class="toc-text">2. 最佳实践</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E6%9E%84%E5%BB%BA%E7%B3%BB%E7%BB%9F-Starters"><span class="toc-number">3.</span> <span class="toc-text">3. 构建系统&amp;Starters</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-DevTools-IDEA-%E7%83%AD%E9%83%A8%E7%BD%B2-%E8%BF%9C%E7%A8%8B%E8%B0%83%E8%AF%95-LiveReload"><span class="toc-number">4.</span> <span class="toc-text">4. DevTools(IDEA 热部署&amp;远程调试&amp;LiveReload)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-%E7%89%B9%E6%80%A7-Spring-Application"><span class="toc-number">5.</span> <span class="toc-text">5. 特性-Spring Application</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-%E7%89%B9%E6%80%A7-%E8%87%AA%E5%AE%9A%E4%B9%89FailureAnalyzer"><span class="toc-number">6.</span> <span class="toc-text">6. 特性-自定义FailureAnalyzer</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#7-%E7%89%B9%E6%80%A7-%E4%BA%8B%E4%BB%B6%E4%B8%8E%E7%9B%91%E5%90%AC"><span class="toc-number">7.</span> <span class="toc-text">7. 特性-事件与监听</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#8-%E7%89%B9%E6%80%A7-%E9%85%8D%E7%BD%AE%E4%B8%8E%E9%85%8D%E7%BD%AE%E6%BA%90"><span class="toc-number">8.</span> <span class="toc-text">8. 特性-配置与配置源</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#9-%E7%89%B9%E6%80%A7-%E7%B1%BB%E5%9E%8B%E5%AE%89%E5%85%A8%E7%9A%84%E9%85%8D%E7%BD%AE%E5%B1%9E%E6%80%A7"><span class="toc-number">9.</span> <span class="toc-text">9. 特性-类型安全的配置属性</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#10-%E7%89%B9%E6%80%A7-Profiles-%E5%A4%9A%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE"><span class="toc-number">10.</span> <span class="toc-text">10. 特性-Profiles&amp;多环境配置</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#11-%E7%89%B9%E6%80%A7-%E9%85%8D%E7%BD%AE%E5%85%83%E6%95%B0%E6%8D%AE"><span class="toc-number">11.</span> <span class="toc-text">11. 特性-配置元数据</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#12-%E7%89%B9%E6%80%A7-%E8%87%AA%E5%8A%A8%E9%85%8D%E7%BD%AE%E5%92%8C%E8%87%AA%E5%AE%9A%E4%B9%89Starter"><span class="toc-number">12.</span> <span class="toc-text">12. 特性-自动配置和自定义Starter</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#13-%E7%89%B9%E6%80%A7-%E6%97%A5%E5%BF%97"><span class="toc-number">13.</span> <span class="toc-text">13. 特性-日志</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#14-%E7%89%B9%E6%80%A7-%E5%9B%BD%E9%99%85%E5%8C%96"><span class="toc-number">14.</span> <span class="toc-text">14. 特性-国际化</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#15-%E7%89%B9%E6%80%A7-JSON-gson-jackson-json-b-fastjson"><span class="toc-number">15.</span> <span class="toc-text">15. 特性-JSON(gson, jackson, json-b, fastjson)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#16-Servlet-Web%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F%E5%BC%80%E5%8F%91-Spring-MVC"><span class="toc-number">16.</span> <span class="toc-text">16. Servlet Web应用程序开发(Spring MVC)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#17-Servlet-Web%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F%E5%BC%80%E5%8F%91-%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%AE%B9%E5%99%A8"><span class="toc-number">17.</span> <span class="toc-text">17. Servlet Web应用程序开发(嵌入式容器)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#18-SQL%E6%95%B0%E6%8D%AE%E6%BA%90%E9%85%8D%E7%BD%AE"><span class="toc-number">18.</span> <span class="toc-text">18. SQL数据源配置</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#19-SQL%E6%95%B0%E6%8D%AE%E8%BF%9E%E6%8E%A5%E6%B1%A0-HikariCP-Tomcat-pool-DBCP2-Druid"><span class="toc-number">19.</span> <span class="toc-text">19. SQL数据连接池(HikariCP, Tomcat pool, DBCP2, Druid)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#20-JdbcTemplate%E8%AF%A6%E8%A7%A3"><span class="toc-number">20.</span> <span class="toc-text">20. JdbcTemplate详解</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#21-23-Spring-Data-JPA%E8%AF%A6%E8%A7%A3"><span class="toc-number">21.</span> <span class="toc-text">21-23. Spring Data JPA详解</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#24-25-Spring-Data-JDBC%E8%AF%A6%E8%A7%A3"><span class="toc-number">22.</span> <span class="toc-text">24-25. Spring Data JDBC详解</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#26-27-%E5%A4%9A%E6%95%B0%E6%8D%AE%E6%BA%90%E9%85%8D%E7%BD%AE"><span class="toc-number">23.</span> <span class="toc-text">26-27. 多数据源配置</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#28-29-%E6%9E%84%E5%BB%BARESTful-API"><span class="toc-number">24.</span> <span class="toc-text">28-29. 构建RESTful API</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#30-MybatisPlus%E9%9B%86%E6%88%90"><span class="toc-number">25.</span> <span class="toc-text">30. MybatisPlus集成</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2025/02/24/%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E7%B2%BE%E9%80%9A-Sentinel/" title="从入门到精通 Sentinel"><img src="/img/liushui.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="从入门到精通 Sentinel"/></a><div class="content"><a class="title" href="/2025/02/24/%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E7%B2%BE%E9%80%9A-Sentinel/" title="从入门到精通 Sentinel">从入门到精通 Sentinel</a><time datetime="2025-02-24T07:48:28.000Z" title="发表于 2025-02-24 15:48:28">2025-02-24</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/02/24/redis-%E9%94%81%E7%9A%845%E4%B8%AA%E5%A4%A7%E5%9D%91%EF%BC%8C%E5%A6%82%E4%BD%95%E8%A7%84%E9%81%BF%EF%BC%9F/" title="redis 锁的5个大坑，如何规避？"><img src="/img/liushui.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="redis 锁的5个大坑，如何规避？"/></a><div class="content"><a class="title" href="/2025/02/24/redis-%E9%94%81%E7%9A%845%E4%B8%AA%E5%A4%A7%E5%9D%91%EF%BC%8C%E5%A6%82%E4%BD%95%E8%A7%84%E9%81%BF%EF%BC%9F/" title="redis 锁的5个大坑，如何规避？">redis 锁的5个大坑，如何规避？</a><time datetime="2025-02-24T02:42:01.000Z" title="发表于 2025-02-24 10:42:01">2025-02-24</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/08/28/IDEA%E4%B8%ADGit-Reset%E9%80%89%E9%A1%B9%E8%AF%B4%E6%98%8E/" title="IDEA中Git Reset选项说明"><img src="/img/hubian.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="IDEA中Git Reset选项说明"/></a><div class="content"><a class="title" href="/2024/08/28/IDEA%E4%B8%ADGit-Reset%E9%80%89%E9%A1%B9%E8%AF%B4%E6%98%8E/" title="IDEA中Git Reset选项说明">IDEA中Git Reset选项说明</a><time datetime="2024-08-28T14:58:04.000Z" title="发表于 2024-08-28 22:58:04">2024-08-28</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/08/25/%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8%E5%90%8E%EF%BC%8C%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1%E6%B7%B1%E5%BA%A6%E7%BF%BB%E9%A1%B5%EF%BC%9F/" title="分库分表后，如何设计深度翻页？"><img src="/img/haibian.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="分库分表后，如何设计深度翻页？"/></a><div class="content"><a class="title" href="/2024/08/25/%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8%E5%90%8E%EF%BC%8C%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1%E6%B7%B1%E5%BA%A6%E7%BF%BB%E9%A1%B5%EF%BC%9F/" title="分库分表后，如何设计深度翻页？">分库分表后，如何设计深度翻页？</a><time datetime="2024-08-25T13:30:46.000Z" title="发表于 2024-08-25 21:30:46">2024-08-25</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/08/11/Redis-%E6%9D%80%E7%96%AF%E4%BA%86%E3%80%82%E3%80%82%E3%80%82/" title="Redis 杀疯了。。。"><img src="/img/hubian.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Redis 杀疯了。。。"/></a><div class="content"><a class="title" href="/2024/08/11/Redis-%E6%9D%80%E7%96%AF%E4%BA%86%E3%80%82%E3%80%82%E3%80%82/" title="Redis 杀疯了。。。">Redis 杀疯了。。。</a><time datetime="2024-08-11T04:23:43.000Z" title="发表于 2024-08-11 12:23:43">2024-08-11</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2024 - 2025 By 周五打工人</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=4.13.0"></script><script src="/js/main.js?v=4.13.0"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"><script>(()=>{
+  const loadLivere = () => {
+    if (typeof LivereTower === 'object') window.LivereTower.init()
+    else {
+      (function(d, s) {
+          var j, e = d.getElementsByTagName(s)[0];
+          if (typeof LivereTower === 'function') { return; }
+          j = d.createElement(s);
+          j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+          j.async = true;
+          e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    }
+  }
+
+  if ('Livere' === 'Livere' || !false) {
+    if (false) btf.loadComment(document.getElementById('lv-container'), loadLivere)
+    else loadLivere()
+  } else {
+    window.loadOtherComment = loadLivere
+  }
+})()</script><script>(() => {
+  const getCount = () => {
+    const countELement = document.getElementById('twikoo-count')
+    if(!countELement) return
+    twikoo.getCommentsCount({
+      envId: 'https://mywaline-7unwzwfdi-motors-projects-a4d09e71.vercel.app/',
+      region: '',
+      urls: [window.location.pathname],
+      includeReply: false
+    }).then(res => {
+      countELement.textContent = res[0].count
+    }).catch(err => {
+      console.error(err)
+    })
+  }
+
+  const init = () => {
+    twikoo.init(Object.assign({
+      el: '#twikoo-wrap',
+      envId: 'https://mywaline-7unwzwfdi-motors-projects-a4d09e71.vercel.app/',
+      region: '',
+      onCommentLoaded: () => {
+        btf.loadLightbox(document.querySelectorAll('#twikoo .tk-content img:not(.tk-owo-emotion)'))
+      }
+    }, null))
+
+    
+  }
+
+  const loadTwikoo = () => {
+    if (typeof twikoo === 'object') setTimeout(init,0)
+    else getScript('https://cdn.jsdelivr.net/npm/twikoo@1.6.31/dist/twikoo.all.min.js').then(init)
+  }
+
+  if ('Livere' === 'Twikoo' || !false) {
+    if (false) btf.loadComment(document.getElementById('twikoo-wrap'), loadTwikoo)
+    else loadTwikoo()
+  } else {
+    window.loadOtherComment = loadTwikoo
+  }
+})()</script></div><canvas class="fireworks" mobile="false"></canvas><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/dist/fireworks.min.js"></script><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/dist/canvas-nest.min.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=4.13.0"></script></div></div></body></html>

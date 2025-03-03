@@ -5,53 +5,6 @@ tags: Seata集成RocketMQ
 categories: 架构
 ---
 
-
-****\-** 一：回顾Seat AT 模式** 
-
- - AT模式角色如下
-
-- 分支事务 处理逻辑如下
-
-- AT模式第一阶段  Prepare 阶段
-
-#####     -这也是Seata和XA事务的不同之处：
-
-- AT模式第二阶段
-
-#####     -场景一：提交，全局提交
-
-#####     -场景二：回滚，全局回滚
-
-- AT模式相对于XA模式的优势
-
-- 秒杀实操的AT分布式事务架构
-
-- Seat AT 模式的不足
-
-****\-**** **二：回顾Seat TCC 模式** 
-
- - Seata TCC基本原理
-
-- Seata TCC模式的流程图
-
-- Seata TCC 事务的3个操作
-
-- TCC 模式第一阶段  try 阶段
-
-- TCC 模式第二阶段  
-
- - TCC版本的秒杀的分布式事务架构
-
-- Seata TCC 事务的弱点
-
-****\-**** **三：新功能  Seata + Rocketmq 事务消息实现 强弱结合型事务**
-
-- Seata  + Rocketmq 事务消息 结合
-
-- Seata  + Rocketmq 事务消息 结合的使用场景
-
-****\-**** **说在最后：有问题找老架构取经**
-
 一：回顾Seat AT 模式
 --------------
 
@@ -222,7 +175,7 @@ ServiceA，ServiceB，OrderService都需分别实现try()，confirm()，cancle()
 
 #### TCC 模式第一阶段 try 阶段
 
-看看尼恩给大家画的 try 阶段 简单的图
+看看给大家画的 try 阶段 简单的图
 
 ![](./2025/02/27/最新Seata集成了RocketMQ事务消息yyds/img_14.png)
 
@@ -230,7 +183,7 @@ try 阶段 没有本地事务了。需要业务维护 本地操作的 原子性�
 
 #### TCC 模式第二阶段 
 
-看看尼恩给大家画的第二阶段 简单的图
+看看给大家画的第二阶段 简单的图
 
 ![](./2025/02/27/最新Seata集成了RocketMQ事务消息yyds/img_15.png)
 

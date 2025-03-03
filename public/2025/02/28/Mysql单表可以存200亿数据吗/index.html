@@ -1,0 +1,487 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Mysql单表可以存200亿数据吗 | 繁华流年间</title><meta name="author" content="周五打工人"><meta name="copyright" content="周五打工人"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="ffffff"><meta name="description" content="首先，告诉面试官一个惊世骇俗的答案， 是可以的。接下来，说说 InnoDB 索引数据结构的磁盘文件格式磁盘扇区、文件系统、InnoDB 存储引擎都有各自的最小存储单元。 来看看三个重要的最小单元  磁盘上，存储数据最小单元是扇区，一个扇区的大小是 512 字节，  文件系统（例如EXT4）,最小单元是块 （block），一个block 块的大小是 4k，  InnoDB 存储引擎 的最小储存单元—">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Mysql单表可以存200亿数据吗">
+<meta property="og:url" content="http://flowtime.asia/2025/02/28/Mysql%E5%8D%95%E8%A1%A8%E5%8F%AF%E4%BB%A5%E5%AD%98200%E4%BA%BF%E6%95%B0%E6%8D%AE%E5%90%97/index.html">
+<meta property="og:site_name" content="繁华流年间">
+<meta property="og:description" content="首先，告诉面试官一个惊世骇俗的答案， 是可以的。接下来，说说 InnoDB 索引数据结构的磁盘文件格式磁盘扇区、文件系统、InnoDB 存储引擎都有各自的最小存储单元。 来看看三个重要的最小单元  磁盘上，存储数据最小单元是扇区，一个扇区的大小是 512 字节，  文件系统（例如EXT4）,最小单元是块 （block），一个block 块的大小是 4k，  InnoDB 存储引擎 的最小储存单元—">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://flowtime.asia/img/hubian.png">
+<meta property="article:published_time" content="2025-02-28T03:00:04.000Z">
+<meta property="article:modified_time" content="2025-02-28T03:56:24.995Z">
+<meta property="article:author" content="周五打工人">
+<meta property="article:tag" content="数据库">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://flowtime.asia/img/hubian.png"><link rel="shortcut icon" href="/img/index.jpg"><link rel="canonical" href="http://flowtime.asia/2025/02/28/Mysql%E5%8D%95%E8%A1%A8%E5%8F%AF%E4%BB%A5%E5%AD%98200%E4%BA%BF%E6%95%B0%E6%8D%AE%E5%90%97/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=4.13.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script async="async" src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><script>(adsbygoogle = window.adsbygoogle || []).push({
+  google_ad_client: 'ca-pub-3578075519463317',
+  enable_page_level_ads: 'true'
+});</script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.11.1/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Mysql单表可以存200亿数据吗',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2025-02-28 11:56:24'
+}</script><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+    
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
+    
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+    
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', 'ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+        if (t === 'dark') activateDarkMode()
+        else if (t === 'light') activateLightMode()
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/transparent.css"><link rel="stylesheet" href="/css/footer.css"><meta name="generator" content="Hexo 7.2.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/nav.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">42</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">36</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/img/hubian.png')"><nav id="nav"><span id="blog-info"><a href="/" title="繁华流年间"></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Mysql单表可以存200亿数据吗</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="fa-fw post-meta-icon far fa-calendar-alt"></i><span class="post-meta-label">发表于</span><time datetime="2025-02-28T03:00:04.000Z" title="发表于 2025-02-28 11:00:04">2025-02-28</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E9%9D%A2%E8%AF%95/">面试</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Mysql单表可以存200亿数据吗"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="首先，告诉面试官一个惊世骇俗的答案，-是可以的。"><a href="#首先，告诉面试官一个惊世骇俗的答案，-是可以的。" class="headerlink" title="首先，告诉面试官一个惊世骇俗的答案， 是可以的。"></a>首先，告诉面试官一个惊世骇俗的答案， 是可以的。</h2><h2 id="接下来，说说-InnoDB-索引数据结构的磁盘文件格式"><a href="#接下来，说说-InnoDB-索引数据结构的磁盘文件格式" class="headerlink" title="接下来，说说 InnoDB 索引数据结构的磁盘文件格式"></a>接下来，说说 InnoDB 索引数据结构的磁盘文件格式</h2><p>磁盘扇区、文件系统、InnoDB 存储引擎都有各自的最小存储单元。</p>
+<p>来看看三个重要的最小单元</p>
+<ul>
+<li><p>磁盘上，存储数据最小单元是扇区，一个扇区的大小是 512 字节，</p>
+</li>
+<li><p>文件系统（例如EXT4）,最小单元是块 （block），一个block 块的大小是 4k，</p>
+</li>
+<li><p>InnoDB 存储引擎 的最小储存单元——页（Page），一个页的大小是 16K。</p>
+</li>
+</ul>
+<p>来一个图，更清楚：</p>
+<p><img src="/./2025/02/28/Mysql%E5%8D%95%E8%A1%A8%E5%8F%AF%E4%BB%A5%E5%AD%98200%E4%BA%BF%E6%95%B0%E6%8D%AE%E5%90%97/img_1.png"></p>
+<p>由于文件系统（例如EXT4）的最小单元是块 （block），一个block 块的大小是 4k。所以，假设一个文件大小只有1个字节，那么，这个文件在磁盘上，还是不得不占4KB的空间。</p>
+<p>具体如下图：</p>
+<p><img src="/./2025/02/28/Mysql%E5%8D%95%E8%A1%A8%E5%8F%AF%E4%BB%A5%E5%AD%98200%E4%BA%BF%E6%95%B0%E6%8D%AE%E5%90%97/img_2.png"></p>
+<p>要知道，Innodb 的所有数据文件（后缀为 ibd 的文件），也是存储在磁盘的，当然也是由block组成，</p>
+<p>所以，Innodb 的所有数据文件，全部都是 16384（16k）的整数倍。</p>
+<p>具体如下图：</p>
+<p><img src="/./2025/02/28/Mysql%E5%8D%95%E8%A1%A8%E5%8F%AF%E4%BB%A5%E5%AD%98200%E4%BA%BF%E6%95%B0%E6%8D%AE%E5%90%97/img_3.png"></p>
+<p>InnoDB 存储引擎 的最小储存单元——页（Page），一个页的大小是 16K，</p>
+<p>在 MySQL 中我们的InnoDB 页的大小当然也可以通过参数设置的，具体如下图：</p>
+<p><img src="/./2025/02/28/Mysql%E5%8D%95%E8%A1%A8%E5%8F%AF%E4%BB%A5%E5%AD%98200%E4%BA%BF%E6%95%B0%E6%8D%AE%E5%90%97/img_4.png"></p>
+<p>通过上图，可以看到，在 MySQL 中我们的 <strong>InnoDB 页的大小默认是 16k</strong></p>
+<h2 id="回到核心问题：-一棵B-树可以存放多少行数据？"><a href="#回到核心问题：-一棵B-树可以存放多少行数据？" class="headerlink" title="回到核心问题： 一棵B+树可以存放多少行数据？"></a>回到核心问题： 一棵B+树可以存放多少行数据？</h2><p>那么回到我们开始的问题，通常一棵B+树可以存放多少行数据？</p>
+<h3 id="高度为2的B-树，可以存放多少行数据"><a href="#高度为2的B-树，可以存放多少行数据" class="headerlink" title="高度为2的B+树，可以存放多少行数据?"></a>高度为2的B+树，可以存放多少行数据?</h3><p>首先，需要计算出非叶子节点能存放多少指针？</p>
+<p><strong>页作为 InnoDB 磁盘管理的最小单位，不仅可以用来存放具体的行数据，还可以存放键值和指针</strong>。</p>
+<p>回到文题，我们先从简单的入手，</p>
+<p>这里我们先假设B+树高为2，即存在一个根节点和若干个叶子节点，那么 B+ 树只有两层。</p>
+<p>如下图：</p>
+<p><img src="/./2025/02/28/Mysql%E5%8D%95%E8%A1%A8%E5%8F%AF%E4%BB%A5%E5%AD%98200%E4%BA%BF%E6%95%B0%E6%8D%AE%E5%90%97/img_5.png"></p>
+<p>这B+树的存放总记录数为, 是一个简单的公式：</p>
+<p><strong>记录总数 &#x3D; 非叶子节点存放的page 指针数 * 每个叶子节点存放的行记录数</strong></p>
+<p><strong>非叶子节点里面存的是主键值 + 指针</strong></p>
+<p>为了方便分析，这里我们把一个主键值 + 一个指针称为一个单元，</p>
+<ul>
+<li><p>我们假设主键的类型是 BigInt，长度为 8 字节，</p>
+</li>
+<li><p>而指针大小在 InnoDB 中设置为 6 字节，</p>
+</li>
+</ul>
+<p>这样一个单元，一共 14 字节。</p>
+<p>这样的话，一页或者说一个非叶子节点能够存放 16384 &#x2F; 14&#x3D;1170 个这样的单元。</p>
+<p>也就是说一个非叶子节点中能够存放 1170 个指针，即对应 1170 个叶子节点，</p>
+<p><strong>叶子节点里面存的是 数据行记录</strong></p>
+<p>每个叶子节点存放的行记录数就是每页存放的记录数，由于各个数据表中的字段数量都不一样，这里我们就不深究叶子节点的存储结构了，</p>
+<p>实际上现在很多互联网业务数据记录大小通常就是 1K 左右， 简单按照一行记录的数据大小为 1k 来算的话，</p>
+<p>一页（16K）或者说一个叶子节点可以存放 16 行这样的数据。</p>
+<h4 id="通过简单的公式进行-记录数的估算："><a href="#通过简单的公式进行-记录数的估算：" class="headerlink" title="通过简单的公式进行 记录数的估算："></a>通过简单的公式进行 记录数的估算：</h4><p><strong>记录总数 &#x3D; 非叶子节点存放的page 指针数 * 每个叶子节点存放的行记录数</strong></p>
+<p>那么 ，这颗2层B+ 树 的非叶子节点（ 唯一的）能够存储多少数据呢？</p>
+<p>所以对于这样一棵高度为 2 的 B+ 树，根节点能存放 1170（一个非叶子节点中的指针数） * 16（一个叶子节点中的行数）&#x3D; 18720 行数据。</p>
+<p><img src="/./2025/02/28/Mysql%E5%8D%95%E8%A1%A8%E5%8F%AF%E4%BB%A5%E5%AD%98200%E4%BA%BF%E6%95%B0%E6%8D%AE%E5%90%97/img_6.png"></p>
+<p>但是咱们这里主要是 估算树的高度和 一颗2层的B+树的大概 容量， 所以就把 他的结构简化理解吧。</p>
+<h3 id="高度为3的B-树可以存放多少行数据？"><a href="#高度为3的B-树可以存放多少行数据？" class="headerlink" title="高度为3的B+树可以存放多少行数据？"></a>高度为3的B+树可以存放多少行数据？</h3><p>分析完高度为 2 的 B+ 树，同样的道理，我们来看高度为 3 的：</p>
+<p><img src="/./2025/02/28/Mysql%E5%8D%95%E8%A1%A8%E5%8F%AF%E4%BB%A5%E5%AD%98200%E4%BA%BF%E6%95%B0%E6%8D%AE%E5%90%97/img_7.png"></p>
+<p><strong>非叶子节点里面存的是主键值 + 指针</strong></p>
+<p>为了方便分析，这里我们把一个主键值 + 一个指针称为一个单元，</p>
+<ul>
+<li><p>第一层、第二层 都是 非叶节点（索引页）， 用来存储  <strong>key + 页指针</strong></p>
+</li>
+<li><p>我们假设主键的类型是 BigInt，长度为 8 字节，</p>
+</li>
+<li><p>而指针大小在 InnoDB 中设置为 6 字节</p>
+</li>
+<li><p>第三层是 叶子， 存储数据 ,是 数据页</p>
+</li>
+</ul>
+<p>这样的话：</p>
+<ul>
+<li><p>第一层 根页（page10）可以存放 1170 个指针，有 1170 个二层page</p>
+</li>
+<li><p>第二层的每个页 也都分别可以存放1170个指针，有 1170 * 1170 个 三层 page</p>
+</li>
+</ul>
+<p><strong>叶子节点里面存的是 数据行记录</strong></p>
+<p>每条记录 简单按照一行记录的数据大小为 1k 来算的话，一页（16K）或者说一个叶子节点可以存放 16 行这样的数据。</p>
+<p>这样， 3层的一共可以存放 <code>1170 * 1170</code> 个指针，即对应的有 <code>1170 * 1170</code> 个叶子节点，每一个叶子节点 可以放大概 16条 record。</p>
+<p>所以，高为3的B+树一共可以存放 <code>1170 * 1170 * 16 = 21902400</code> 行记录。</p>
+<p>回到问题，InnoDB 一棵 B+ 树可以存放多少行数据？ 这个问题的简单回答是：<strong>约 2 千万</strong>。</p>
+<h3 id="高度为4的B-树可以存放多少行数据？"><a href="#高度为4的B-树可以存放多少行数据？" class="headerlink" title="高度为4的B+树可以存放多少行数据？"></a>高度为4的B+树可以存放多少行数据？</h3><p><strong>非叶子节点里面存的是主键值 + 指针</strong></p>
+<p>为了方便分析，这里我们把一个主键值 + 一个指针称为一个单元，</p>
+<ul>
+<li><p>第一层、第二层、第三层 都是 非叶节点（索引页）， 用来存储  <strong>key + 页指针</strong></p>
+</li>
+<li><p>高为3的B+树一共可以存放 <code>1170 * 1170 * * 1170</code> 个 叶子节点 。</p>
+</li>
+</ul>
+<p><strong>叶子节点里面存的是 数据行记录</strong></p>
+<p>每条记录 简单按照一行记录的数据大小为 1k 来算的话，一页（16K）或者说一个叶子节点可以存放 16 行这样的数据。</p>
+<p>所以，高为4的B+树一共可以存放 <code>1170 * 1170 * 1170 * 16 = 25,625,808,000 （约200亿）</code> 行记录。</p>
+<p>回到问题，InnoDB 一棵 B+ 树可以存放多少行数据？ 这个问题的简单回答是：<strong>200亿</strong>。</p>
+<p><img src="/./2025/02/28/Mysql%E5%8D%95%E8%A1%A8%E5%8F%AF%E4%BB%A5%E5%AD%98200%E4%BA%BF%E6%95%B0%E6%8D%AE%E5%90%97/img_8.png"></p>
+<h2 id="如何通过元数据，找到InnoDB主键索引B-树的高度？"><a href="#如何通过元数据，找到InnoDB主键索引B-树的高度？" class="headerlink" title="如何通过元数据，找到InnoDB主键索引B+树的高度？"></a>如何通过元数据，找到InnoDB主键索引B+树的高度？</h2><p>在InnoDB 引擎中，实际的情况如何呢？</p>
+<p>在InnoDB的表空间文件中，约定<strong>page number为3</strong>的代表主键索引的根页，而在根页偏移量为<strong>64</strong>的地方存放了该B+树的page level。</p>
+<h3 id="第一步：通过-mysql-元数据-找到-主键索引-的-根页"><a href="#第一步：通过-mysql-元数据-找到-主键索引-的-根页" class="headerlink" title="第一步：通过 mysql 元数据 找到 主键索引 的 根页"></a>第一步：通过 mysql 元数据 找到 主键索引 的 根页</h3><p>首先我们通过 mysql 元数据 找到 主键索引 的 根页的 page number 为3</p>
+<p>如果page level为1，树高为2，page level为2，则树高为3。</p>
+<p>即B+树的高度&#x3D;page level+1；</p>
+<p>下面我们将从实际环境中尝试找到这个page level。</p>
+<p>实验环境中，下面这三张表（一个表30W，一个表 3W，一个表3行数据） 如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">mysql&gt;  select count(\*) from book ;  </span><br><span class="line">+----------+  </span><br><span class="line">| count(\*) |  </span><br><span class="line">+----------+  </span><br><span class="line">|   312221 |  </span><br><span class="line">+----------+  </span><br><span class="line">1 row in set (0.07 sec)  </span><br><span class="line">  </span><br><span class="line">mysql&gt;  select count(\*) from biz\_user  ;  </span><br><span class="line">+----------+  </span><br><span class="line">| count(\*) |  </span><br><span class="line">+----------+  </span><br><span class="line">|     3570 |  </span><br><span class="line">+----------+  </span><br><span class="line">1 row in set (0.02 sec)  </span><br><span class="line">  </span><br><span class="line">mysql&gt;  select count(\*) from biz\_patient\_pdf\_stamp\_position   ;  </span><br><span class="line">+----------+  </span><br><span class="line">| count(\*) |  </span><br><span class="line">+----------+  </span><br><span class="line">|        3 |  </span><br><span class="line">+----------+  </span><br><span class="line">1 row in set (0.02 sec)  </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>从图中可以看到，一个表30W，一个表 3W，一个表3行数据。</p>
+<p>在实际操作之前，可以通过InnoDB 元数据表 ， 确认主键索引根页的page number为3，当然，也可以从《InnoDB存储引擎》这本书中得到确认。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">mysql&gt; SELECT  </span><br><span class="line">    b.NAME,  </span><br><span class="line">    a.NAME,  </span><br><span class="line">    index\_id,  </span><br><span class="line">    type,  </span><br><span class="line">    a.space,  </span><br><span class="line">    a.PAGE\_NO   </span><br><span class="line">FROM  </span><br><span class="line">    information\_schema.INNODB\_SYS\_INDEXES a,  </span><br><span class="line">    information\_schema.INNODB\_SYS\_TABLES b   </span><br><span class="line">WHERE  </span><br><span class="line">    a.table\_id = b.table\_id   </span><br><span class="line">    AND a.space &lt;&gt; 0;  </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>说明： information_schema是mysql自带的一个 元数据表，其保存着关于mysql服务器所维护的所有其他数据库的信息，如数据库名，数据库的表，表栏的数据类型与访问权限等。</p>
+<ul>
+<li><p>innodb_sys_indexes：innodb表的索引 信息</p>
+</li>
+<li><p>innodb_sys_tables：表格 存储特性，包括行格式，压缩页面大小位级别的信息</p>
+</li>
+</ul>
+<p>执行结果：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">mysql&gt; SELECT  </span><br><span class="line">    b.NAME,  </span><br><span class="line">    a.NAME,  </span><br><span class="line">    index\_id,  </span><br><span class="line">    type,  </span><br><span class="line">    a.space,  </span><br><span class="line">    a.PAGE\_NO   </span><br><span class="line">FROM  </span><br><span class="line">    information\_schema.INNODB\_SYS\_INDEXES a,  </span><br><span class="line">    information\_schema.INNODB\_SYS\_TABLES b   </span><br><span class="line">WHERE  </span><br><span class="line">    a.table\_id = b.table\_id   </span><br><span class="line">    AND a.space &lt;&gt; 0;  </span><br><span class="line">+------------------------------------+-------------+----------+------+-------+---------+  </span><br><span class="line">| NAME                               | NAME        | index\_id | type | space | PAGE\_NO |  </span><br><span class="line">+------------------------------------+-------------+----------+------+-------+---------+  </span><br><span class="line">  </span><br><span class="line">| iam/biz\_organization               | PRIMARY     |      116 |    3 |    95 |       3 |  </span><br><span class="line">| iam/biz\_patient\_pdf\_stamp\_position | PRIMARY     |      117 |    3 |    96 |       3 |  </span><br><span class="line">| iam/biz\_patient\_sign\_pdf           | PRIMARY     |      118 |    3 |    97 |       3 |  </span><br><span class="line">| iam/biz\_patient\_sign\_pdf\_details   | PRIMARY     |      119 |    3 |    98 |       3 |  </span><br><span class="line">| iam/biz\_signed\_pdf                 | PRIMARY     |      120 |    3 |    99 |       3 |  </span><br><span class="line">| iam/biz\_signed\_pdf\_details         | PRIMARY     |      121 |    3 |   100 |       3 |  </span><br><span class="line">| iam/biz\_sys\_info                   | PRIMARY     |      122 |    3 |   101 |       3 |  </span><br><span class="line">| iam/biz\_ukey\_login                 | PRIMARY     |      123 |    3 |   102 |       3 |  </span><br><span class="line">| iam/biz\_ukey\_login\_details         | PRIMARY     |      124 |    3 |   103 |       3 |  </span><br><span class="line">| iam/biz\_ukey\_sign                  | PRIMARY     |      125 |    3 |   104 |       3 |  </span><br><span class="line">| iam/biz\_ukey\_sign\_details          | PRIMARY     |      126 |    3 |   105 |       3 |  </span><br><span class="line">| iam/biz\_ukey\_signed\_pdf            | PRIMARY     |      127 |    3 |   106 |       3 |  </span><br><span class="line">| iam/biz\_ukey\_signed\_pdf\_details    | PRIMARY     |      128 |    3 |   107 |       3 |  </span><br><span class="line">| iam/biz\_user                       | PRIMARY     |      129 |    3 |   108 |       3 |  </span><br><span class="line">| iam/biz\_user                       | mobile      |      130 |    0 |   108 |       4 |  </span><br><span class="line">| iam/biz\_user                       | authon\_mark |      131 |    0 |   108 |       5 |  </span><br><span class="line">| iam/biz\_user\_employee\_num          | PRIMARY     |      230 |    3 |   188 |       3 |  </span><br><span class="line">| iam/biz\_user\_employee\_num          | biz\_num     |      231 |    2 |   188 |       4 |  </span><br><span class="line">| iam/book                           | PRIMARY     |      235 |    3 |   197 |       3 |  </span><br><span class="line">| iam/book                           | index\_uer\_id|      236 |    0 |   197 |       4 |  </span><br><span class="line">  </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>可以看出主键索引（PRIMARY）根页的page number均为3，而其他的二级索引page number(PAGE_NO)为4还有5。</p>
+<p>B+树的高度通常是1-3;</p>
+<p>可以通过InnoDB元数据表，我们已经确认主键索引 的 根页的 page number 为3。</p>
+<h3 id="第二步：通过-主键索引-的-根页，找到树的高度"><a href="#第二步：通过-主键索引-的-根页，找到树的高度" class="headerlink" title="第二步：通过 主键索引 的 根页，找到树的高度"></a>第二步：通过 主键索引 的 根页，找到树的高度</h3><p>在InnoDB的表空间文件中，约定 page number 为3的代表主键索引的根页 （root page ），而在根页偏移量为<code>64</code>的地方存放了该B+树的page level。</p>
+<p>我们需要找到这个page level。</p>
+<p>如果根页偏移量为<code>64</code>的地方的 page level为1，树高为2，page level为2，则树高为3。</p>
+<blockquote>
+<p>B+树的高度&#x3D;page level+1；</p>
+</blockquote>
+<p>索引树高度决定查询的IO次数，当然树高度越大则查询需要的IO次数就越多，查询效率相对来说就越低！</p>
+<p>下面我们对数据库表空间文件做 相关的解析：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">\[root@localhost iam\]# ls -l \*.ibd  </span><br><span class="line">\-rw-r-----. 1 mysql mysql     98304 10月 30 15:12 biz\_h5\_sign\_details.ibd  </span><br><span class="line">\-rw-r-----. 1 mysql mysql     98304 10月 30 15:12 biz\_h5\_sign.ibd  </span><br><span class="line">\-rw-r-----. 1 mysql mysql     98304 10月 30 15:12 biz\_organization.ibd  </span><br><span class="line">\-rw-r-----. 1 mysql mysql     98304 10月 30 15:12 biz\_patient\_pdf\_stamp\_position.ibd  </span><br><span class="line">\-rw-r-----. 1 mysql mysql   9437184 10月 30 15:12 biz\_patient\_sign\_pdf\_details.ibd  </span><br><span class="line">\-rw-r-----. 1 mysql mysql     98304 10月 30 15:12 biz\_patient\_sign\_pdf.ibd  </span><br><span class="line">\-rw-r-----. 1 mysql mysql    131072 10月 30 15:12 biz\_signed\_pdf\_details.ibd  </span><br><span class="line">\-rw-r-----. 1 mysql mysql     98304 10月 30 15:12 biz\_signed\_pdf.ibd  </span><br><span class="line">\-rw-r-----. 1 mysql mysql     98304 10月 30 15:12 biz\_sys\_info.ibd  </span><br><span class="line">\-rw-r-----. 1 mysql mysql     98304 10月 30 15:12 biz\_ukey\_login\_details.ibd  </span><br><span class="line">\-rw-r-----. 1 mysql mysql     98304 10月 30 15:12 biz\_ukey\_login.ibd  </span><br><span class="line">\-rw-r-----. 1 mysql mysql     98304 10月 30 15:12 biz\_ukey\_sign\_details.ibd  </span><br><span class="line">\-rw-r-----. 1 mysql mysql     98304 10月 30 15:12 biz\_ukey\_signed\_pdf\_details.ibd  </span><br><span class="line">\-rw-r-----. 1 mysql mysql     98304 10月 30 15:12 biz\_ukey\_signed\_pdf.ibd  </span><br><span class="line">\-rw-r-----. 1 mysql mysql     98304 10月 30 15:12 biz\_ukey\_sign.ibd  </span><br><span class="line">\-rw-r-----. 1 mysql mysql   9437184 10月 30 15:12 biz\_user\_copy1.ibd  </span><br><span class="line">\-rw-r-----. 1 mysql mysql   9437184 10月 30 15:12 biz\_user\_copy2.ibd  </span><br><span class="line">\-rw-r-----. 1 mysql mysql   9437184 10月 30 15:12 biz\_user\_copy3.ibd  </span><br><span class="line">\-rw-r-----. 1 mysql mysql    114688 11月 23 15:12 biz\_user\_employee\_num.ibd  </span><br><span class="line">\-rw-r-----. 1 mysql mysql   9437184 10月 30 15:12 biz\_user.ibd  </span><br><span class="line">\-rw-r-----. 1 mysql mysql 125829120 1月  26 09:19 book.ibd  </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>因为主键索引B+树的根页在整个表空间文件中的第3个页开始，所以可以算出它在文件中的偏移量：16384*3&#x3D;49152（16384为页大小 16KB）。</p>
+<p>根页的64偏移量位置前2个字节，保存了page level的值，因此我们想要的page level的值在整个文件中的偏移量为：16384*3+64&#x3D;49152+64&#x3D;49216，前2个字节中。</p>
+<p><strong>接下来我们用hexdump工具，查看表空间文件指定偏移量上的数据：</strong></p>
+<blockquote>
+<p>hexdump 是一个用于查看文件或其他输入流的十六进制和 ASCII 码表示的工具。它能够以十六进制字节序列的形式显示文件内容，并且在旁边同时展示对应的 ASCII 字符（如果字符是可打印的），方便用户查看文件的二进制数据结构。</p>
+<p>hexdump 基本功能：当你有一个二进制文件，想要查看其内部的数据布局时，hexdump 可以将文件内容逐字节地以十六进制形式展示出来。</p>
+<p>假设我们有一个简单的文件，其中存储了字符序列 “ABC”，使用 hexdump 查看时，会显示出每个字符对应的 ASCII 码值（在十六进制下，A 是 41，B 是 42，C 是 43）以及对应的 ASCII 字符，这样就可以直观地看到文件的内容在二进制层面的表示。</p>
+</blockquote>
+<p>用hexdump工具 分别查看book、biz_user、biz_patient_pdf_stamp_position三张表的ibd表空间文件</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">\[root@localhost iam\]\# hexdump -s 49216 -n 10 book.ibd  </span><br><span class="line">000c040 0200 0000 0000 0000 eb00                 </span><br><span class="line">000c04a  </span><br><span class="line">\[root@localhost iam\]\# hexdump -s 49216 -n 10 biz\_user.ibd  </span><br><span class="line">000c040 0100 0000 0000 0000 8100                 </span><br><span class="line">000c04a  </span><br><span class="line">\[root@localhost iam\]\# hexdump -s 49216 -n 10 biz\_patient\_pdf\_stamp\_position.ibd  </span><br><span class="line">000c040 0000 0000 0000 0000 7500                 </span><br><span class="line">000c04a  </span><br><span class="line">\[root@localhost iam\]\# </span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>book 表的page level为2，B+树高度为page level+1&#x3D;3； biz_user 表的page level为1，B+树高度为page level+1&#x3D;2； biz_patient_pdf_stamp_position 表的page level为0，B+树高度为page level+1&#x3D;1；</p>
+<h2 id="InnoDB一棵B-树的IO次数"><a href="#InnoDB一棵B-树的IO次数" class="headerlink" title="InnoDB一棵B+树的IO次数"></a>InnoDB一棵B+树的IO次数</h2><p>数据表中的数据都是存储在页中的，所以一个页中能存储多少行数据呢？</p>
+<p>InnoDB存储引擎的最小存储单元是页，页可以用于存放数据（叶子），也可以用于存放键值+指针（非叶子）， 用B+树的方式组织这些数据</p>
+<ul>
+<li><p>B+ 树的叶子节点存储真正的记录，对应的文件系统 page页面，可以叫做 数据页。假设一行数据的大小是1k，那么一个16K页，一个数据页 可以存放16行这样的数据。</p>
+</li>
+<li><p>B+ 树的非叶子节点存放的是键值 + 指针，其对应的文件系统 page页面，可以叫做 索引页</p>
+</li>
+</ul>
+<p>注意：查询数据时，每加载一页（page）代表一次IO，</p>
+<p>索引树高度决定查询的IO次数，当然树高度越大则查询需要的IO次数就越多，查询效率相对来说就越低！</p>
+<p><strong>索引树高度与 IO 次数的关系</strong></p>
+<ul>
+<li><p><strong>树高度为 1 的情况（极端简单情况）</strong>：如果索引树高度为 1，这意味着索引数据可能全部存储在一个数据页中（假设只有根节点）。查询时，只需要一次磁盘 I&#x2F;O 操作将这个数据页读取到内存中，就可以获取到所需的索引信息，进而找到对应的行记录，这种情况下查询效率很高。</p>
+</li>
+<li><p><strong>树高度为 2 的情况</strong>：当树高度为 2 时，首先需要一次磁盘 I&#x2F;O 操作读取根节点到内存，然后根据根节点中的指针信息，再进行一次磁盘 I&#x2F;O 操作读取叶子节点到内存，总共需要两次磁盘 I&#x2F;O 操作来获取索引数据。</p>
+</li>
+<li><p><strong>树高度为 3 及以上的情况</strong>：随着树高度的增加，每增加一层，查询就需要多进行一次磁盘 I&#x2F;O 操作。例如，树高度为 3 时，可能需要先读取根节点，再读取中间节点，最后读取叶子节点，总共需要三次磁盘 I&#x2F;O 操作。</p>
+</li>
+</ul>
+<h2 id="InnoDB一棵B-树的查找流程"><a href="#InnoDB一棵B-树的查找流程" class="headerlink" title="InnoDB一棵B+树的查找流程"></a>InnoDB一棵B+树的查找流程</h2><p>InnoDB中主键索引B+树是如何组织数据、查询数据的？</p>
+<p>我们总结一下：</p>
+<p>1、在B+树中叶子节点存放数据，非叶子节点存放键值+指针。</p>
+<p>2、<strong>页内的记录是有序的</strong>，所以可以使用二分查找在页内到下一层的目标页面的指针</p>
+<ul>
+<li><p>从根页开始，首先通过非叶子节点的二分查找法，</p>
+</li>
+<li><p>确定数据在下一层哪个页之后，一层一层往下找，一直到 叶子节点，</p>
+</li>
+<li><p>进而在 叶子节（数据页）中查找到需要的数据；</p>
+</li>
+</ul>
+<h3 id="执行一次-聚集索引B-树的io次数"><a href="#执行一次-聚集索引B-树的io次数" class="headerlink" title="执行一次 聚集索引B+树的io次数"></a>执行一次 聚集索引B+树的io次数</h3><p>前面分析了，假设主键ID为<code>bigint</code>类型，长度为<code>8字节</code>，而指针大小在InnoDB源码中设置为<code>6字节</code>，这样一共<code>14字节</code>。</p>
+<p>那么一个索引页 能存放多少这样的组合，就代表有多少指针，即 <code>16384 / 14 = 1170</code>。</p>
+<p>那么可以算出一棵高度为2 的B+树，能存放 <code>1170 * 16 = 18720</code> 条这样的数据记录。</p>
+<p>同理：高度为3的B+树可以存放的行数 &#x3D; <code>1170 * 1170 * 16 = 21902400</code></p>
+<p>所以，千万级的数据存储只需要约3层B+树，所以说，根据主键id索引查询约3次IO便可以找到目标结果。</p>
+<p><strong>注意：查询数据时，每加载一页（page）代表一次IO，</strong></p>
+<p>那么，在不考虑缓存的情况下， 千万级的数据存储只需要约3层B+树 ， 需要3次IO。</p>
+<p><img src="/./2025/02/28/Mysql%E5%8D%95%E8%A1%A8%E5%8F%AF%E4%BB%A5%E5%AD%98200%E4%BA%BF%E6%95%B0%E6%8D%AE%E5%90%97/img_9.png"></p>
+<p>同理，在不考虑缓存的情况下， 200亿级的数据存储只需要约4层B+树 ， 需要4次IO。</p>
+<p>也就是说， 200亿规模的数据， 和 2000万规模的数据查询，也就多了一次IO，稍后我们看看， 一次IO会耗费多少时间。</p>
+<h3 id="执行一次-非聚集索引B-树的io次数"><a href="#执行一次-非聚集索引B-树的io次数" class="headerlink" title="执行一次 非聚集索引B+树的io次数"></a>执行一次 非聚集索引B+树的io次数</h3><p>回顾：主键索引和二级索引 一下，什么是 非聚集索引。</p>
+<p><strong>什么是主键索引(Primary Key)?</strong></p>
+<p>数据表的主键列使用的就是主键索引。一张数据表有只能有一个主键，并且主键不能为 null，不能重复。</p>
+<p>在 MySQL 的 InnoDB 的表中，当没有显示的指定表的主键时，InnoDB 会自动先检查表中是否有唯一索引的字段，如果有，则选择该字段为默认的主键，否则 InnoDB 将会自动创建一个 6Byte 的自增主键。</p>
+<p><strong>什么是二级索引(辅助索引)?</strong></p>
+<p>二级索引又称为辅助索引，是因为二级索引的叶子节点存储的数据是主键。也就是说，通过二级索引，可以定位主键的位置。常用的二级索引包括：</p>
+<ol>
+<li><p><strong>唯一索引(Unique Key)</strong> ：唯一索引也是一种约束。<strong>唯一索引的属性列不能出现重复的数据，但是允许数据为 NULL，一张表允许创建多个唯一索引。</strong> 建立唯一索引的目的大部分时候都是为了该属性列的数据的唯一性，而不是为了查询效率。</p>
+</li>
+<li><p><strong>普通索引(Index)</strong> ：<strong>普通索引的唯一作用就是为了快速查询数据，一张表允许创建多个普通索引，并允许数据重复和 NULL。</strong></p>
+</li>
+<li><p><strong>前缀索引(Prefix)</strong> ：前缀索引只适用于字符串类型的数据。前缀索引是对文本的前几个字符创建索引，相比普通索引建立的数据更小， 因为只取前几个字符。</p>
+</li>
+</ol>
+<p>对于一些复杂的查询，可能需要走二级索引，那么通过二级索引查找记录最多需要花费多少次IO呢？</p>
+<p>首先，从二级索引B+树中，根据<code>name</code> 找到对应的主键id</p>
+<p><img src="/./2025/02/28/Mysql%E5%8D%95%E8%A1%A8%E5%8F%AF%E4%BB%A5%E5%AD%98200%E4%BA%BF%E6%95%B0%E6%8D%AE%E5%90%97/img_10.png"></p>
+<p>然后，再回表， 根据主键id 从 聚簇索引查找到对应的记录。 上面分析了， 这里也是 3次IO。</p>
+<p>总结：</p>
+<p><strong>2000w记录，二级索引有3层，聚簇索引有3层，那么最多花费的IO次数是：3+3 &#x3D; 6</strong></p>
+<p>同理：</p>
+<p><strong>200已记录，二级索引有4层，聚簇索引有4层，那么最多花费的IO次数是：4+4 &#x3D; 8</strong></p>
+<p>聚簇索引默认是主键，如果表中没有定义主键，InnoDB 会选择一个唯一的非空索引代替。</p>
+<p>如果连这样的索引没有，InnoDB 会隐式定义一个主键来作为聚簇索引。</p>
+<p>这也是为什么InnoDB表必须有主键，并且推荐使用整型的自增主键！InnoDB使用的是聚簇索引，将主键组织到一棵B+树中，而行数据就储存在叶子节点上</p>
+<h2 id="为啥磁盘IO的性能低？mysql-一次磁盘io-的耗时为多少"><a href="#为啥磁盘IO的性能低？mysql-一次磁盘io-的耗时为多少" class="headerlink" title="为啥磁盘IO的性能低？mysql 一次磁盘io 的耗时为多少?"></a>为啥磁盘IO的性能低？<br>mysql 一次磁盘io 的耗时为多少?</h2><h3 id="磁盘-I-O-耗时的影响因素"><a href="#磁盘-I-O-耗时的影响因素" class="headerlink" title="磁盘 I&#x2F;O 耗时的影响因素"></a>磁盘 I&#x2F;O 耗时的影响因素</h3><ul>
+<li><p>磁盘类型：</p>
+</li>
+<li><p><strong>机械硬盘（HDD）</strong>：机械硬盘的读写速度相对较慢。其寻道时间（磁头移动到指定磁道的时间）通常在几毫秒到十几毫秒之间。例如，一般 7200 转 &#x2F; 分钟的机械硬盘，平均寻道时间约为 9 毫秒左右。数据传输率方面，顺序读取速度可能在 100 - 200MB&#x2F;s 左右，随机读取速度则会因为寻道时间的影响而大幅降低。一次磁盘 I&#x2F;O 操作如果是随机小数据量的读取，加上寻道时间和数据传输时间，可能会达到 10 - 20 毫秒左右。</p>
+</li>
+<li><p><strong>固态硬盘（SSD）</strong>：固态硬盘的性能要比机械硬盘好很多。其顺序读取速度可以达到几 GB&#x2F;s，随机读取速度也能达到几十 MB&#x2F;s 甚至更高。SSD 没有机械部件，寻道时间可以忽略不计。一般来说，一次简单的磁盘 I&#x2F;O 操作（如读取一个 4KB 的数据页）在 SSD 上可能只需要 0.1 - 0.2 毫秒左右。</p>
+</li>
+<li><p>I&#x2F;O 负载和系统环境：</p>
+</li>
+<li><p>当系统中有多个进程同时竞争磁盘 I&#x2F;O 资源时，会导致磁盘 I&#x2F;O 排队，从而增加单次 I&#x2F;O 的耗时。例如，在一个高并发的数据库服务器上，如果同时有大量的查询和写入操作，磁盘 I&#x2F;O 队列可能会很长，单次磁盘 I&#x2F;O 操作的等待时间可能会从几毫秒增加到几十毫秒甚至更多。</p>
+</li>
+<li><p>另外，磁盘 I&#x2F;O 控制器、磁盘接口（如 SATA、NVMe 等）的性能以及操作系统的磁盘缓存策略等因素也会对单次磁盘 I&#x2F;O 耗时产生影响。例如，良好的磁盘缓存策略可以减少实际的磁盘 I&#x2F;O 操作，从而降低 I&#x2F;O 耗时。</p>
+</li>
+</ul>
+<h3 id="MySQL-中的磁盘-I-O-操作和大致耗时范围"><a href="#MySQL-中的磁盘-I-O-操作和大致耗时范围" class="headerlink" title="MySQL 中的磁盘 I&#x2F;O 操作和大致耗时范围"></a>MySQL 中的磁盘 I&#x2F;O 操作和大致耗时范围</h3><ul>
+<li><p>在 MySQL 中，数据存储和读取主要是以页为单位。InnoDB 存储引擎默认的页大小是 16KB。</p>
+</li>
+<li><p><strong>机械硬盘场景</strong>：如果是在机械硬盘环境下，读取一个 16KB 的数据页，加上寻道时间、旋转延迟（磁头等待数据所在扇区旋转到下方的时间）和数据传输时间，一次磁盘 I&#x2F;O 操作可能在 10 - 20 毫秒左右。如果是写入操作，由于还涉及到数据校验、日志记录等额外操作，耗时可能会更长，可能达到 20 - 30 毫秒左右。</p>
+</li>
+<li><p><strong>固态硬盘场景</strong>：对于固态硬盘，读取一个 16KB 的数据页可能只需要 0.1 - 0.2 毫秒左右，写入操作可能也在 0.2 - 0.5 毫秒左右，具体取决于 SSD 的性能和写入策略（如是否有写入缓存等）。</p>
+</li>
+</ul>
+<h3 id="InnoDB一棵B-树的查找耗时"><a href="#InnoDB一棵B-树的查找耗时" class="headerlink" title="InnoDB一棵B+树的查找耗时"></a>InnoDB一棵B+树的查找耗时</h3><p>一图胜过千言万语。</p>
+<p>给大画了一张图，进行了一下 聚族索引、非聚族索引 、固态硬盘、机械硬盘下的 B+树的查找耗时对比， 具体如下:</p>
+<p><img src="/./2025/02/28/Mysql%E5%8D%95%E8%A1%A8%E5%8F%AF%E4%BB%A5%E5%AD%98200%E4%BA%BF%E6%95%B0%E6%8D%AE%E5%90%97/img_11.png"></p>
+<p>这是一张全网最全的图， 从这张图可以看出 ， 其实一个 表，超过 2000w数据， 速度也没有慢太多。尤其 在SSD场景下， 也就 多 0.2ms 到 0.4ms ，可以说是微乎其微。</p>
+<p>所以结论是：在SSD 硬盘的场景下， 一个表完全可以放入 10亿-100亿 规模的数据，此时 B+树的层数是 4层。</p>
+<h2 id="mysql-Buffer-Pool-缓冲池对-B-树-访问的加速"><a href="#mysql-Buffer-Pool-缓冲池对-B-树-访问的加速" class="headerlink" title="mysql Buffer Pool 缓冲池对 B+树 访问的加速"></a>mysql Buffer Pool 缓冲池对 B+树 访问的加速</h2><p>在 MySQL 的 InnoDB 存储引擎中，Buffer Pool 是一块内存区域，用于缓存从磁盘读取的数据页和索引页。它是提高数据库性能的关键组件，通过减少磁盘 I&#x2F;O 操作来加快数据的访问速度。</p>
+<p>在 MySQL 的 InnoDB 存储引擎中，数据是以页（Page）为单位存储在磁盘上的，索引结构（B + 树）也是基于页来构建的。缓存主要是通过缓冲池（Buffer Pool）来实现的，缓冲池用于缓存数据页和索引页，以减少磁盘 I&#x2F;O 操作，提高数据库性能。</p>
+<p><strong>Buffer Pool 作用原理</strong>：当数据库需要读取数据或索引页时，首先会在 Buffer Pool 中查找。如果 Buffer Pool 中已经缓存了所需的页（称为缓存命中），就可以直接从内存中获取，避免了相对较慢的磁盘 I&#x2F;O 操作；如果没有找到（缓存未命中），则从磁盘读取该页，并将其放入 Buffer Pool 中，以便后续的访问能够利用缓存。</p>
+<p><img src="/./2025/02/28/Mysql%E5%8D%95%E8%A1%A8%E5%8F%AF%E4%BB%A5%E5%AD%98200%E4%BA%BF%E6%95%B0%E6%8D%AE%E5%90%97/img_12.png"></p>
+<p>Buffer Pool 的内部结构，大致如下：</p>
+<p><img src="/./2025/02/28/Mysql%E5%8D%95%E8%A1%A8%E5%8F%AF%E4%BB%A5%E5%AD%98200%E4%BA%BF%E6%95%B0%E6%8D%AE%E5%90%97/img_13.png"></p>
+<h3 id="Buffer-Pool-对-B-树的-索引页和数据页的缓存和加速"><a href="#Buffer-Pool-对-B-树的-索引页和数据页的缓存和加速" class="headerlink" title="Buffer Pool 对 B + 树的 索引页和数据页的缓存和加速"></a>Buffer Pool 对 B + 树的 索引页和数据页的缓存和加速</h3><p>对于 B + 树结构的索引，并没有严格规定缓存 “几层” 的概念，而是以页为单位进行缓存。</p>
+<p>缓冲池中的页可能包含 B + 树索引的根节点、中间节点以及叶子节点。</p>
+<p><strong>缓冲池 和对 B + 树的影响</strong></p>
+<p>对 B + 树索引的缓存：</p>
+<ul>
+<li><p>根节点页：由于根节点是索引树访问的起始点，经常会被访问到。在系统运行过程中，根节点所在的页很可能会被缓存到缓冲池中。这样，在进行索引查询时，能快速定位到根节点，减少磁盘 I&#x2F;O。</p>
+</li>
+<li><p>中间节点页：随着查询操作的进行，中间节点也会被频繁访问。如果缓冲池足够大，这些中间节点所在的页也会被缓存。这有助于在索引遍历过程中，快速从一个中间节点跳转到下一个相关的中间节点，而不需要每次都从磁盘读取。</p>
+</li>
+<li><p>叶子节点页：叶子节点包含了实际的数据记录（在聚簇索引中）或者指向数据记录的指针（在二级索引中）。叶子节点页的缓存对于数据的读取至关重要。当进行数据查询时，最终是要从叶子节点获取数据的，所以叶子节点页也会被缓存到缓冲池中，以加快数据访问速度。</p>
+</li>
+</ul>
+<h3 id="Buffer-Pool-的大小设置"><a href="#Buffer-Pool-的大小设置" class="headerlink" title="Buffer Pool 的大小设置"></a>Buffer Pool 的大小设置</h3><p>种常见的初步估算方法是将服务器内存的 70% - 80% 分配给 Buffer Pool。</p>
+<p>例如，在一台 64GB 内存的服务器上，初步可以将 Buffer Pool 大小设置为 45GB - 51GB 左右。</p>
+<p>但这只是一个经验性的建议，实际设置还需要根据上述考虑因素进行调整。</p>
+<p>Buffer Pool 越大， 如果能在内存中命中数据页和 索引页， 那么磁盘IO的次数就越少， 性能就越高。</p>
+<h3 id="为啥阿里编程规范推荐-inno-DB单表记录2kw-？"><a href="#为啥阿里编程规范推荐-inno-DB单表记录2kw-？" class="headerlink" title="为啥阿里编程规范推荐 inno DB单表记录2kw ？"></a>为啥阿里编程规范推荐 inno DB单表记录2kw ？</h3><p>通过上面的分析可以看出， 如果2000W记录，在没有命中Buffer Pool 情况下， 走 非聚集索引查询， 需要6次IO，走 聚焦索引查询，需要3次磁盘IO</p>
+<p>当然，以上分析流程，忽略了一些性能的优化措施，比如 B+树根节点 常驻内存，还有可能命中 查询缓存等等。</p>
+<p>所以，阿里编程规范中， innodb 单表推荐2kw 记录，超过了这个值可能会导致B+树层级有3层变成4层，影响查询性能，推荐进行 分库分表。</p>
+<p>实际上， 如果我们的机器性能高， 一个表的记录完全可以达到 100亿级别， 虽然B+变成4层， 但是其实 DB操作的性能任然很高。</p>
+<p>当然，凡事看场景。</p>
+<p>的单表记录数最大值，受到硬件条件，和各种优化措施的影响。</p>
+<p>不过，如果 能给面试官分析到这里， 这一次 面试官也就口水直流、五体投地了。</p>
+<h3 id="附录：表空间文件的-基础知识"><a href="#附录：表空间文件的-基础知识" class="headerlink" title="附录：表空间文件的 基础知识"></a>附录：表空间文件的 基础知识</h3><p>从物理意义上来讲，InnoDB表由共享表空间文件（ibdata1）、独占表空间文件（ibd）、表结构文件（.frm）、以及日志文件（redo文件等）组成。</p>
+<p><strong>1、表结构文件</strong></p>
+<p>在MYSQL中建立任何一张数据表，在其数据目录对应的数据库目录下都有对应表的.frm文件</p>
+<p>.frm文件是用来保存每个数据表的元数据(meta)信息，包括表结构的定义等，</p>
+<p>.frm文件跟数据库存储引擎无关，也就是任何存储引擎的数据表都必须有.frm文件，</p>
+<p>命名方式为数据表名.frm，如user.frm. ， .frm文件可以用来在数据库崩溃时恢复表结构。</p>
+<p><strong>2、表空间文件</strong></p>
+<p>（1）表空间结构分析</p>
+<p>以下为InnoDB的表空间结构图：</p>
+<p><img src="/./2025/02/28/Mysql%E5%8D%95%E8%A1%A8%E5%8F%AF%E4%BB%A5%E5%AD%98200%E4%BA%BF%E6%95%B0%E6%8D%AE%E5%90%97/img_14.png"></p>
+<p>来个清晰点的图</p>
+<p><img src="/./2025/02/28/Mysql%E5%8D%95%E8%A1%A8%E5%8F%AF%E4%BB%A5%E5%AD%98200%E4%BA%BF%E6%95%B0%E6%8D%AE%E5%90%97/img_15.png"></p>
+<p>数据段即B+树的叶子节点，索引段即为B+树的非叶子节点InnoDB存储引擎的管理是由引擎本身完成的，</p>
+<p>表空间（Tablespace）是由分散的段(Segment)组成。一个段(Segment)包含多个区（Extent）。</p>
+<p>区（Extent）由64个连续的页（Page）组成，每个页大小为16K，即每个区大小为1MB，创建新表时，先使用32页大小的碎片页存放数据，使用完后才是区的申请（InnoDB最多每次申请4个区，保证数据的顺序性能） 页类型有：数据页、Undo页、系统页、事务数据页、插入缓冲位图页、以及插入缓冲空闲列表页。</p>
+<p>（2）独占表空间文件</p>
+<p>若将innodb_file_per_table设置为on，则系统将为每一个表单独的生成一个table_name.ibd的文件，</p>
+<p>在此文件中，存储与该表相关的数据、索引、表的内部数据字典信息。</p>
+<p>（3）共享表空间文件</p>
+<p>在InnoDB存储引擎中，默认表空间文件是ibdata1（主要存储的是共享表空间数据），初始化为10M，且可以扩展，如下图所示：</p>
+<p><img src="/./2025/02/28/Mysql%E5%8D%95%E8%A1%A8%E5%8F%AF%E4%BB%A5%E5%AD%98200%E4%BA%BF%E6%95%B0%E6%8D%AE%E5%90%97/img_16.png"></p>
+<p>实际上，InnoDB的表空间文件是可以修改的，使用以下语句就可以修改：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">Innodb\_data\_file\_path=ibdata1:370M；ibdata2:50M:autoextend  </span><br><span class="line">  </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>使用共享表空间存储方式时，Innodb的所有数据保存在一个单独的表空间里面，而这个表空间可以由很多个文件组成，一个表可以跨多个文件存在，所以其大小限制不再是文件大小的限制，而是其自身的限制。</p>
+<p>从Innodb的官方文档中可以看到，其表空间的最大限制为64TB，也就是说，Innodb的单表限制基本上也在64TB左右了，当然这个大小是包括这个表的所有索引等其他相关数据。</p>
+<p>而在使用单独表空间存储方式时，每个表的数据以一个单独的文件来存放，这个时候的单表限制，又变成文件系统的大小限制了。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="http://flowtime.asia">周五打工人</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="http://flowtime.asia/2025/02/28/Mysql%E5%8D%95%E8%A1%A8%E5%8F%AF%E4%BB%A5%E5%AD%98200%E4%BA%BF%E6%95%B0%E6%8D%AE%E5%90%97/">http://flowtime.asia/2025/02/28/Mysql%E5%8D%95%E8%A1%A8%E5%8F%AF%E4%BB%A5%E5%AD%98200%E4%BA%BF%E6%95%B0%E6%8D%AE%E5%90%97/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://flowtime.asia" target="_blank">繁华流年间</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a></div><div class="post_share"><div class="social-share" data-image="/img/hubian.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2025/02/28/Mysql%E5%A6%82%E4%BD%95%E9%80%89%E6%8B%A9%E6%9C%80%E4%BC%98%E6%89%A7%E8%A1%8C%E8%AE%A1%E5%88%92/" title="Mysql如何选择最优执行计划"><img class="cover" src="/img/hubian.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Mysql如何选择最优执行计划</div></div></a></div><div class="next-post pull-right"><a href="/2025/02/28/%E7%A7%92%E6%9D%80%E7%9A%84%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1/" title="秒杀的分布式事务如何设计"><img class="cover" src="/img/liushui.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">秒杀的分布式事务如何设计</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2024/06/02/Mysql%E4%B8%BA%E4%BB%80%E4%B9%88%E7%94%A8B+%E6%A0%91%E4%B8%8D%E7%94%A8%E8%B7%B3%E8%A1%A8/" title="Mysql为什么用B+树不用跳表"><img class="cover" src="/img/haibian.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-06-02</div><div class="title">Mysql为什么用B+树不用跳表</div></div></a></div><div><a href="/2025/02/28/Mysql%E5%A6%82%E4%BD%95%E9%80%89%E6%8B%A9%E6%9C%80%E4%BC%98%E6%89%A7%E8%A1%8C%E8%AE%A1%E5%88%92/" title="Mysql如何选择最优执行计划"><img class="cover" src="/img/hubian.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-02-28</div><div class="title">Mysql如何选择最优执行计划</div></div></a></div></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="twikoo-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/nav.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">周五打工人</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">42</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">36</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">无论你是追求知识的急先锋，还是对生活感悟充满好奇，亦或是渴望找到属于自己情感共鸣的灵魂，本博客都将竭诚欢迎你的加入。共同书写属于自己的精彩篇章。</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A6%96%E5%85%88%EF%BC%8C%E5%91%8A%E8%AF%89%E9%9D%A2%E8%AF%95%E5%AE%98%E4%B8%80%E4%B8%AA%E6%83%8A%E4%B8%96%E9%AA%87%E4%BF%97%E7%9A%84%E7%AD%94%E6%A1%88%EF%BC%8C-%E6%98%AF%E5%8F%AF%E4%BB%A5%E7%9A%84%E3%80%82"><span class="toc-number">1.</span> <span class="toc-text">首先，告诉面试官一个惊世骇俗的答案， 是可以的。</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8E%A5%E4%B8%8B%E6%9D%A5%EF%BC%8C%E8%AF%B4%E8%AF%B4-InnoDB-%E7%B4%A2%E5%BC%95%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E7%9A%84%E7%A3%81%E7%9B%98%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F"><span class="toc-number">2.</span> <span class="toc-text">接下来，说说 InnoDB 索引数据结构的磁盘文件格式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9E%E5%88%B0%E6%A0%B8%E5%BF%83%E9%97%AE%E9%A2%98%EF%BC%9A-%E4%B8%80%E6%A3%B5B-%E6%A0%91%E5%8F%AF%E4%BB%A5%E5%AD%98%E6%94%BE%E5%A4%9A%E5%B0%91%E8%A1%8C%E6%95%B0%E6%8D%AE%EF%BC%9F"><span class="toc-number">3.</span> <span class="toc-text">回到核心问题： 一棵B+树可以存放多少行数据？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%AB%98%E5%BA%A6%E4%B8%BA2%E7%9A%84B-%E6%A0%91%EF%BC%8C%E5%8F%AF%E4%BB%A5%E5%AD%98%E6%94%BE%E5%A4%9A%E5%B0%91%E8%A1%8C%E6%95%B0%E6%8D%AE"><span class="toc-number">3.1.</span> <span class="toc-text">高度为2的B+树，可以存放多少行数据?</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%80%9A%E8%BF%87%E7%AE%80%E5%8D%95%E7%9A%84%E5%85%AC%E5%BC%8F%E8%BF%9B%E8%A1%8C-%E8%AE%B0%E5%BD%95%E6%95%B0%E7%9A%84%E4%BC%B0%E7%AE%97%EF%BC%9A"><span class="toc-number">3.1.1.</span> <span class="toc-text">通过简单的公式进行 记录数的估算：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%AB%98%E5%BA%A6%E4%B8%BA3%E7%9A%84B-%E6%A0%91%E5%8F%AF%E4%BB%A5%E5%AD%98%E6%94%BE%E5%A4%9A%E5%B0%91%E8%A1%8C%E6%95%B0%E6%8D%AE%EF%BC%9F"><span class="toc-number">3.2.</span> <span class="toc-text">高度为3的B+树可以存放多少行数据？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%AB%98%E5%BA%A6%E4%B8%BA4%E7%9A%84B-%E6%A0%91%E5%8F%AF%E4%BB%A5%E5%AD%98%E6%94%BE%E5%A4%9A%E5%B0%91%E8%A1%8C%E6%95%B0%E6%8D%AE%EF%BC%9F"><span class="toc-number">3.3.</span> <span class="toc-text">高度为4的B+树可以存放多少行数据？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E9%80%9A%E8%BF%87%E5%85%83%E6%95%B0%E6%8D%AE%EF%BC%8C%E6%89%BE%E5%88%B0InnoDB%E4%B8%BB%E9%94%AE%E7%B4%A2%E5%BC%95B-%E6%A0%91%E7%9A%84%E9%AB%98%E5%BA%A6%EF%BC%9F"><span class="toc-number">4.</span> <span class="toc-text">如何通过元数据，找到InnoDB主键索引B+树的高度？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E6%AD%A5%EF%BC%9A%E9%80%9A%E8%BF%87-mysql-%E5%85%83%E6%95%B0%E6%8D%AE-%E6%89%BE%E5%88%B0-%E4%B8%BB%E9%94%AE%E7%B4%A2%E5%BC%95-%E7%9A%84-%E6%A0%B9%E9%A1%B5"><span class="toc-number">4.1.</span> <span class="toc-text">第一步：通过 mysql 元数据 找到 主键索引 的 根页</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E6%AD%A5%EF%BC%9A%E9%80%9A%E8%BF%87-%E4%B8%BB%E9%94%AE%E7%B4%A2%E5%BC%95-%E7%9A%84-%E6%A0%B9%E9%A1%B5%EF%BC%8C%E6%89%BE%E5%88%B0%E6%A0%91%E7%9A%84%E9%AB%98%E5%BA%A6"><span class="toc-number">4.2.</span> <span class="toc-text">第二步：通过 主键索引 的 根页，找到树的高度</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#InnoDB%E4%B8%80%E6%A3%B5B-%E6%A0%91%E7%9A%84IO%E6%AC%A1%E6%95%B0"><span class="toc-number">5.</span> <span class="toc-text">InnoDB一棵B+树的IO次数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#InnoDB%E4%B8%80%E6%A3%B5B-%E6%A0%91%E7%9A%84%E6%9F%A5%E6%89%BE%E6%B5%81%E7%A8%8B"><span class="toc-number">6.</span> <span class="toc-text">InnoDB一棵B+树的查找流程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%89%A7%E8%A1%8C%E4%B8%80%E6%AC%A1-%E8%81%9A%E9%9B%86%E7%B4%A2%E5%BC%95B-%E6%A0%91%E7%9A%84io%E6%AC%A1%E6%95%B0"><span class="toc-number">6.1.</span> <span class="toc-text">执行一次 聚集索引B+树的io次数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%89%A7%E8%A1%8C%E4%B8%80%E6%AC%A1-%E9%9D%9E%E8%81%9A%E9%9B%86%E7%B4%A2%E5%BC%95B-%E6%A0%91%E7%9A%84io%E6%AC%A1%E6%95%B0"><span class="toc-number">6.2.</span> <span class="toc-text">执行一次 非聚集索引B+树的io次数</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E5%95%A5%E7%A3%81%E7%9B%98IO%E7%9A%84%E6%80%A7%E8%83%BD%E4%BD%8E%EF%BC%9Fmysql-%E4%B8%80%E6%AC%A1%E7%A3%81%E7%9B%98io-%E7%9A%84%E8%80%97%E6%97%B6%E4%B8%BA%E5%A4%9A%E5%B0%91"><span class="toc-number">7.</span> <span class="toc-text">为啥磁盘IO的性能低？mysql 一次磁盘io 的耗时为多少?</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A3%81%E7%9B%98-I-O-%E8%80%97%E6%97%B6%E7%9A%84%E5%BD%B1%E5%93%8D%E5%9B%A0%E7%B4%A0"><span class="toc-number">7.1.</span> <span class="toc-text">磁盘 I&#x2F;O 耗时的影响因素</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#MySQL-%E4%B8%AD%E7%9A%84%E7%A3%81%E7%9B%98-I-O-%E6%93%8D%E4%BD%9C%E5%92%8C%E5%A4%A7%E8%87%B4%E8%80%97%E6%97%B6%E8%8C%83%E5%9B%B4"><span class="toc-number">7.2.</span> <span class="toc-text">MySQL 中的磁盘 I&#x2F;O 操作和大致耗时范围</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#InnoDB%E4%B8%80%E6%A3%B5B-%E6%A0%91%E7%9A%84%E6%9F%A5%E6%89%BE%E8%80%97%E6%97%B6"><span class="toc-number">7.3.</span> <span class="toc-text">InnoDB一棵B+树的查找耗时</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#mysql-Buffer-Pool-%E7%BC%93%E5%86%B2%E6%B1%A0%E5%AF%B9-B-%E6%A0%91-%E8%AE%BF%E9%97%AE%E7%9A%84%E5%8A%A0%E9%80%9F"><span class="toc-number">8.</span> <span class="toc-text">mysql Buffer Pool 缓冲池对 B+树 访问的加速</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Buffer-Pool-%E5%AF%B9-B-%E6%A0%91%E7%9A%84-%E7%B4%A2%E5%BC%95%E9%A1%B5%E5%92%8C%E6%95%B0%E6%8D%AE%E9%A1%B5%E7%9A%84%E7%BC%93%E5%AD%98%E5%92%8C%E5%8A%A0%E9%80%9F"><span class="toc-number">8.1.</span> <span class="toc-text">Buffer Pool 对 B + 树的 索引页和数据页的缓存和加速</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Buffer-Pool-%E7%9A%84%E5%A4%A7%E5%B0%8F%E8%AE%BE%E7%BD%AE"><span class="toc-number">8.2.</span> <span class="toc-text">Buffer Pool 的大小设置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E5%95%A5%E9%98%BF%E9%87%8C%E7%BC%96%E7%A8%8B%E8%A7%84%E8%8C%83%E6%8E%A8%E8%8D%90-inno-DB%E5%8D%95%E8%A1%A8%E8%AE%B0%E5%BD%952kw-%EF%BC%9F"><span class="toc-number">8.3.</span> <span class="toc-text">为啥阿里编程规范推荐 inno DB单表记录2kw ？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%99%84%E5%BD%95%EF%BC%9A%E8%A1%A8%E7%A9%BA%E9%97%B4%E6%96%87%E4%BB%B6%E7%9A%84-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86"><span class="toc-number">8.4.</span> <span class="toc-text">附录：表空间文件的 基础知识</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2025/03/03/where-1-1-%E5%8F%AF%E8%83%BD%E4%B8%A5%E9%87%8D%E5%BD%B1%E5%93%8D%E6%80%A7%E8%83%BD%EF%BC%8C%E5%B7%AE%E4%BA%8610%E5%A4%9A%E5%80%8D%EF%BC%8C%E5%BF%AB%E5%8E%BB%E6%8E%92%E6%9F%A5%E4%BD%A0%E7%9A%84-sql/" title="where 1=1 可能严重影响性能，差了10多倍，快去排查你的 sql"><img src="/img/haibian.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="where 1=1 可能严重影响性能，差了10多倍，快去排查你的 sql"/></a><div class="content"><a class="title" href="/2025/03/03/where-1-1-%E5%8F%AF%E8%83%BD%E4%B8%A5%E9%87%8D%E5%BD%B1%E5%93%8D%E6%80%A7%E8%83%BD%EF%BC%8C%E5%B7%AE%E4%BA%8610%E5%A4%9A%E5%80%8D%EF%BC%8C%E5%BF%AB%E5%8E%BB%E6%8E%92%E6%9F%A5%E4%BD%A0%E7%9A%84-sql/" title="where 1=1 可能严重影响性能，差了10多倍，快去排查你的 sql">where 1=1 可能严重影响性能，差了10多倍，快去排查你的 sql</a><time datetime="2025-03-03T13:38:30.000Z" title="发表于 2025-03-03 21:38:30">2025-03-03</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/03/03/Mysql-%E6%9C%89%E5%87%A0%E7%BA%A7%E7%BC%93%E5%AD%98%EF%BC%9F-%E6%AF%8F%E4%B8%80%E7%BA%A7%E7%BC%93%E5%AD%98%EF%BC%8C%E5%85%B7%E4%BD%93%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F/" title="Mysql 有几级缓存？ 每一级缓存，具体是什么？"><img src="/img/liushui.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Mysql 有几级缓存？ 每一级缓存，具体是什么？"/></a><div class="content"><a class="title" href="/2025/03/03/Mysql-%E6%9C%89%E5%87%A0%E7%BA%A7%E7%BC%93%E5%AD%98%EF%BC%9F-%E6%AF%8F%E4%B8%80%E7%BA%A7%E7%BC%93%E5%AD%98%EF%BC%8C%E5%85%B7%E4%BD%93%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F/" title="Mysql 有几级缓存？ 每一级缓存，具体是什么？">Mysql 有几级缓存？ 每一级缓存，具体是什么？</a><time datetime="2025-03-03T13:10:35.000Z" title="发表于 2025-03-03 21:10:35">2025-03-03</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/02/28/Mysql%E5%A6%82%E4%BD%95%E9%80%89%E6%8B%A9%E6%9C%80%E4%BC%98%E6%89%A7%E8%A1%8C%E8%AE%A1%E5%88%92/" title="Mysql如何选择最优执行计划"><img src="/img/hubian.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Mysql如何选择最优执行计划"/></a><div class="content"><a class="title" href="/2025/02/28/Mysql%E5%A6%82%E4%BD%95%E9%80%89%E6%8B%A9%E6%9C%80%E4%BC%98%E6%89%A7%E8%A1%8C%E8%AE%A1%E5%88%92/" title="Mysql如何选择最优执行计划">Mysql如何选择最优执行计划</a><time datetime="2025-02-28T03:47:10.000Z" title="发表于 2025-02-28 11:47:10">2025-02-28</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/02/28/Mysql%E5%8D%95%E8%A1%A8%E5%8F%AF%E4%BB%A5%E5%AD%98200%E4%BA%BF%E6%95%B0%E6%8D%AE%E5%90%97/" title="Mysql单表可以存200亿数据吗"><img src="/img/hubian.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Mysql单表可以存200亿数据吗"/></a><div class="content"><a class="title" href="/2025/02/28/Mysql%E5%8D%95%E8%A1%A8%E5%8F%AF%E4%BB%A5%E5%AD%98200%E4%BA%BF%E6%95%B0%E6%8D%AE%E5%90%97/" title="Mysql单表可以存200亿数据吗">Mysql单表可以存200亿数据吗</a><time datetime="2025-02-28T03:00:04.000Z" title="发表于 2025-02-28 11:00:04">2025-02-28</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/02/28/%E7%A7%92%E6%9D%80%E7%9A%84%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1/" title="秒杀的分布式事务如何设计"><img src="/img/liushui.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="秒杀的分布式事务如何设计"/></a><div class="content"><a class="title" href="/2025/02/28/%E7%A7%92%E6%9D%80%E7%9A%84%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1/" title="秒杀的分布式事务如何设计">秒杀的分布式事务如何设计</a><time datetime="2025-02-28T02:33:34.000Z" title="发表于 2025-02-28 10:33:34">2025-02-28</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2024 - 2025 By 周五打工人</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=4.13.0"></script><script src="/js/main.js?v=4.13.0"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"><script>(() => {
+  const getCount = () => {
+    const countELement = document.getElementById('twikoo-count')
+    if(!countELement) return
+    twikoo.getCommentsCount({
+      envId: 'https://mywaline-7unwzwfdi-motors-projects-a4d09e71.vercel.app/',
+      region: '',
+      urls: [window.location.pathname],
+      includeReply: false
+    }).then(res => {
+      countELement.textContent = res[0].count
+    }).catch(err => {
+      console.error(err)
+    })
+  }
+
+  const init = () => {
+    twikoo.init(Object.assign({
+      el: '#twikoo-wrap',
+      envId: 'https://mywaline-7unwzwfdi-motors-projects-a4d09e71.vercel.app/',
+      region: '',
+      onCommentLoaded: () => {
+        btf.loadLightbox(document.querySelectorAll('#twikoo .tk-content img:not(.tk-owo-emotion)'))
+      }
+    }, null))
+
+    
+  }
+
+  const loadTwikoo = () => {
+    if (typeof twikoo === 'object') setTimeout(init,0)
+    else getScript('https://cdn.jsdelivr.net/npm/twikoo@1.6.31/dist/twikoo.all.min.js').then(init)
+  }
+
+  if ('Twikoo' === 'Twikoo' || !false) {
+    if (false) btf.loadComment(document.getElementById('twikoo-wrap'), loadTwikoo)
+    else loadTwikoo()
+  } else {
+    window.loadOtherComment = loadTwikoo
+  }
+})()</script></div><canvas class="fireworks" mobile="false"></canvas><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/dist/fireworks.min.js"></script><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/dist/canvas-nest.min.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=4.13.0"></script></div></div></body></html>

@@ -1,0 +1,584 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>亿级redis排行榜如何设计 | 繁华流年间</title><meta name="author" content="周五打工人"><meta name="copyright" content="周五打工人"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="ffffff"><meta name="description" content="首先回顾一下：redis 四大统计（基数统计，二值统计，排序统计、聚合统计）的原理 和应用场景尼恩这边的文章都有一个 基本的规则，从最为基础的讲起。 先看看 常见的四大统计。 第1大统计：基数统计基数（Cardinality）是指一个集合中不同元素的数量， 或者说统计一个集合中不重复元素的个数。 简单来说： 基数（Cardinality）就是去除重复后的数的个数 例如，对于一个包含重复元素的集合{">
+<meta property="og:type" content="article">
+<meta property="og:title" content="亿级redis排行榜如何设计">
+<meta property="og:url" content="http://flowtime.asia/2025/03/06/%E4%BA%BF%E7%BA%A7redis%E6%8E%92%E8%A1%8C%E6%A6%9C%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1/index.html">
+<meta property="og:site_name" content="繁华流年间">
+<meta property="og:description" content="首先回顾一下：redis 四大统计（基数统计，二值统计，排序统计、聚合统计）的原理 和应用场景尼恩这边的文章都有一个 基本的规则，从最为基础的讲起。 先看看 常见的四大统计。 第1大统计：基数统计基数（Cardinality）是指一个集合中不同元素的数量， 或者说统计一个集合中不重复元素的个数。 简单来说： 基数（Cardinality）就是去除重复后的数的个数 例如，对于一个包含重复元素的集合{">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://flowtime.asia/img/hubian.png">
+<meta property="article:published_time" content="2025-03-06T13:16:31.000Z">
+<meta property="article:modified_time" content="2025-03-06T13:42:02.608Z">
+<meta property="article:author" content="周五打工人">
+<meta property="article:tag" content="场景设计">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://flowtime.asia/img/hubian.png"><link rel="shortcut icon" href="/img/index.jpg"><link rel="canonical" href="http://flowtime.asia/2025/03/06/%E4%BA%BF%E7%BA%A7redis%E6%8E%92%E8%A1%8C%E6%A6%9C%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=4.13.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script async="async" src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><script>(adsbygoogle = window.adsbygoogle || []).push({
+  google_ad_client: 'ca-pub-3578075519463317',
+  enable_page_level_ads: 'true'
+});</script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.11.1/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '亿级redis排行榜如何设计',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2025-03-06 21:42:02'
+}</script><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+    
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
+    
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+    
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', 'ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+        if (t === 'dark') activateDarkMode()
+        else if (t === 'light') activateLightMode()
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/transparent.css"><link rel="stylesheet" href="/css/footer.css"><meta name="generator" content="Hexo 7.2.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/nav.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">46</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">37</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/img/hubian.png')"><nav id="nav"><span id="blog-info"><a href="/" title="繁华流年间"></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">亿级redis排行榜如何设计</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="fa-fw post-meta-icon far fa-calendar-alt"></i><span class="post-meta-label">发表于</span><time datetime="2025-03-06T13:16:31.000Z" title="发表于 2025-03-06 21:16:31">2025-03-06</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E9%9D%A2%E8%AF%95/">面试</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="亿级redis排行榜如何设计"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="首先回顾一下：redis-四大统计（基数统计，二值统计，排序统计、聚合统计）的原理-和应用场景"><a href="#首先回顾一下：redis-四大统计（基数统计，二值统计，排序统计、聚合统计）的原理-和应用场景" class="headerlink" title="首先回顾一下：redis 四大统计（基数统计，二值统计，排序统计、聚合统计）的原理 和应用场景"></a>首先回顾一下：redis 四大统计（基数统计，二值统计，排序统计、聚合统计）的原理 和应用场景</h2><p>尼恩这边的文章都有一个 基本的规则，从最为基础的讲起。</p>
+<p>先看看 常见的四大统计。</p>
+<h3 id="第1大统计：基数统计"><a href="#第1大统计：基数统计" class="headerlink" title="第1大统计：基数统计"></a>第1大统计：基数统计</h3><p>基数（Cardinality）是指一个集合中不同元素的数量， 或者说统计一个集合中不重复元素的个数。</p>
+<p>简单来说： <strong>基数（Cardinality）</strong>就是<strong>去除重复后的数的个数</strong></p>
+<p>例如，对于一个包含重复元素的集合{1, 2, 2, 3, 4, 4, 4}，其基数为4，即不同元素的个数。</p>
+<p>在Redis中，HashSet &#x2F;bitmap&#x2F; HyperLogLog数据结构都能提供 高效的基数统计，而HyperLogLog算法可以在不保存原始数据的情况下快速计算出一个集合的基数。</p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=MzkxNzIyMTM1NQ==&mid=2247504179&idx=1&sn=76e0985509626a1c72d61be1e2833c45&scene=21#wechat_redirect">希音面试：亿级用户 日活 月活，如何统计？（史上最强 HyperLogLog 解读）</a></p>
+<h3 id="第2大统计：二值统计"><a href="#第2大统计：二值统计" class="headerlink" title="第2大统计：二值统计"></a>第2大统计：二值统计</h3><p>二值统计通常涉及到将数据分为两个类别或状态，比如成功与失败、是与非等，并对这些类别进行计数和分析。</p>
+<p>这种统计方法在处理二分类问题时非常常见，比如在质量控制、用户行为分析等领域。</p>
+<p>亿级海量数据查重，如何实现 ？ 涉及的是四大统计其中的 二值统计</p>
+<p>亿级海量数据黑名单 ，如何存储？涉及的也是四大统计其中的 二值统计</p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=MzkxNzIyMTM1NQ==&mid=2247504154&idx=1&sn=f57f32c4d22ed6857cbf68d2bfbf4624&scene=21#wechat_redirect"><strong>京东面试：亿级 数据查重，亿级 数据黑名单 ，如何实现？（此文介绍了布隆过滤器、布谷鸟过滤器）</strong></a></p>
+<h3 id="第3大统计：排序统计"><a href="#第3大统计：排序统计" class="headerlink" title="第3大统计：排序统计"></a>第3大统计：排序统计</h3><p>排序统计涉及将数据按照一定的顺序（如升序或降序）进行排列，以便于分析和比较。</p>
+<p>排序统计的例子，比如，可以使用ZSET对排序统计</p>
+<ol>
+<li><p>可以 使用ZSET对文章的点赞数排序并分页展示</p>
+</li>
+<li><p>对评论根据时间进行排序</p>
+</li>
+<li><p>亿级用户的排行榜，如何设计？</p>
+</li>
+</ol>
+<p><strong>都属于排序统计， 此文，彻底介绍一下排序统计。</strong></p>
+<h3 id="第4大统计：聚合统计"><a href="#第4大统计：聚合统计" class="headerlink" title="第4大统计：聚合统计"></a>第4大统计：聚合统计</h3><p>聚合统计是一种数据处理技术，它将多个数据记录组合成一个集合，并计算该集合的统计信息，如总和、平均值、最大值和最小值等。</p>
+<p>聚合操作通常用于数据仓库和数据分析中，以简化数据并提取有用的信息。</p>
+<p>聚合统计的核心在于对数据进行分组（grouping），然后对每个组应用聚合函数（如sum, avg, max, min等）来计算统计值。</p>
+<p>此文，45岁老架构师给大家彻底介绍一下第3大统计： 排序统计。</p>
+<h2 id="入门篇：Redis-的有序集合（Sorted-Set）"><a href="#入门篇：Redis-的有序集合（Sorted-Set）" class="headerlink" title="入门篇：Redis 的有序集合（Sorted Set）"></a>入门篇：Redis 的有序集合（Sorted Set）</h2><p>Redis 的有序集合（Sorted Set）是一个复合数据类型，它能够存储不重复的字符串成员，并且每个成员都关联了一个浮点数分数，这个分数用于对集合中的成员进行排序。</p>
+<p>有序集合是唯一的，新成员可以添加，分数可以更新，但成员必须是唯一的。</p>
+<p>以下是有序集合的一些主要操作及其实例：</p>
+<h3 id="1-ZADD"><a href="#1-ZADD" class="headerlink" title="1. ZADD"></a>1. ZADD</h3><p>向有序集合添加一个或多个成员，或者更新已存在成员的分数。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">ZADD key score member \[score member ...\]  </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>实例：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">ZADD myzset 1 &quot;one&quot;  </span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>“one” 的分数是 1</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">ZADD myzset 1 &quot;one&quot; 2 &quot;two&quot; 3 &quot;three&quot;  </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>“one” 的分数是 1 ， “two” 的分数是2 ， “three” 的分数是3 ，</p>
+<h3 id="2-ZSCORE"><a href="#2-ZSCORE" class="headerlink" title="2. ZSCORE"></a>2. ZSCORE</h3><p>获取有序集合中指定成员的分数。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">ZSCORE key member  </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>实例：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">ZSCORE myzset &quot;two&quot;  </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>这里返回 “two” 的分数 2</p>
+<h3 id="3-ZINCRBY"><a href="#3-ZINCRBY" class="headerlink" title="3. ZINCRBY"></a>3. ZINCRBY</h3><p>为有序集合中已存在的成员的分数加上一个增量值。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">ZINCRBY key increment member  </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>实例：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">ZINCRBY myzset 2 &quot;two&quot; </span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>“two” 的原始分数是 2，现在将变为 4</p>
+<h3 id="4-ZRANK-ZREVRANK"><a href="#4-ZRANK-ZREVRANK" class="headerlink" title="4. ZRANK &#x2F; ZREVRANK"></a>4. ZRANK &#x2F; ZREVRANK</h3><p>获取有序集合中指定成员的排名。ZRANK 是升序排名，ZREVRANK 是降序排名。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">ZRANK key member  </span><br><span class="line">ZREVRANK key member  </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>实例：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">ZRANK myzset &quot;three&quot;    # 返回 &quot;three&quot; 升序排名  </span><br><span class="line">ZREVRANK myzset &quot;three&quot;   # 返回 &quot;three&quot; 降序排名  </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="5-ZRANGE-ZREVRANGE"><a href="#5-ZRANGE-ZREVRANGE" class="headerlink" title="5. ZRANGE &#x2F; ZREVRANGE"></a>5. ZRANGE &#x2F; ZREVRANGE</h3><p>获取有序集合中指定区间的成员，ZRANGE 是按分数从小到大排序，ZREVRANGE 是按分数从大到小排序。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">ZRANGE key start stop \[WITHSCORES\]  </span><br><span class="line">ZREVRANGE key start stop \[WITHSCORES\]  </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><code>ZRANGE</code> 命令用于返回有序集合中指定区间内的成员列表，区间是有序集合的索引范围，可以是正数或负数，正数表示从大到小的顺序，负数表示从小到大的顺序。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">ZRANGE key start stop \[WITHSCORES\]  </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p><code>key</code>：有序集合的键名。</p>
+</li>
+<li><p><code>start</code>：区间的起始索引。</p>
+</li>
+<li><p><code>stop</code>：区间的结束索引。</p>
+</li>
+<li><p><code>WITHSCORES</code>：（可选）如果指定这个选项，命令将返回成员及其分数。</p>
+</li>
+</ul>
+<p><strong>返回值：</strong></p>
+<ul>
+<li><p>如果没有指定 <code>WITHSCORES</code>，则返回一个列表，包含指定区间内的成员。</p>
+</li>
+<li><p>如果指定了 <code>WITHSCORES</code>，则返回一个列表，包含指定区间内的成员及其分数，成员和分数是成对出现的。</p>
+</li>
+</ul>
+<p>实例：假设你有一个名为 <code>myzset</code> 的有序集合，并且已经添加了一些成员和分数，如下所示：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">ZADD myzset 1 &quot;one&quot; 2 &quot;two&quot; 3 &quot;three&quot; 4 &quot;four&quot; 5 &quot;five&quot;  </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>现在，如果你想要获取索引从 0 到 2 的成员（即分数最低的三个成员），你可以执行以下命令：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">ZRANGE myzset 0 2  </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>执行这个命令后，Redis 将返回一个列表，包含成员 <code>&quot;one&quot;</code>、<code>&quot;two&quot;</code> 和 <code>&quot;three&quot;</code>。</p>
+<p>如果你还想要获取这些成员的分数，可以添加 <code>WITHSCORES</code> 选项：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">ZRANGE myzset 0 2 WITHSCORES  </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>执行这个命令后，Redis 将返回一个列表，包含成员及其分数，如下所示：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">1) &quot;one&quot;  </span><br><span class="line">2) &quot;1&quot;  </span><br><span class="line">3) &quot;two&quot;  </span><br><span class="line">4) &quot;2&quot;  </span><br><span class="line">5) &quot;three&quot;  </span><br><span class="line">6) &quot;3&quot;  </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="6-ZCOUNT"><a href="#6-ZCOUNT" class="headerlink" title="6. ZCOUNT"></a>6. ZCOUNT</h3><p>获取有序集合中指定分数区间的成员数量。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">ZCOUNT key min max  </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>实例：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">ZCOUNT myzset 0 3  </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="7-ZREM"><a href="#7-ZREM" class="headerlink" title="7. ZREM"></a>7. ZREM</h3><p>移除有序集合中的一个或多个成员。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">ZREM key member \[member ...\]  </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>实例：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">ZREM myzset &quot;one&quot;  </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="8-ZCARD"><a href="#8-ZCARD" class="headerlink" title="8. ZCARD"></a>8. ZCARD</h3><p>获取有序集合的成员数。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">ZCARD key  </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>实例：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">ZCARD myzset  </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="9-ZREMRANGEBYSCORE"><a href="#9-ZREMRANGEBYSCORE" class="headerlink" title="9. ZREMRANGEBYSCORE"></a>9. ZREMRANGEBYSCORE</h3><p>移除有序集合中给定分数区间的所有成员。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">ZREMRANGEBYSCORE key min max  </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>实例：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">ZREMRANGEBYSCORE myzset 0 2  </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>这些操作使得有序集合成为实现排行榜、计分板等需要排序和排名功能的应用的理想选择。通过这些命令，你可以有效地管理和查询有序集合中的数据。</p>
+<h2 id="社交点赞-的设计与实现"><a href="#社交点赞-的设计与实现" class="headerlink" title="社交点赞 的设计与实现"></a>社交点赞 的设计与实现</h2><p>在当今的社交媒体时代，点赞功能是一个非常重要的交互元素。</p>
+<p>它不仅可以让用户表达对内容的喜爱，还能帮助平台突出受欢迎的内容，增强用户的参与感和平台的活跃度。本文将详细介绍一种基于 Redis 的社交点赞系统的设计与实现方法。</p>
+<p>在构建社交媒体平台时，需要为用户提供对文章、照片等各类内容进行点赞的功能。</p>
+<p>平台要能够准确统计每个内容的点赞数量，并实时展示最受欢迎的内容，以满足用户对内容热度的关注和平台对优质内容推荐的需求。</p>
+<p>使用 Redis 的有序集合（zset）和哈希（hash）来设计一个社交点赞系统，可以有效地存储和检索点赞数据。</p>
+<p>以下是如何使用这两种数据结构来实现点赞系统的具体步骤：</p>
+<h3 id="社交点赞-数据结构设计"><a href="#社交点赞-数据结构设计" class="headerlink" title="社交点赞 数据结构设计"></a>社交点赞 数据结构设计</h3><ul>
+<li><p><strong>有序集合（zset）</strong>：用于存储所有内容（如文章）的点赞总数，并按照点赞数进行排序。</p>
+</li>
+<li><p><code>key</code>：likes:all，表示所有文章的点赞数的一个排序集合。</p>
+</li>
+<li><p><code>member</code>：文章的唯一标识符，比如 <code>post:&lt;content_id&gt;</code>。</p>
+</li>
+<li><p><code>score</code>：点赞的次数，用于 点赞的排序。</p>
+</li>
+<li><p><strong>哈希（hash）</strong>：用于存储每个用户点赞过的所有内容。</p>
+</li>
+<li><p><code>key</code>：<code>user:&lt;user_id&gt;:likes</code>，其中 <code>&lt;user_id&gt;</code> 是用户的唯一标识符。</p>
+</li>
+<li><p><code>field</code>：内容的唯一标识符，比如 <code>&lt;content_id&gt;</code>。</p>
+</li>
+<li><p><code>value</code>：点赞的时间戳，用于记录用户点赞该内容的具体时间。</p>
+</li>
+</ul>
+<h3 id="社交点赞的核心操作"><a href="#社交点赞的核心操作" class="headerlink" title="社交点赞的核心操作"></a>社交点赞的核心操作</h3><ul>
+<li><p><strong>点赞</strong>：当用户对内容点赞时，更新有序集合和哈希表。</p>
+</li>
+<li><p><strong>取消点赞</strong>：当用户取消点赞时，从有序集合和哈希表中移除相应的记录。</p>
+</li>
+<li><p><strong>获取点赞数</strong>：获取特定内容的点赞数。</p>
+</li>
+<li><p><strong>获取用户点赞的内容</strong>：获取一个用户点赞过的所有内容。</p>
+</li>
+<li><p><strong>获取热门内容</strong>：根据点赞数获取最热门或最新的内容列表。</p>
+</li>
+</ul>
+<h3 id="社交点赞涉及的Redis-命令"><a href="#社交点赞涉及的Redis-命令" class="headerlink" title="社交点赞涉及的Redis 命令"></a>社交点赞涉及的Redis 命令</h3><ul>
+<li><p><strong>ZADD</strong>：向有序集合添加成员。</p>
+</li>
+<li><p><strong>ZREM</strong>：从有序集合移除成员。</p>
+</li>
+<li><p><strong>HSET</strong>：向哈希表添加字段。</p>
+</li>
+<li><p><strong>HDEL</strong>：从哈希表删除字段。</p>
+</li>
+<li><p><strong>ZSCORE</strong>：获取有序集合中成员的分数。</p>
+</li>
+<li><p><strong>ZCARD</strong>：获取有序集合的成员数。</p>
+</li>
+<li><p><strong>ZRANGE</strong>：获取有序集合中指定区间的成员。</p>
+</li>
+</ul>
+<h3 id="社交点赞的-redis-命令实现"><a href="#社交点赞的-redis-命令实现" class="headerlink" title="社交点赞的 redis 命令实现"></a>社交点赞的 redis 命令实现</h3><p>以下是使用 Redis 命令实现点赞系统的基本操作：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line"># 用户点赞  </span><br><span class="line">ZADD likes:all 1 post:&lt;content\_id&gt;  </span><br><span class="line">HSET user:&lt;user\_id&gt;:likes &lt;content\_id&gt; &lt;timestamp&gt;  </span><br><span class="line">  </span><br><span class="line"># 用户取消点赞  </span><br><span class="line">ZADD likes:all -1 post:&lt;content\_id&gt;  </span><br><span class="line">HDEL user:&lt;user\_id&gt;:likes &lt;content\_id&gt;  </span><br><span class="line">    </span><br><span class="line">  </span><br><span class="line"># 获取特定内容的点赞数  </span><br><span class="line">ZSCORE likes:all  post:&lt;content\_id&gt;  </span><br><span class="line">  </span><br><span class="line"># 获取用户点赞过的所有内容  </span><br><span class="line">HGETALL user:&lt;user\_id&gt;:likes  </span><br><span class="line">  </span><br><span class="line"># 获取热门内容列表 ToP 10  </span><br><span class="line">ZRANGE likes:all 0 9 WITHSCORES  </span><br><span class="line">  </span><br><span class="line"># 获取文章的排名  </span><br><span class="line">ZRANK likes:all  post:&lt;content\_id&gt;  </span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="游戏玩家排行榜案例"><a href="#游戏玩家排行榜案例" class="headerlink" title="游戏玩家排行榜案例"></a>游戏玩家排行榜案例</h2><p>在游戏中，玩家排行榜是一个重要的功能，它可以激发玩家的竞争意识，增加游戏的趣味性和玩家的粘性。</p>
+<p>在一个多人在线游戏中，我们希望能够实时追踪和显示玩家的排行榜，以鼓励玩家参与并提升游戏的竞争性。</p>
+<p>通过排行榜，玩家可以直观地了解自己在游戏中的位置，与其他玩家进行比较。以下是一个基于特定技术的游戏玩家排行榜系统的设计与实现方案。</p>
+<h3 id="游戏玩家排行榜-数据模型"><a href="#游戏玩家排行榜-数据模型" class="headerlink" title="游戏玩家排行榜 数据模型"></a>游戏玩家排行榜 数据模型</h3><p>可以选择使用 Redis 作为主要的数据存储来实现排行榜功能。 Redis 的有序集合（Sorted Set）数据结构非常适合存储排行榜数据。</p>
+<p>因为有序集合中的元素可以根据一个分数值进行排序，而这个分数值可以根据游戏中的排名因素（如得分、时间等）来计算。</p>
+<ol>
+<li><p><strong>玩家标识</strong> 每个玩家都有一个唯一的标识，如玩家 ID。这个标识将作为 Redis 有序集合中的元素。</p>
+</li>
+<li><p>排名分数计算因素</p>
+</li>
+</ol>
+<ul>
+<li><p><strong>得分</strong>：玩家在游戏中的得分是一个重要的排名因素。例如，在射击游戏中，杀敌数、完成任务获得的奖励分数等都可以计入总分。</p>
+</li>
+<li><p><strong>游戏完成时间</strong>：对于一些有时间限制的游戏关卡或模式，完成时间越短排名越靠前。可以根据一定的算法将完成时间转换为分数的一部分，比如，用时越短分数越高。</p>
+</li>
+</ul>
+<ol start="4">
+<li><strong>综合排名分数</strong> 根据上述因素，通过一个特定的算法计算出每个玩家的综合排名分数。例如，可以将得分乘以一个权重系数，再加上根据完成时间计算出的分数，得到最终的综合排名分数。</li>
+</ol>
+<h3 id="游戏玩家排行榜-Redis-操作命令"><a href="#游戏玩家排行榜-Redis-操作命令" class="headerlink" title="游戏玩家排行榜 Redis 操作命令"></a>游戏玩家排行榜 Redis 操作命令</h3><p><strong>玩家数据更新 Redis 操作命令</strong></p>
+<p>当玩家完成一局游戏后，根据游戏结果计算出玩家的新排名分数。</p>
+<p>然后使用 Redis 的 ZADD 命令将玩家 ID 和新的排名分数添加到有序集合中。</p>
+<p>例如，如果玩家 ID 是 “player123”，新的排名分数是 1000，对应的 ZADD 命令就是</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">ZADD &quot;leaderboard&quot; 1000 &quot;player123&quot; </span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>获取排行榜信息 Redis 操作命令</strong></p>
+<ol>
+<li><p><strong>获取 top N 玩家</strong> 使用 ZREVRANGE 命令可以获取排名靠前的 N 个玩家信息。</p>
+<p>例如，要获取排行榜前 10 名玩家，可以使用<code>ZREVRANGE &quot;leaderboard&quot; 0 9</code>命令。这个命令将返回排名前 10 的玩家 ID。</p>
+</li>
+<li><p><strong>获取玩家排名</strong></p>
+<p>使用 ZRANK 或 ZREVRANK 命令可以获取某个玩家在排行榜中的位置。</p>
+<p>如果要获取 “player123” 的排名，可以使用<code>ZRANK &quot;leaderboard&quot; &quot;player123&quot;</code>（正序排名）或<code>ZREVRANK &quot;leaderboard&quot; &quot;player123&quot;</code>（逆序排名，即从高到低的排名）。</p>
+</li>
+</ol>
+<h3 id="游戏玩家排行榜Java-代码示例"><a href="#游戏玩家排行榜Java-代码示例" class="headerlink" title="游戏玩家排行榜Java 代码示例"></a>游戏玩家排行榜Java 代码示例</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">import redis.clients.jedis.Jedis;  </span><br><span class="line">import java.util.Map;  </span><br><span class="line">  </span><br><span class="line">public class GameLeaderboardSystem &#123;  </span><br><span class="line">    private Jedis jedis;  </span><br><span class="line">  </span><br><span class="line">    public GameLeaderboardSystem() &#123;  </span><br><span class="line">        jedis = new Jedis(&quot;localhost&quot;, 6379);  </span><br><span class="line">    &#125;  </span><br><span class="line">  </span><br><span class="line">    // 根据得分和时间计算玩家的综合排名分数（这里只是示例算法）  </span><br><span class="line">    private double calculateRankScore(int score, long completionTime) &#123;  </span><br><span class="line">        // 假设得分权重为0.7，时间权重为0.3，时间越短分数越高，可以根据实际情况调整  </span><br><span class="line">        double timeScore = 1000.0 / completionTime;   </span><br><span class="line">        return score \* 0.7 + timeScore \* 0.3;  </span><br><span class="line">    &#125;  </span><br><span class="line">  </span><br><span class="line">    public void updatePlayerRank(String playerId, int score, long completionTime) &#123;  </span><br><span class="line">        double rankScore = calculateRankScore(score, completionTime);  </span><br><span class="line">        jedis.zadd(&quot;leaderboard&quot;, rankScore, playerId);  </span><br><span class="line">    &#125;  </span><br><span class="line">  </span><br><span class="line">    public void showTopPlayers(int topN) &#123;  </span><br><span class="line">        System.out.println(&quot;Top &quot; + topN + &quot; players in the leaderboard:&quot;);  </span><br><span class="line">        jedis.zrevrange(&quot;leaderboard&quot;, 0, topN - 1).forEach(System.out::println);  </span><br><span class="line">    &#125;  </span><br><span class="line">  </span><br><span class="line">    public long getPlayerRank(String playerId) &#123;  </span><br><span class="line">        Long rank = jedis.zrevrank(&quot;leaderboard&quot;, playerId);  </span><br><span class="line">        return rank == null? -1 : rank;  </span><br><span class="line">    &#125;  </span><br><span class="line">  </span><br><span class="line">    public static void main(String\[\] args) &#123;  </span><br><span class="line">        GameLeaderboardSystem system = new GameLeaderboardSystem();  </span><br><span class="line">        // 模拟玩家数据更新  </span><br><span class="line">        system.updatePlayerRank(&quot;player1&quot;, 100, 120000);   </span><br><span class="line">        system.updatePlayerRank(&quot;player2&quot;, 120, 100000);  </span><br><span class="line">        system.updatePlayerRank(&quot;player1&quot;, 150, 110000);  </span><br><span class="line">        // 展示排行榜前5名玩家  </span><br><span class="line">        system.showTopPlayers(5);   </span><br><span class="line">        // 获取player1的排名  </span><br><span class="line">        System.out.println(&quot;Player1&#x27;s rank: &quot; + system.getPlayerRank(&quot;player1&quot;));   </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;  </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>在上述代码中：</p>
+<ol>
+<li><p><code>GameLeaderboardSystem</code>类负责管理游戏玩家排行榜。在构造函数中初始化<code>Jedis</code>连接到本地 Redis 服务器。</p>
+</li>
+<li><p><code>calculateRankScore</code>方法根据玩家得分和游戏完成时间计算综合排名分数。这里只是一个简单的示例算法，可以根据游戏实际情况进行更复杂的设计。</p>
+</li>
+<li><p><code>updatePlayerRank</code>方法在玩家完成游戏后，计算排名分数并使用<code>ZADD</code>命令更新玩家在排行榜中的位置。</p>
+</li>
+<li><p><code>showTopPlayers</code>方法使用<code>ZREVRANGE</code>命令获取并展示排行榜上前<code>N</code>名玩家。</p>
+</li>
+<li><p><code>getPlayerRank</code>方法使用<code>ZREVRANK</code>命令获取指定玩家的排名。在<code>main</code>方法中，模拟了玩家数据更新、排行榜展示和获取玩家排名的操作，展示了整个排行榜系统的基本功能实现。</p>
+</li>
+</ol>
+<p>通过这样的设计和实现，我们可以构建一个高效、实时的游戏玩家排行榜系统，满足游戏中玩家竞争和排名展示的需求。同时，Redis 的高性能特性能够保证在大量玩家数据和高并发操作下系统的稳定运行。</p>
+<h2 id="超高并发下-Redis-热key-分治原理"><a href="#超高并发下-Redis-热key-分治原理" class="headerlink" title="超高并发下 Redis 热key 分治原理"></a>超高并发下 Redis 热key 分治原理</h2><p>众所周知Redis扛并发的能力是非常强的，所以高并发场景下经常会使用Redis，</p>
+<p>如果在亿级用户、超高并发下场景， 一个key 落到一个 redis 节点，单 节点的Redis 扛不住的，如下图所示：</p>
+<p><img src="/./2025/03/06/%E4%BA%BF%E7%BA%A7redis%E6%8E%92%E8%A1%8C%E6%A6%9C%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1/img.png"></p>
+<p>因为， Redis单分片的 吞吐量 瓶颈在2w左右 。</p>
+<p>如果 Redis做了集群部署呢？ 没有。 实际上，一个Redis的key只会存在一个分片上，此时超高并发下redis2很有可能会被打垮。</p>
+<p><img src="/./2025/03/06/%E4%BA%BF%E7%BA%A7redis%E6%8E%92%E8%A1%8C%E6%A6%9C%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1/img_1.png"></p>
+<p>那么在超高的并发如何解决，某个热key带来的单分片被打垮，甚至系统雪崩的问题呢？</p>
+<p>具体请参见 45岁老架构师尼恩的文章 <a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=MzkxNzIyMTM1NQ==&mid=2247503676&idx=1&sn=4201e57105f2c00127a8e1b50b17aa47&scene=21#wechat_redirect"><strong>史上最全：Redis热点Key，如何 彻底解决问题</strong></a></p>
+<p><img src="/./2025/03/06/%E4%BA%BF%E7%BA%A7redis%E6%8E%92%E8%A1%8C%E6%A6%9C%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1/img_2.png"></p>
+<p>下面聊聊Redis分key来解决这个问题的方案。</p>
+<h3 id="什么是Redis-热点key-拆分？"><a href="#什么是Redis-热点key-拆分？" class="headerlink" title="什么是Redis 热点key 拆分？"></a>什么是Redis 热点key 拆分？</h3><p>Redis分key就是将一个热点key通过拆分成若干key，然后让这若干个key分散到Redis集群的不同节点，</p>
+<p>如下图所示：</p>
+<p><img src="/./2025/03/06/%E4%BA%BF%E7%BA%A7redis%E6%8E%92%E8%A1%8C%E6%A6%9C%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1/img_3.png"></p>
+<p>上图，将热点key拆分成3个小key，这样由原先的一个key拆分成3个小key，在超高并发下由这3个key共同的来承担原先一个热点key扛的流量。</p>
+<p>当然， 通过Redis的key 到 node的 对应关系， 是通过 hash 取模 (crc16算法）获取的槽位值，再对应到redis 节点上</p>
+<p><img src="/./2025/03/06/%E4%BA%BF%E7%BA%A7redis%E6%8E%92%E8%A1%8C%E6%A6%9C%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1/img_4.png"></p>
+<p>hash 取模 (crc16算法）获取的槽位值 ，算法将这3个key分散到Redis集群的分片上。由hash 取模 (crc16算法） 保证数据 的大致均匀，不发生数据倾斜。</p>
+<p>（1）Redis分可以的原理就是将一个热点key拆分成若干个小key后分散不集群的不同节点上（集群有几个节点就拆分成几个小key）</p>
+<p>（2）为保证key可以分散到集群节点上，采用的是手动尝试的方式来获取拆分后的小key。</p>
+<p>（3）分key的方案常用于超高并发业务场景下，如抢优惠券、实时榜单等。</p>
+<h3 id="亿级用户排行榜，如何设计范围分片，-路由到-不同的set"><a href="#亿级用户排行榜，如何设计范围分片，-路由到-不同的set" class="headerlink" title="亿级用户排行榜，如何设计范围分片， 路由到 不同的set"></a>亿级用户排行榜，如何设计范围分片， 路由到 不同的set</h3><p>王者荣耀，妥妥的亿级用户, 这个亿级用户排行榜的需求也得用分治的思想。</p>
+<p><img src="/./2025/03/06/%E4%BA%BF%E7%BA%A7redis%E6%8E%92%E8%A1%8C%E6%A6%9C%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1/img_5.png"></p>
+<p>其实，45岁老架构师尼恩提示大家，一般面试遇到什么千万条数据、几个 G 文件、上亿的数据啥的，首先想到的方案就是分而治之。</p>
+<p>关键是，亿级用户 ，如何设计分片？</p>
+<p>这里，我们可以设计范围分片&#x2F;分桶，比如按照下面的 模式去拆</p>
+<p><img src="/./2025/03/06/%E4%BA%BF%E7%BA%A7redis%E6%8E%92%E8%A1%8C%E6%A6%9C%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1/img_6.png"></p>
+<p>那么， 分片的基本原理和思想是什么，尼恩给大家慢慢道来。</p>
+<h3 id="理解范围分片的基本概念"><a href="#理解范围分片的基本概念" class="headerlink" title="理解范围分片的基本概念"></a>理解范围分片的基本概念</h3><ul>
+<li><p>范围分片是一种数据分片策略，它根据数据的某个特定范围将数据划分到不同的存储单元（在这个例子中是不同的 set）。</p>
+<p>对于亿级用户排行榜来说，这个范围可以基于用户的某个属性，积分属性。</p>
+<p>类似的，其他场景可以是活跃度等。</p>
+</li>
+<li><p>假设以用户积分来进行范围分片，首先需要确定积分的范围。</p>
+<p>例如，可以将积分范围划分为多个区间，如 0 - 1000，1001 - 2000，2001 - 3000 ，2001 - 无穷大 等。</p>
+</li>
+</ul>
+<h4 id="确定分片键和范围边界"><a href="#确定分片键和范围边界" class="headerlink" title="确定分片键和范围边界"></a>确定分片键和范围边界</h4><ul>
+<li><p><strong>选择分片键</strong>：分片键是用于决定数据存储位置的关键属性。</p>
+<p>在用户排行榜场景中，如前面提到的积分、用户等级等属性都可以作为分片键。</p>
+<p>以积分作为分片键为例，它能很好地反映用户在排行榜中的位置。</p>
+</li>
+<li><p>确定范围边界：</p>
+<p>需要考虑数据的分布情况。</p>
+<p><strong>如果积分分布比较均匀</strong>，可以采用等距的范围边界划分。</p>
+<p>比如，整个用户积分范围是 0 - 100000，要划分成 10 个 set，可以将每个 set 的积分范围设为 10000（0 - 9999，10000 - 19999，…，90000 - 99999）。</p>
+<p><strong>如果数据分布不均匀</strong>，可能需要根据实际数据的统计情况来划分。</p>
+<p>例如，大部分用户积分集中在 0 - 5000，那么可以将 0 - 5000 这个区间划分得更细，比如 0 - 1000，1001 - 2000，2001 - 3000，3001 - 4000，4001 - 5000，</p>
+<p>而对于 5001 - 100000 可以划分得粗一些，如 5001 - 20000，20001 - 40000，40001 - 60000，60001 - 80000，80001 - 100000。</p>
+</li>
+</ul>
+<h4 id="设计路由算法"><a href="#设计路由算法" class="headerlink" title="设计路由算法"></a>设计路由算法</h4><ul>
+<li><p>简单映射算法：</p>
+<p>当确定了分片键和范围边界后，路由算法可以是一个简单的映射函数。</p>
+<p>例如，以积分范围分片为例，假设有一个函数<code>getSetIDByScore(score)</code>，如果积分范围是 0 - 999 对应 set1，1000 - 1999 对应 set2 等，那么函数可以这样实现：</p>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">public class SetIDRouter &#123;  </span><br><span class="line">  </span><br><span class="line">    public static int getSetIDByScore(int score) &#123;  </span><br><span class="line">        if (score &gt;= 0 &amp;&amp; score &lt;= 999) &#123;  </span><br><span class="line">            return 1;  </span><br><span class="line">        &#125; else if (score &gt;= 1000 &amp;&amp; score &lt;= 1999) &#123;  </span><br><span class="line">            return 2;  </span><br><span class="line">        &#125;  </span><br><span class="line">        // 这里可以根据实际需求继续添加更多的条件判断来确定返回的Set ID  </span><br><span class="line">        return -1; // 如果没有匹配的条件，可以返回一个默认值，这里返回 -1 作为示例  </span><br><span class="line">    &#125;  </span><br><span class="line">  </span><br><span class="line">    public static void main(String\[\] args) &#123;  </span><br><span class="line">        int score = 1500;  </span><br><span class="line">        int setID = getSetIDByScore(score);  </span><br><span class="line">        System.out.println(&quot;对于积分 &quot; + score + &quot;，对应的Set ID为：&quot; + setID);  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;  </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>在上述 Java 代码中：</p>
+<ul>
+<li><p>定义了一个名为 <code>getSetIDByScore</code> 的静态方法，它接受一个整数类型的 <code>score</code>参数，根据 <code>score</code> 的值所在的范围返回对应的 <code>Set ID</code>。</p>
+</li>
+<li><p>在 <code>main</code> 方法中，示例了如何调用 <code>getSetIDByScore</code> 方法并输出结果，你可以根据实际情况修改 <code>main</code> 方法中的 <code>score</code> 值或者在其他地方调用 <code>getSetIDByScore</code>方法来满足具体的业务需求。同时，如果实际情况中有更多的积分范围判断，需要在 <code>getSetIDByScore</code> 方法中继续添加相应的 <code>if-else</code> 条件语句。</p>
+</li>
+</ul>
+<p><strong>靠虑边界情况：</strong></p>
+<p>要注意边界值的处理。</p>
+<p>比如，当积分正好是边界值（如 1000）时，需要明确它应该被路由到哪个 set。</p>
+<p>可以采用左闭右开区间（[a, b)）的方式，即积分 1000 应该被路由到 set2。</p>
+<p><strong>动态调整范围：</strong></p>
+<p>随着用户数据的变化，积分范围可能会发生改变。</p>
+<p>例如，随着用户活跃度的提高，整体积分范围可能会上升。</p>
+<p>此时，需要有一种机制来动态调整范围分片的边界。</p>
+<p>可以定期重新统计用户积分的分布情况，根据新的分布来调整范围边界和路由算法。这就设计</p>
+<h3 id="动态范围调整的-数据迁移策略："><a href="#动态范围调整的-数据迁移策略：" class="headerlink" title="动态范围调整的 数据迁移策略："></a>动态范围调整的 数据迁移策略：</h3><p>当调整范围分片边界时，可能需要进行数据迁移。</p>
+<p>如果积分范围从 0 - 9999 和 10000 - 19999 两个区间调整为 0 - 14999 和 15000 - 19999，那么原本在 10000 - 14999 区间的数据需要从原来的 set 迁移到新的 set。</p>
+<p>可以采用异步迁移的方式，分成3步：</p>
+<ul>
+<li><p>先在新的 set 中插入数据，</p>
+</li>
+<li><p>动态的切换 路由算法，把老的路由算法，切换为新的路由算法。 可以使用 nacos&#x2F;zk的发布订阅机制，进行算法的切换</p>
+</li>
+<li><p>然后逐步删除旧 set 中的数据。</p>
+</li>
+</ul>
+<h3 id="动态范围调整的数据一致性保证："><a href="#动态范围调整的数据一致性保证：" class="headerlink" title="动态范围调整的数据一致性保证："></a>动态范围调整的数据一致性保证：</h3><p>在数据迁移过程中，可以有的key 已经迁移到新的 分片，但是 前端写入用的是老的 路由算法， 会导致数据的丢失。</p>
+<p>所以说，这个是弱一致性。</p>
+<p>但是在排行榜这样的场景，这个是允许的。</p>
+<h2 id="排行榜-Redis-Cluster-集群持久化方式"><a href="#排行榜-Redis-Cluster-集群持久化方式" class="headerlink" title="排行榜 Redis Cluster 集群持久化方式"></a>排行榜 Redis Cluster 集群持久化方式</h2><p>如何进行 排行榜的 持久化?</p>
+<p>首先来看 Redis Cluster 集群持久化方式。</p>
+<ul>
+<li><p>RDB 持久化（Redis Database）</p>
+</li>
+<li><p>AOF 持久化（Append - Only File）</p>
+</li>
+</ul>
+<p>RDB是通过快照的形式保存内存中的数据到硬盘上的二进制文件中，而AOF是将Redis的操作日志以追加的方式保存到硬盘上的AOF文件中。</p>
+<p>可以根据实际需求选择适合的持久化策略，以保证数据的可靠性和性能的平衡</p>
+<h3 id="方式1：RDB-持久化（Redis-Database）"><a href="#方式1：RDB-持久化（Redis-Database）" class="headerlink" title="方式1：RDB 持久化（Redis Database）"></a>方式1：RDB 持久化（Redis Database）</h3><ul>
+<li><p><strong>工作原理</strong>：RDB 持久化是通过对 Redis 中的数据进行周期性的快照来实现的。它会在满足一定条件时，将内存中的数据集快照写入磁盘。这些条件包括：用户通过配置文件指定的时间间隔（例如，<code>save 900 1</code>表示 900 秒内如果有 1 个键被修改就进行快照），或者执行<code>SAVE</code>或<code>BGSAVE</code>命令。<code>SAVE</code>命令会阻塞 Redis 服务器进程，直到 RDB 文件创建完毕；而<code>BGSAVE</code>命令会在后台异步进行快照操作，不会阻塞服务器的正常读写操作。</p>
+</li>
+<li><p><strong>RDB 文件格式</strong>：RDB 文件是一个二进制文件，它以非常紧凑的格式存储了 Redis 数据。文件头包含了一些关于文件格式的版本信息和其他元数据。然后，数据部分按照键值对的形式存储，不同的数据类型有不同的存储格式。例如，字符串类型会存储其长度和内容，列表类型会存储列表长度和每个元素等。</p>
+</li>
+<li><p><strong>优势</strong>：RDB 文件非常紧凑，适合用于备份和灾难恢复场景。它能够快速地将数据恢复到某个时间点的状态，并且在进行数据传输时，因为文件小，传输速度也比较快。例如，将 RDB 文件传输到另一个数据中心进行恢复。</p>
+</li>
+<li><p><strong>劣势</strong>：由于它是周期性地进行快照，如果 Redis 在两次快照之间发生故障，那么这期间的数据修改将会丢失。</p>
+</li>
+</ul>
+<h4 id="方式2：AOF-持久化（Append-Only-File）"><a href="#方式2：AOF-持久化（Append-Only-File）" class="headerlink" title="方式2：AOF 持久化（Append - Only File）"></a>方式2：AOF 持久化（Append - Only File）</h4><ul>
+<li><p><strong>工作原理</strong>：AOF 持久化是通过记录服务器所执行的写命令来实现的。当 Redis 执行一个写命令（如<code>SET</code>、<code>LPUSH</code>等）时，这个命令会被追加到 AOF 文件的末尾。AOF 文件的内容是纯文本格式，可以通过文本编辑器查看。例如，执行<code>SET key value</code>命令后，AOF 文件中会追加一行<code>*3\r\n$3\r\nSET\r\n$3\r\nkey\r\n$5\r\nvalue</code>，其中<code>*3</code>表示命令有 3 个参数，<code>$3</code>表示参数长度为 3 字节，以此类推。</p>
+</li>
+<li><p><strong>文件重写机制</strong>：随着时间的推移，AOF 文件会变得越来越大，因为它会不断地追加写命令。为了解决这个问题，Redis 引入了 AOF 文件重写机制。当 AOF 文件大小超过一定阈值时，Redis 会在后台启动一个子进程对 AOF 文件进行重写。重写的过程不是简单地复制原文件，而是根据当前内存中的数据状态，重新生成一个最小化的 AOF 文件。例如，如果对一个键进行了多次修改，重写后的 AOF 文件只会记录这个键的最终状态。</p>
+</li>
+<li><p><strong>优势</strong>：AOF 持久化提供了更好的数据安全性，因为它可以记录每一个写操作，只要 AOF 文件不丢失，数据就可以最大限度地被恢复。它还可以通过配置<code>appendfsync</code>选项来控制数据同步到磁盘的频率，例如设置为<code>always</code>可以保证每次写操作都立即同步到磁盘，数据安全性最高。</p>
+</li>
+<li><p><strong>劣势</strong>：AOF 文件通常比 RDB 文件大，因为它记录了所有的写命令。而且，AOF 文件的恢复速度相对较慢，因为需要重新执行 AOF 文件中的所有写命令来恢复数据。</p>
+</li>
+</ul>
+<h3 id="Redis-Cluster-集群恢复过程"><a href="#Redis-Cluster-集群恢复过程" class="headerlink" title="Redis Cluster 集群恢复过程"></a>Redis Cluster 集群恢复过程</h3><ul>
+<li><p>RDB 恢复</p>
+</li>
+<li><p><strong>单个节点恢复</strong>：当一个 Redis 节点需要从 RDB 文件恢复数据时，它会在启动时检查是否存在 RDB 文件（默认文件名是<code>dump.rdb</code>，存储在配置文件指定的目录下）。如果存在，它会将 RDB 文件中的数据加载到内存中。这个过程是将二进制数据解析成 Redis 内部的数据结构，例如，将存储的字符串还原成<code>SDS</code>（Simple Dynamic String）结构，将列表数据还原成<code>quicklist</code>结构等。</p>
+</li>
+<li><p><strong>集群恢复场景</strong>：在 Redis Cluster 集群中，如果某个节点故障后重新启动，它会独立地从自己的 RDB 文件恢复数据。但是，在恢复后，它还需要与集群中的其他节点进行通信，重新同步一些集群相关的信息，比如槽位（slot）的分配情况。因为在节点故障期间，集群的状态可能已经发生了变化，例如其他节点可能已经接管了故障节点负责的槽位。</p>
+</li>
+<li><p>AOF 恢复</p>
+</li>
+<li><p><strong>单个节点恢复</strong>：在启动时，如果 Redis 发现 AOF 文件（默认文件名是<code>appendonly.aof</code>）存在，并且配置为优先使用 AOF 恢复（可以通过配置<code>appendonly yes</code>开启 AOF 持久化并设置恢复优先级），它会读取 AOF 文件并重新执行其中的写命令来恢复数据。这个过程是顺序读取 AOF 文件中的每一行，解析命令并执行。例如，读取到上面提到的<code>*3\r\n$3\r\nSET\r\n$3\r\nkey\r\n$5\r\nvalue</code>命令，Redis 会执行<code>SET key value</code>操作。</p>
+</li>
+<li><p><strong>集群恢复场景</strong>：在 Redis Cluster 集群中，AOF 恢复的过程和单个节点类似。不过，恢复后同样需要与集群中的其他节点进行信息同步。而且，由于 AOF 文件记录的是写操作，如果在集群中某个写操作涉及到多个节点（例如跨槽位的事务操作），需要确保这些操作在恢复后不会破坏集群的一致性。在实际操作中，Redis Cluster 会根据集群状态和 AOF 记录的操作，合理地调整数据状态，保证集群的正常运行。</p>
+</li>
+</ul>
+<h3 id="结合亿级用户排行榜选择合适的持久化策略"><a href="#结合亿级用户排行榜选择合适的持久化策略" class="headerlink" title="结合亿级用户排行榜选择合适的持久化策略"></a>结合亿级用户排行榜选择合适的持久化策略</h3><ul>
+<li><p>对于排行榜数据更新频率较低的情况：</p>
+<p>如果亿级用户排行榜的数据更新不是很频繁，例如，排行榜只是每天或者每周更新一次，RDB 持久化可能是一个比较好的选择。</p>
+<p>可以将<code>save</code>配置参数设置为适当的值，以平衡数据安全性和性能。</p>
+<p>同时，可以定期手动执行<code>SAVE</code>或<code>BGSAVE</code>命令来创建数据集快照。</p>
+<p><code>SAVE</code>命令会阻塞 Redis 服务器，直到快照保存完成；</p>
+<p><code>BGSAVE</code>命令则是在后台执行快照保存，不会阻塞服务器，但可能会占用一定的系统资源。</p>
+</li>
+<li><p>对于排行榜数据更新频繁的情况：</p>
+<p>如果排行榜数据更新频繁，如实时更新用户积分和排名，AOF 持久化可能更合适。</p>
+<p>在 Redis 配置文件中，可以设置 AOF 的相关参数。</p>
+<p>首先，开启 AOF 持久化，将<code>appendonly</code>选项设置为<code>yes</code>。</p>
+<p>然后，可以通过设置<code>appendfsync</code>参数来控制 AOF 文件的同步频率。</p>
+<p><code>appendfsync always</code>会在每个写命令执行后立即将命令同步到 AOF 文件，这种方式数据安全性最高，但性能损耗也最大；</p>
+<p><code>appendfsync everysec</code>表示每秒同步一次 AOF 文件，这是一种在性能和数据安全性之间比较好的平衡；<code>appendfsync no</code>表示由操作系统决定何时将 AOF 文件同步到磁盘，这种方式性能最好，但数据丢失的风险也相对较高。</p>
+</li>
+</ul>
+<h3 id="为什么-Reids-的-ZRANK-那么快"><a href="#为什么-Reids-的-ZRANK-那么快" class="headerlink" title="为什么 Reids 的 ZRANK 那么快?"></a>为什么 Reids 的 ZRANK 那么快?</h3><p>最后理解了上面的zset之后，面试官一般会问，为什么 Reids 的 ZRANK 那么快？</p>
+<p>zset 底层用跳表来实现实时排行榜功能。</p>
+<p>Java 中，ConcurrentSkipListMap、ConcurrentSkipListSet 就是基于跳表的。</p>
+<p>那么 跳表为啥块呢 ， Redis Zset 作者是这么解释的：</p>
+<p><img src="/./2025/03/06/%E4%BA%BF%E7%BA%A7redis%E6%8E%92%E8%A1%8C%E6%A6%9C%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1/img_7.png"></p>
+<p>Redis 源码中还有非常多的精妙绝伦的设计，后面我们一起来揭开它的更多面纱吧！</p>
+<p>关于跳表的结构， 请参见 45岁老架构尼恩的深度文章，手写一个跳表。</p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=MzkxNzIyMTM1NQ==&mid=2247501801&idx=1&sn=36ec0db469080065aac9ff6f15900f08&scene=21#wechat_redirect">手写一个跳表，跪了。。。</a></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="http://flowtime.asia">周五打工人</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="http://flowtime.asia/2025/03/06/%E4%BA%BF%E7%BA%A7redis%E6%8E%92%E8%A1%8C%E6%A6%9C%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1/">http://flowtime.asia/2025/03/06/%E4%BA%BF%E7%BA%A7redis%E6%8E%92%E8%A1%8C%E6%A6%9C%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://flowtime.asia" target="_blank">繁华流年间</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E5%9C%BA%E6%99%AF%E8%AE%BE%E8%AE%A1/">场景设计</a></div><div class="post_share"><div class="social-share" data-image="/img/hubian.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2025/03/05/1000%E4%B8%87%E7%BA%A7%E5%A4%A7%E8%A1%A8-%E5%A6%82%E4%BD%95-%E5%8A%A0%E7%B4%A2%E5%BC%95/" title="1000万级大表, 如何加索引"><img class="cover" src="/img/haibian.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">1000万级大表, 如何加索引</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2025/03/05/%E4%BA%BF%E7%BA%A7%E7%94%A8%E6%88%B7%E6%97%A5%E6%B4%BB%E6%9C%88%E6%B4%BB%EF%BC%8C%E5%A6%82%E4%BD%95%E7%BB%9F%E8%AE%A1/" title="亿级用户日活月活，如何统计"><img class="cover" src="/img/liushui.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-03-05</div><div class="title">亿级用户日活月活，如何统计</div></div></a></div><div><a href="/2025/03/05/%E4%BA%BF%E7%BA%A7%E9%BB%91%E5%90%8D%E5%8D%95%E4%BA%BF%E7%BA%A7%E6%9F%A5%E9%87%8D%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1/" title="亿级黑名单亿级查重如何设计"><img class="cover" src="/img/liushui.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-03-05</div><div class="title">亿级黑名单亿级查重如何设计</div></div></a></div><div><a href="/2024/05/26/%E5%9C%BA%E6%99%AF%E8%AE%BE%E8%AE%A1%E9%9D%A2%E8%AF%95%E9%A2%98/" title="场景设计面试题"><img class="cover" src="/img/liushui.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-05-26</div><div class="title">场景设计面试题</div></div></a></div><div><a href="/2024/06/16/%E7%94%B5%E5%95%86%E4%B8%ADes%E5%92%8Cmysql%E6%95%B0%E6%8D%AE%E5%90%8C%E6%AD%A5%E6%96%B9%E6%A1%88/" title="电商中es和mysql数据同步方案"><img class="cover" src="/img/haibian.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-06-16</div><div class="title">电商中es和mysql数据同步方案</div></div></a></div></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="twikoo-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/nav.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">周五打工人</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">46</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">37</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">无论你是追求知识的急先锋，还是对生活感悟充满好奇，亦或是渴望找到属于自己情感共鸣的灵魂，本博客都将竭诚欢迎你的加入。共同书写属于自己的精彩篇章。</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A6%96%E5%85%88%E5%9B%9E%E9%A1%BE%E4%B8%80%E4%B8%8B%EF%BC%9Aredis-%E5%9B%9B%E5%A4%A7%E7%BB%9F%E8%AE%A1%EF%BC%88%E5%9F%BA%E6%95%B0%E7%BB%9F%E8%AE%A1%EF%BC%8C%E4%BA%8C%E5%80%BC%E7%BB%9F%E8%AE%A1%EF%BC%8C%E6%8E%92%E5%BA%8F%E7%BB%9F%E8%AE%A1%E3%80%81%E8%81%9A%E5%90%88%E7%BB%9F%E8%AE%A1%EF%BC%89%E7%9A%84%E5%8E%9F%E7%90%86-%E5%92%8C%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-number">1.</span> <span class="toc-text">首先回顾一下：redis 四大统计（基数统计，二值统计，排序统计、聚合统计）的原理 和应用场景</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC1%E5%A4%A7%E7%BB%9F%E8%AE%A1%EF%BC%9A%E5%9F%BA%E6%95%B0%E7%BB%9F%E8%AE%A1"><span class="toc-number">1.1.</span> <span class="toc-text">第1大统计：基数统计</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC2%E5%A4%A7%E7%BB%9F%E8%AE%A1%EF%BC%9A%E4%BA%8C%E5%80%BC%E7%BB%9F%E8%AE%A1"><span class="toc-number">1.2.</span> <span class="toc-text">第2大统计：二值统计</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC3%E5%A4%A7%E7%BB%9F%E8%AE%A1%EF%BC%9A%E6%8E%92%E5%BA%8F%E7%BB%9F%E8%AE%A1"><span class="toc-number">1.3.</span> <span class="toc-text">第3大统计：排序统计</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC4%E5%A4%A7%E7%BB%9F%E8%AE%A1%EF%BC%9A%E8%81%9A%E5%90%88%E7%BB%9F%E8%AE%A1"><span class="toc-number">1.4.</span> <span class="toc-text">第4大统计：聚合统计</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%A5%E9%97%A8%E7%AF%87%EF%BC%9ARedis-%E7%9A%84%E6%9C%89%E5%BA%8F%E9%9B%86%E5%90%88%EF%BC%88Sorted-Set%EF%BC%89"><span class="toc-number">2.</span> <span class="toc-text">入门篇：Redis 的有序集合（Sorted Set）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-ZADD"><span class="toc-number">2.1.</span> <span class="toc-text">1. ZADD</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-ZSCORE"><span class="toc-number">2.2.</span> <span class="toc-text">2. ZSCORE</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-ZINCRBY"><span class="toc-number">2.3.</span> <span class="toc-text">3. ZINCRBY</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-ZRANK-ZREVRANK"><span class="toc-number">2.4.</span> <span class="toc-text">4. ZRANK &#x2F; ZREVRANK</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-ZRANGE-ZREVRANGE"><span class="toc-number">2.5.</span> <span class="toc-text">5. ZRANGE &#x2F; ZREVRANGE</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-ZCOUNT"><span class="toc-number">2.6.</span> <span class="toc-text">6. ZCOUNT</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-ZREM"><span class="toc-number">2.7.</span> <span class="toc-text">7. ZREM</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-ZCARD"><span class="toc-number">2.8.</span> <span class="toc-text">8. ZCARD</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#9-ZREMRANGEBYSCORE"><span class="toc-number">2.9.</span> <span class="toc-text">9. ZREMRANGEBYSCORE</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A4%BE%E4%BA%A4%E7%82%B9%E8%B5%9E-%E7%9A%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0"><span class="toc-number">3.</span> <span class="toc-text">社交点赞 的设计与实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A4%BE%E4%BA%A4%E7%82%B9%E8%B5%9E-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E8%AE%BE%E8%AE%A1"><span class="toc-number">3.1.</span> <span class="toc-text">社交点赞 数据结构设计</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A4%BE%E4%BA%A4%E7%82%B9%E8%B5%9E%E7%9A%84%E6%A0%B8%E5%BF%83%E6%93%8D%E4%BD%9C"><span class="toc-number">3.2.</span> <span class="toc-text">社交点赞的核心操作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A4%BE%E4%BA%A4%E7%82%B9%E8%B5%9E%E6%B6%89%E5%8F%8A%E7%9A%84Redis-%E5%91%BD%E4%BB%A4"><span class="toc-number">3.3.</span> <span class="toc-text">社交点赞涉及的Redis 命令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A4%BE%E4%BA%A4%E7%82%B9%E8%B5%9E%E7%9A%84-redis-%E5%91%BD%E4%BB%A4%E5%AE%9E%E7%8E%B0"><span class="toc-number">3.4.</span> <span class="toc-text">社交点赞的 redis 命令实现</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B8%B8%E6%88%8F%E7%8E%A9%E5%AE%B6%E6%8E%92%E8%A1%8C%E6%A6%9C%E6%A1%88%E4%BE%8B"><span class="toc-number">4.</span> <span class="toc-text">游戏玩家排行榜案例</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B8%B8%E6%88%8F%E7%8E%A9%E5%AE%B6%E6%8E%92%E8%A1%8C%E6%A6%9C-%E6%95%B0%E6%8D%AE%E6%A8%A1%E5%9E%8B"><span class="toc-number">4.1.</span> <span class="toc-text">游戏玩家排行榜 数据模型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B8%B8%E6%88%8F%E7%8E%A9%E5%AE%B6%E6%8E%92%E8%A1%8C%E6%A6%9C-Redis-%E6%93%8D%E4%BD%9C%E5%91%BD%E4%BB%A4"><span class="toc-number">4.2.</span> <span class="toc-text">游戏玩家排行榜 Redis 操作命令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B8%B8%E6%88%8F%E7%8E%A9%E5%AE%B6%E6%8E%92%E8%A1%8C%E6%A6%9CJava-%E4%BB%A3%E7%A0%81%E7%A4%BA%E4%BE%8B"><span class="toc-number">4.3.</span> <span class="toc-text">游戏玩家排行榜Java 代码示例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B6%85%E9%AB%98%E5%B9%B6%E5%8F%91%E4%B8%8B-Redis-%E7%83%ADkey-%E5%88%86%E6%B2%BB%E5%8E%9F%E7%90%86"><span class="toc-number">5.</span> <span class="toc-text">超高并发下 Redis 热key 分治原理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFRedis-%E7%83%AD%E7%82%B9key-%E6%8B%86%E5%88%86%EF%BC%9F"><span class="toc-number">5.1.</span> <span class="toc-text">什么是Redis 热点key 拆分？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%BF%E7%BA%A7%E7%94%A8%E6%88%B7%E6%8E%92%E8%A1%8C%E6%A6%9C%EF%BC%8C%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1%E8%8C%83%E5%9B%B4%E5%88%86%E7%89%87%EF%BC%8C-%E8%B7%AF%E7%94%B1%E5%88%B0-%E4%B8%8D%E5%90%8C%E7%9A%84set"><span class="toc-number">5.2.</span> <span class="toc-text">亿级用户排行榜，如何设计范围分片， 路由到 不同的set</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%90%86%E8%A7%A3%E8%8C%83%E5%9B%B4%E5%88%86%E7%89%87%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="toc-number">5.3.</span> <span class="toc-text">理解范围分片的基本概念</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%A1%AE%E5%AE%9A%E5%88%86%E7%89%87%E9%94%AE%E5%92%8C%E8%8C%83%E5%9B%B4%E8%BE%B9%E7%95%8C"><span class="toc-number">5.3.1.</span> <span class="toc-text">确定分片键和范围边界</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AE%BE%E8%AE%A1%E8%B7%AF%E7%94%B1%E7%AE%97%E6%B3%95"><span class="toc-number">5.3.2.</span> <span class="toc-text">设计路由算法</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8A%A8%E6%80%81%E8%8C%83%E5%9B%B4%E8%B0%83%E6%95%B4%E7%9A%84-%E6%95%B0%E6%8D%AE%E8%BF%81%E7%A7%BB%E7%AD%96%E7%95%A5%EF%BC%9A"><span class="toc-number">5.4.</span> <span class="toc-text">动态范围调整的 数据迁移策略：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8A%A8%E6%80%81%E8%8C%83%E5%9B%B4%E8%B0%83%E6%95%B4%E7%9A%84%E6%95%B0%E6%8D%AE%E4%B8%80%E8%87%B4%E6%80%A7%E4%BF%9D%E8%AF%81%EF%BC%9A"><span class="toc-number">5.5.</span> <span class="toc-text">动态范围调整的数据一致性保证：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8E%92%E8%A1%8C%E6%A6%9C-Redis-Cluster-%E9%9B%86%E7%BE%A4%E6%8C%81%E4%B9%85%E5%8C%96%E6%96%B9%E5%BC%8F"><span class="toc-number">6.</span> <span class="toc-text">排行榜 Redis Cluster 集群持久化方式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B9%E5%BC%8F1%EF%BC%9ARDB-%E6%8C%81%E4%B9%85%E5%8C%96%EF%BC%88Redis-Database%EF%BC%89"><span class="toc-number">6.1.</span> <span class="toc-text">方式1：RDB 持久化（Redis Database）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%96%B9%E5%BC%8F2%EF%BC%9AAOF-%E6%8C%81%E4%B9%85%E5%8C%96%EF%BC%88Append-Only-File%EF%BC%89"><span class="toc-number">6.1.1.</span> <span class="toc-text">方式2：AOF 持久化（Append - Only File）</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Redis-Cluster-%E9%9B%86%E7%BE%A4%E6%81%A2%E5%A4%8D%E8%BF%87%E7%A8%8B"><span class="toc-number">6.2.</span> <span class="toc-text">Redis Cluster 集群恢复过程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%93%E5%90%88%E4%BA%BF%E7%BA%A7%E7%94%A8%E6%88%B7%E6%8E%92%E8%A1%8C%E6%A6%9C%E9%80%89%E6%8B%A9%E5%90%88%E9%80%82%E7%9A%84%E6%8C%81%E4%B9%85%E5%8C%96%E7%AD%96%E7%95%A5"><span class="toc-number">6.3.</span> <span class="toc-text">结合亿级用户排行榜选择合适的持久化策略</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88-Reids-%E7%9A%84-ZRANK-%E9%82%A3%E4%B9%88%E5%BF%AB"><span class="toc-number">6.4.</span> <span class="toc-text">为什么 Reids 的 ZRANK 那么快?</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2025/03/06/%E4%BA%BF%E7%BA%A7redis%E6%8E%92%E8%A1%8C%E6%A6%9C%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1/" title="亿级redis排行榜如何设计"><img src="/img/hubian.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="亿级redis排行榜如何设计"/></a><div class="content"><a class="title" href="/2025/03/06/%E4%BA%BF%E7%BA%A7redis%E6%8E%92%E8%A1%8C%E6%A6%9C%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1/" title="亿级redis排行榜如何设计">亿级redis排行榜如何设计</a><time datetime="2025-03-06T13:16:31.000Z" title="发表于 2025-03-06 21:16:31">2025-03-06</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/03/05/1000%E4%B8%87%E7%BA%A7%E5%A4%A7%E8%A1%A8-%E5%A6%82%E4%BD%95-%E5%8A%A0%E7%B4%A2%E5%BC%95/" title="1000万级大表, 如何加索引"><img src="/img/haibian.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="1000万级大表, 如何加索引"/></a><div class="content"><a class="title" href="/2025/03/05/1000%E4%B8%87%E7%BA%A7%E5%A4%A7%E8%A1%A8-%E5%A6%82%E4%BD%95-%E5%8A%A0%E7%B4%A2%E5%BC%95/" title="1000万级大表, 如何加索引">1000万级大表, 如何加索引</a><time datetime="2025-03-05T03:31:17.000Z" title="发表于 2025-03-05 11:31:17">2025-03-05</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/03/05/%E4%BA%BF%E7%BA%A7%E7%94%A8%E6%88%B7%E6%97%A5%E6%B4%BB%E6%9C%88%E6%B4%BB%EF%BC%8C%E5%A6%82%E4%BD%95%E7%BB%9F%E8%AE%A1/" title="亿级用户日活月活，如何统计"><img src="/img/liushui.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="亿级用户日活月活，如何统计"/></a><div class="content"><a class="title" href="/2025/03/05/%E4%BA%BF%E7%BA%A7%E7%94%A8%E6%88%B7%E6%97%A5%E6%B4%BB%E6%9C%88%E6%B4%BB%EF%BC%8C%E5%A6%82%E4%BD%95%E7%BB%9F%E8%AE%A1/" title="亿级用户日活月活，如何统计">亿级用户日活月活，如何统计</a><time datetime="2025-03-05T02:50:21.000Z" title="发表于 2025-03-05 10:50:21">2025-03-05</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/03/05/%E4%BA%BF%E7%BA%A7%E9%BB%91%E5%90%8D%E5%8D%95%E4%BA%BF%E7%BA%A7%E6%9F%A5%E9%87%8D%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1/" title="亿级黑名单亿级查重如何设计"><img src="/img/liushui.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="亿级黑名单亿级查重如何设计"/></a><div class="content"><a class="title" href="/2025/03/05/%E4%BA%BF%E7%BA%A7%E9%BB%91%E5%90%8D%E5%8D%95%E4%BA%BF%E7%BA%A7%E6%9F%A5%E9%87%8D%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1/" title="亿级黑名单亿级查重如何设计">亿级黑名单亿级查重如何设计</a><time datetime="2025-03-05T02:32:59.000Z" title="发表于 2025-03-05 10:32:59">2025-03-05</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/03/03/where-1-1-%E5%8F%AF%E8%83%BD%E4%B8%A5%E9%87%8D%E5%BD%B1%E5%93%8D%E6%80%A7%E8%83%BD%EF%BC%8C%E5%B7%AE%E4%BA%8610%E5%A4%9A%E5%80%8D%EF%BC%8C%E5%BF%AB%E5%8E%BB%E6%8E%92%E6%9F%A5%E4%BD%A0%E7%9A%84-sql/" title="where 1=1 可能严重影响性能，差了10多倍，快去排查你的 sql"><img src="/img/haibian.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="where 1=1 可能严重影响性能，差了10多倍，快去排查你的 sql"/></a><div class="content"><a class="title" href="/2025/03/03/where-1-1-%E5%8F%AF%E8%83%BD%E4%B8%A5%E9%87%8D%E5%BD%B1%E5%93%8D%E6%80%A7%E8%83%BD%EF%BC%8C%E5%B7%AE%E4%BA%8610%E5%A4%9A%E5%80%8D%EF%BC%8C%E5%BF%AB%E5%8E%BB%E6%8E%92%E6%9F%A5%E4%BD%A0%E7%9A%84-sql/" title="where 1=1 可能严重影响性能，差了10多倍，快去排查你的 sql">where 1=1 可能严重影响性能，差了10多倍，快去排查你的 sql</a><time datetime="2025-03-03T13:38:30.000Z" title="发表于 2025-03-03 21:38:30">2025-03-03</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2024 - 2025 By 周五打工人</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=4.13.0"></script><script src="/js/main.js?v=4.13.0"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"><script>(() => {
+  const getCount = () => {
+    const countELement = document.getElementById('twikoo-count')
+    if(!countELement) return
+    twikoo.getCommentsCount({
+      envId: 'https://mywaline-7unwzwfdi-motors-projects-a4d09e71.vercel.app/',
+      region: '',
+      urls: [window.location.pathname],
+      includeReply: false
+    }).then(res => {
+      countELement.textContent = res[0].count
+    }).catch(err => {
+      console.error(err)
+    })
+  }
+
+  const init = () => {
+    twikoo.init(Object.assign({
+      el: '#twikoo-wrap',
+      envId: 'https://mywaline-7unwzwfdi-motors-projects-a4d09e71.vercel.app/',
+      region: '',
+      onCommentLoaded: () => {
+        btf.loadLightbox(document.querySelectorAll('#twikoo .tk-content img:not(.tk-owo-emotion)'))
+      }
+    }, null))
+
+    
+  }
+
+  const loadTwikoo = () => {
+    if (typeof twikoo === 'object') setTimeout(init,0)
+    else getScript('https://cdn.jsdelivr.net/npm/twikoo@1.6.31/dist/twikoo.all.min.js').then(init)
+  }
+
+  if ('Twikoo' === 'Twikoo' || !false) {
+    if (false) btf.loadComment(document.getElementById('twikoo-wrap'), loadTwikoo)
+    else loadTwikoo()
+  } else {
+    window.loadOtherComment = loadTwikoo
+  }
+})()</script></div><canvas class="fireworks" mobile="false"></canvas><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/dist/fireworks.min.js"></script><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/dist/canvas-nest.min.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=4.13.0"></script></div></div></body></html>

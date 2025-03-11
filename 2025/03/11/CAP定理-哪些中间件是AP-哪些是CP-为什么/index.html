@@ -1,0 +1,311 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>CAP定理,哪些中间件是AP,哪些是CP,为什么 | 繁华流年间</title><meta name="author" content="周五打工人"><meta name="copyright" content="周五打工人"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="ffffff"><meta name="description" content="1.背景介绍数据一致性是分布式系统中的一个重要问题，它涉及到多个节点之间的数据同步和一致性。  数据一致性问题在分布式系统中具有重要的意义。而CAP定理是一个关于分布式系统的一致性模型  。  CAP定理 是 分布式系统的 底层定理， 也是 面试的核心重点。  接下来，带大家来 穿透  CAP定理，  哪些中间件是AP，哪些中间件 是CP，让面试官 口水直流。 2.CAP定理2.1 CAP 猜想&amp;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CAP定理,哪些中间件是AP,哪些是CP,为什么">
+<meta property="og:url" content="http://flowtime.asia/2025/03/11/CAP%E5%AE%9A%E7%90%86-%E5%93%AA%E4%BA%9B%E4%B8%AD%E9%97%B4%E4%BB%B6%E6%98%AFAP-%E5%93%AA%E4%BA%9B%E6%98%AFCP-%E4%B8%BA%E4%BB%80%E4%B9%88/index.html">
+<meta property="og:site_name" content="繁华流年间">
+<meta property="og:description" content="1.背景介绍数据一致性是分布式系统中的一个重要问题，它涉及到多个节点之间的数据同步和一致性。  数据一致性问题在分布式系统中具有重要的意义。而CAP定理是一个关于分布式系统的一致性模型  。  CAP定理 是 分布式系统的 底层定理， 也是 面试的核心重点。  接下来，带大家来 穿透  CAP定理，  哪些中间件是AP，哪些中间件 是CP，让面试官 口水直流。 2.CAP定理2.1 CAP 猜想&amp;">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://flowtime.asia/img/liushui.png">
+<meta property="article:published_time" content="2025-03-11T01:05:25.000Z">
+<meta property="article:modified_time" content="2025-03-11T01:39:18.632Z">
+<meta property="article:author" content="周五打工人">
+<meta property="article:tag" content="CAP">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://flowtime.asia/img/liushui.png"><link rel="shortcut icon" href="/img/index.jpg"><link rel="canonical" href="http://flowtime.asia/2025/03/11/CAP%E5%AE%9A%E7%90%86-%E5%93%AA%E4%BA%9B%E4%B8%AD%E9%97%B4%E4%BB%B6%E6%98%AFAP-%E5%93%AA%E4%BA%9B%E6%98%AFCP-%E4%B8%BA%E4%BB%80%E4%B9%88/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=4.13.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script async="async" src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><script>(adsbygoogle = window.adsbygoogle || []).push({
+  google_ad_client: 'ca-pub-3578075519463317',
+  enable_page_level_ads: 'true'
+});</script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.11.1/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'CAP定理,哪些中间件是AP,哪些是CP,为什么',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2025-03-11 09:39:18'
+}</script><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+    
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
+    
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+    
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', 'ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+        if (t === 'dark') activateDarkMode()
+        else if (t === 'light') activateLightMode()
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/transparent.css"><link rel="stylesheet" href="/css/footer.css"><meta name="generator" content="Hexo 7.2.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/nav.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">48</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">39</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/img/liushui.png')"><nav id="nav"><span id="blog-info"><a href="/" title="繁华流年间"></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">CAP定理,哪些中间件是AP,哪些是CP,为什么</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="fa-fw post-meta-icon far fa-calendar-alt"></i><span class="post-meta-label">发表于</span><time datetime="2025-03-11T01:05:25.000Z" title="发表于 2025-03-11 09:05:25">2025-03-11</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E9%9D%A2%E8%AF%95/">面试</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="CAP定理,哪些中间件是AP,哪些是CP,为什么"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="1-背景介绍"><a href="#1-背景介绍" class="headerlink" title="1.背景介绍"></a>1.背景介绍</h2><p>数据一致性是分布式系统中的一个重要问题，它涉及到多个节点之间的数据同步和一致性。  数据一致性问题在分布式系统中具有重要的意义。<br>而CAP定理是一个关于分布式系统的一致性模型  。  CAP定理 是 分布式系统的 底层定理， 也是 面试的核心重点。  接下来，带大家来 穿透  CAP定理，  哪些中间件是AP，哪些中间件 是CP，让面试官 口水直流。</p>
+<h2 id="2-CAP定理"><a href="#2-CAP定理" class="headerlink" title="2.CAP定理"></a>2.CAP定理</h2><h3 id="2-1-CAP-猜想-CAP证明-CAP定理"><a href="#2-1-CAP-猜想-CAP证明-CAP定理" class="headerlink" title="2.1 CAP 猜想&#x2F;CAP证明&#x2F;CAP定理"></a>2.1 CAP 猜想&#x2F;CAP证明&#x2F;CAP定理</h3><p><strong>CAP 猜想</strong> CAP 定理（CAP theorem）又被称作 布鲁尔定理 ，是加州大学伯克利分校的计算机科学家埃里克·布鲁尔（EricBrewer）在 2000 年的 ACM PODC 上提出的一个猜想。<br><strong>CAP 证明</strong> 2002 年，麻省理工学院的赛斯·吉尔伯特（SethGilbert）和南希·林奇（Nancy Lynch）发表了布鲁尔猜想的证明，使之成为分布式计算领域公认的一个定理。<br><strong>CAP 定理</strong> CAP该定理指出一个 分布式系统 最多只能同时满足 <strong>一致性（Consistency）</strong> 、<strong>可用性（Availability）和分区容错性（Partition tolerance）</strong> 这三项中的两项。</p>
+<p><img src="/./2025/03/11/CAP%E5%AE%9A%E7%90%86-%E5%93%AA%E4%BA%9B%E4%B8%AD%E9%97%B4%E4%BB%B6%E6%98%AFAP-%E5%93%AA%E4%BA%9B%E6%98%AFCP-%E4%B8%BA%E4%BB%80%E4%B9%88/img.png"></p>
+<p>CAP定理的三个要素可以用来描述分布式系统的一致性和可用性。  CAP  三个要素包括：</p>
+<ul>
+<li>一致性(Consistency) C</li>
+<li>可用性(Availability) A</li>
+<li>分区容错性(Partition Tolerance) P</li>
+</ul>
+<h3 id="2-2-CAP定理-的三要素以及-三要素之间的-关系-："><a href="#2-2-CAP定理-的三要素以及-三要素之间的-关系-：" class="headerlink" title="2.2 CAP定理 的三要素以及 三要素之间的 关系 ："></a>2.2 CAP定理 的三要素以及 三要素之间的 关系 ：</h3><p><strong>CAP定理 的内容：一个分布式系统无法同时满足这三个条件，只能满足两个，意味着我们要抛弃其中的一项。</strong> </p>
+<ul>
+<li><p>cap 三个要素：</p>
+</li>
+<li><p>C：一致性是指所有节点 的数据是否一致，或者说，一份数据的多个分布式副本 是否一致</p>
+</li>
+<li><p>A：可用性是 指系统在任何时刻都能提供服务</p>
+</li>
+<li><p>P ：分区容错性是指系统在网络分区（&#x2F; 局部断网）的情况下， 仍然 能提供服务。</p>
+</li>
+</ul>
+<h4 id="2-2-1-一致性-Consistency"><a href="#2-2-1-一致性-Consistency" class="headerlink" title="2.2.1 一致性(Consistency)"></a>2.2.1 一致性(Consistency)</h4><p>一致性是指所有节点 的数据是否一致，或者说，一份数据的多个分布式副本 是否一致。  注意， CAP里边的可用性 C， 强调是 <strong>任何时刻</strong> 一致，<br>指的是强一致性。  一般来说，在分布式系统中 的一致性可以分为两种类型：强一致性和弱一致性。</p>
+<ul>
+<li>强一致性要求在任何时刻，所有节点都能看到相同的数据。</li>
+<li>而弱一致性允许在某些情况下，部分节点可能看到不同的副本。</li>
+</ul>
+<p>CAP里边的 C 指的是 强一致性。</p>
+<h4 id="2-2-2-可用性-Availability"><a href="#2-2-2-可用性-Availability" class="headerlink" title="2.2.2 可用性(Availability)"></a>2.2.2 可用性(Availability)</h4><p>可用性是指系统在 <strong>任何时刻</strong> 都能提供服务。  注意， CAP里边的可用性 A， 强调是 <strong>任何时刻</strong> 可用， 指的是 <strong>高可用，或者说<br>99.99%可用</strong> 。  一般来说， 在分布式系统中，可用性是一个重要的指标，它可以用来衡量系统的稳定性和可靠性。<br>可用性通常被定义为系统在一段时间内无法提供服务的概率，通常使用99.9%(即99.9%的时间内系统可用)来衡量。<br>CAP里边的 A指的是 高可用性， 比如 企业级软件的 4个9。  一般来说， 可用性 有个衡量 的标准——X个9，这个X是代表数字3~5, 具体如下表：  ** 可用度A</p>
+<table>
+<thead>
+<tr>
+<th>‍  ‍  ‍</th>
+<th>9的个数 ‍  ‍</th>
+<th>年内不可用时间（分钟） ‍  ‍  ‍</th>
+<th><strong>适用产品</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0.999</td>
+<td>三个9</td>
+<td>526分钟</td>
+<td>个人电脑</td>
+</tr>
+<tr>
+<td>0.9999</td>
+<td>四个9</td>
+<td>52.6分钟</td>
+<td>企业级软件</td>
+</tr>
+<tr>
+<td>0.99999</td>
+<td>五个9</td>
+<td>5.26分钟</td>
+<td>互联网产品</td>
+</tr>
+<tr>
+<td>0.999999</td>
+<td>六个9</td>
+<td>0.5分钟 （31s)</td>
+<td>电信级基础设施</td>
+</tr>
+<tr>
+<td>X个9表示在系统1年时间的使用过程中，系统可以正常使用时间与总时间（1年）之比，我们通过下面的计算来感受下X个9在不同级别的可靠性(Reliability)差异。</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<ul>
+<li>1个9：(1-90%)*365&#x3D;36.5天</li>
+<li>2个9：(1-99%)*365&#x3D;3.65天</li>
+<li>3个9：(1-99.9%) <em>365</em> 24&#x3D;8.76小时，表示该系统在连续运行1年时间里最多可能的业务中断时间是8.76小时。</li>
+<li>4个9：(1-99.99%) <em>365</em> 24&#x3D;0.876小时&#x3D;52.6分钟，表示该系统在连续运行1年时间里最多可能的业务中断时间是52.6分钟。</li>
+<li>5个9：(1-99.999%) <em>365</em> 24*60&#x3D;5.26分钟，表示该系统在连续运行1年时间里最多可能的业务中断时间是5.26分钟。</li>
+<li>6个9：(1-99.9999%) <em>365</em> 24 <em>60</em> 60&#x3D;31秒</li>
+</ul>
+<p>可以看到1个9和、2个9分别表示一年时间内业务可能中断的时间是36.5天、3.65天，这种级别的可靠性(Reliability)或许还不配使用“可靠性(Reliability)”这个词；<br>而6个9则表示一年内业务中断时间最多是31秒，那么这个级别的可靠性(Reliability)并非实现不了，而是要做到从“5个9”<br>到“6个9”的可靠性(Reliability)提升的话，后者需要付出比前者几倍的成本。</p>
+<h4 id="2-2-3-分区容错性-Partition-Tolerance"><a href="#2-2-3-分区容错性-Partition-Tolerance" class="headerlink" title="2.2.3 分区容错性(Partition Tolerance)"></a>2.2.3 分区容错性(Partition Tolerance)</h4><p>分区容错性是指系统在网络分区（&#x2F; 局部断网）的情况下， 仍然 能提供服务。<br>在分布式系统中，网络分区是一个常见的问题，它可能导致系统的故障和数据丢失。因此，分区容错性是一个重要的一致性要素，它可以帮助我们确保系统在网络分区的情况下仍然能够正常工作。<br>CAP里边的 P 指的一定是 分布式系统， 单节点系统，不能算CAP里边 的P。</p>
+<h3 id="2-2-4-CAP-三要素-之间的-冲突的关系"><a href="#2-2-4-CAP-三要素-之间的-冲突的关系" class="headerlink" title="2.2.4 CAP 三要素 之间的 冲突的关系"></a>2.2.4 CAP 三要素 之间的 冲突的关系</h3><p><strong>CAP定理 的内容：一个分布式系统无法同时满足这三个条件，只能满足两个，意味着我们要抛弃其中的一项。</strong><br><strong>CAP定理的关键：是 三个要素之间的关系。</strong> CAP定理告诉我们，在分布式系统中，一致性 C、可用性 A 和分区容错性 P 是相互冲突的。<br>1、CA，放弃P：强调 单节点， 单副本，或者只有一个正本，没有副本。简单说，CA 将所有数据都放在一个分布式节点上，这同时放弃了系统的可扩展性， 不属于<br>分布式系统范围了。  2、CP，放弃A：强调副本之间的 强一致性， 意味着<br>低性能。一旦系统遇到故障时，受影响的服务器需要等待一段时间，在恢复期间无法对外提供正常的服务。  3、AP，放弃C：强调副本之间的 高性能， 意味着<br>弱一致性。这里的放弃一致性是指放弃数据强一致性，而保留数据的最终一致性。系统无法实时保持数据的一致，但承诺在一个限定的时间窗口内，数据最终能够达到一致的状态。<br>即使我们尝试去优化这三个要素，但是最多只能实现两个要素。CA 、CP、AP 只能 三选一：<br><img src="/./2025/03/11/CAP%E5%AE%9A%E7%90%86-%E5%93%AA%E4%BA%9B%E4%B8%AD%E9%97%B4%E4%BB%B6%E6%98%AFAP-%E5%93%AA%E4%BA%9B%E6%98%AFCP-%E4%B8%BA%E4%BB%80%E4%B9%88/img_1.png"><br>**</p>
+<h2 id="3-CAP定理的实践意义：强一致性-和-高并发的-选择"><a href="#3-CAP定理的实践意义：强一致性-和-高并发的-选择" class="headerlink" title="3 CAP定理的实践意义：强一致性 和 高并发的 选择"></a>3 CAP定理的实践意义：强一致性 和 高并发的 选择</h2><p>CAP定理的实践意义在于它帮助我们在设计分布式系统时，明确一致性、可用性和分区容错性之间的关系，从而能够更好地权衡这三个要素，以确保系统的正常运行。</p>
+<h3 id="3-1-CP（-强一致性）-VS-（高可用性）-AP"><a href="#3-1-CP（-强一致性）-VS-（高可用性）-AP" class="headerlink" title="3.1 CP（ 强一致性） VS （高可用性） AP"></a>3.1 CP（ 强一致性） VS （高可用性） AP</h3><p>CAP理论告诉我们，一致性、可用性和分区容错性是相互冲突的。  作为 分布式系统， 分区容错性 P 是必不可少的， 所以只能在 AP 、CP之间，二选一：</p>
+<p><img src="/./2025/03/11/CAP%E5%AE%9A%E7%90%86-%E5%93%AA%E4%BA%9B%E4%B8%AD%E9%97%B4%E4%BB%B6%E6%98%AFAP-%E5%93%AA%E4%BA%9B%E6%98%AFCP-%E4%B8%BA%E4%BB%80%E4%B9%88/img_2.png"></p>
+<p>因此，CAP定理给我们提供了一个有限的选择空间，我们需要根据具体的需求来选择适当的一致性模型。</p>
+<ul>
+<li>要么 CP 强一致性</li>
+<li>要么 AP 高可用性</li>
+<li>二者 不可兼得， 天然冲突。</li>
+</ul>
+<p>总之，  <strong>CAP 这是数学证明了的。</strong> <strong>CAP 是铁律。</strong> 所以，我们需要在设计分布式系统时，权衡一致性和可用性之间的关系，CP 强一致性 和<br>AP 高可用性 2选一，以确保系统的正常运行。</p>
+<h2 id="4-常用中间件的-CAP-定理"><a href="#4-常用中间件的-CAP-定理" class="headerlink" title="4. 常用中间件的 CAP 定理"></a>4. 常用中间件的 CAP 定理</h2><h2 id="4-1-redis-Cluster-是-ap-型"><a href="#4-1-redis-Cluster-是-ap-型" class="headerlink" title="4.1 redis Cluster 是 ap 型"></a>4.1 redis Cluster 是 ap 型</h2><h3 id="首先-分析一下-redis-Cluster-的-分区容错性（P）-‍"><a href="#首先-分析一下-redis-Cluster-的-分区容错性（P）-‍" class="headerlink" title="首先 分析一下 redis Cluster 的 分区容错性（P）  ‍"></a>首先 分析一下 redis Cluster 的 分区容错性（P）  ‍</h3><p>Redis Cluster 采用去中心化的架构，节点之间通过 Gossip 协议来进行信息交换。Gossip 协议就像在集群中 “传播小道消息”，每个节点<br>周期性地向其他节点发送状态信息， 也会接收其他节点传来的信息。这种方式使得集群能够快速感知到网络分区的情况。<br>当网络分区发生时，例如部分节点之间无法通信，Redis Cluster 依然能够正常工作。<br>它会根据集群配置和节点状态，让每个分区内的节点尽可能地独立运行。  例如，在数据分片（Redis Cluster 将数据分成 16384<br>个槽位，分布在不同节点上）的情况下，每个分区内的节点可以继续处理自己负责槽位的读写请求，保证系统不会因为网络分区而完全瘫痪，体现了良好的分区容错能力。</p>
+<h3 id="再-来分析一下-redis-Cluster-的-可用性（A）"><a href="#再-来分析一下-redis-Cluster-的-可用性（A）" class="headerlink" title="再 来分析一下 redis Cluster 的 可用性（A）"></a>再 来分析一下 redis Cluster 的 可用性（A）</h3><p>在正常情况下，客户端可以向任意主节点发送读写请求。即使在节点故障转移过程中，大部分读写请求依然能够得到处理。  Redis Cluster<br>具备高效的故障转移机制。每个主节点都有对应的从节点，当主节点出现故障时，从节点会通过选举机制快速晋升为主节点。<br>例如，假设一个主节点因为硬件故障或者网络问题无法正常工作，从节点能够在很短的时间（通常在毫秒级）内检测到这种情况，并开始竞选成为新的主节点。<br>一旦竞选成功，新的主节点就可以接收客户端的读写请求，保证服务的可用性。</p>
+<h3 id="最后-分析一下-redis-Cluster-的-一致性（C）"><a href="#最后-分析一下-redis-Cluster-的-一致性（C）" class="headerlink" title="最后 分析一下 redis Cluster 的 一致性（C）"></a>最后 分析一下 redis Cluster 的 一致性（C）</h3><p>Redis Cluster 没有选择强一致性，而是采用了最终一致性。  这是因为在保证高可用性和分区容错性的同时，强一致性会带来性能上的巨大损耗。<br>例如，在主从复制过程中，如果要求每次写操作都必须等待从节点同步完成才能返回成功，会大大增加写操作的延迟。  Redis Cluster<br>通过异步复制的方式来维护数据的一致性。  主节点接收写请求后，会异步地将数据复制给从节点。  在正常情况下，这种异步复制能够快速地将数据传播到从节点。<br>当出现故障转移时，新晋升的主节点可能会丢失一部分还没来得及复制的数据，但系统会在后续通过数据恢复机制（如从其他节点获取丢失的数据副本）来使数据最终达到一致。<br>这种对一致性的权衡使得 Redis Cluster 更符合 AP 系统的特点。  总之 ：redis Cluster 是 ap 型。</p>
+<h2 id="4-2-zookeeper-是-cp-型"><a href="#4-2-zookeeper-是-cp-型" class="headerlink" title="4.2 zookeeper 是 cp 型"></a>4.2 zookeeper 是 cp 型</h2><h3 id="首先-分析一下-zookeeper-的-分区容错性（P）"><a href="#首先-分析一下-zookeeper-的-分区容错性（P）" class="headerlink" title="首先 分析一下 zookeeper 的 分区容错性（P）"></a>首先 分析一下 zookeeper 的 分区容错性（P）</h3><p>当网络分区发生时，例如部分节点之间无法通信，Zookeeper 集群会尝试重新建立连接。  如果分区情况，会通过 过半机制，形成多数派+<br>少数派，然后放弃少数派。  例如，一个集群有 5 个节点，因为分区变成了两个子集群，一个子集群有 2 个节点（多数派），另一个有 3<br>个节点（多数派），那么：</p>
+<ul>
+<li>（多数派）3 个节点的子集群可以继续工作 ，</li>
+<li>少数派2 个节点 会暂停服务，以避免数据不一致。</li>
+</ul>
+<p>这样做虽然会牺牲部分节点的可用性，但保证了整个集群的一致性和分区容错性。</p>
+<h3 id="再-来分析一下-zookeeper-的-可用性（A）"><a href="#再-来分析一下-zookeeper-的-可用性（A）" class="headerlink" title="再 来分析一下 zookeeper 的 可用性（A）"></a>再 来分析一下 zookeeper 的 可用性（A）</h3><p>Zookeeper 为了确保一致性，在一定程度上牺牲了可用性。  在网络分区或者节点故障导致无法形成多数派的情况下，少数派节点会被隔离，不能提供服务。<br>例如，如果一个集群有 3 个节点，当一个节点故障，剩下两个节点还可以继续工作；  但如果出现网络分区，将 3 个节点分成两个单独的部分（如 1 个节点一组和<br>2 个节点一组），那么只有 2 个节点的那一组可以工作，1 个节点的那一组会停止服务，直到网络分区恢复或者节点重新加入多数派。  这种设计使得<br>Zookeeper 更侧重于一致性和分区容错性，符合 CP 系统的特点。</p>
+<h3 id="最后-分析一下-zookeeper-的-一致性（C）"><a href="#最后-分析一下-zookeeper-的-一致性（C）" class="headerlink" title="最后 分析一下 zookeeper 的 一致性（C）"></a>最后 分析一下 zookeeper 的 一致性（C）</h3><p>Zookeeper 使用 ZAB（Zookeeper Atomic Broadcast）协议来保证一致性。  在 ZAB<br>协议中，当一个事务（如节点数据的更新）被提议时，它会通过一个类似于 <strong>两阶段提交</strong> 的过程在集群中传播。<br>首先是广播阶段，主节点（leader）会将事务提议发送给所有的从节点（follower）。<br>然后是提交阶段，当多数从节点都成功接收并持久化这个提议后，主节点才会提交这个事务，并且通知所有从节点也提交，这样就确保了所有节点要么都执行这个事务，要么都不执行，从而保证了数据的一致性。<br>两阶段的 事务， 意味着网络上 有很多次 IO 通讯，这是是低性能的。  总之 ：zookeeper 是 cp 型。</p>
+<h2 id="4-3-MongoDB-属于-CP"><a href="#4-3-MongoDB-属于-CP" class="headerlink" title="4.3 MongoDB 属于 CP"></a>4.3 MongoDB 属于 CP</h2><p>MongoDB 是一个流行的 NoSQL 数据库管理系统，它将数据存储为 BSON（binary JSON）文档。  MongoDB<br>是一个单一的主系统，每个副本集只能有一个主节点来接收所有的写操作。<br>同一副本集中的所有其他节点都是辅助节点，它们复制主节点的操作日志并将其应用于自己的数据集。<br>默认情况下，客户机也从主节点读取数据，但他们也可以指定一个允许他们从辅助节点读取数据的读取首选项。<br>当主节点不可用时，具有最新操作日志的次节点将被选为新的主节点。<br>一旦所有其他次要节点都赶上新的主节点，集群将再次可用。由于在此期间客户端无法发出任何写请求，因此数据在整个网络中保持一致。  相对于 CAP 定理，<br><strong>MongoDB是一个 CP 数据存储</strong> ，它通过保持一致性来解决网络分区问题，同时降低可用性。</p>
+<h2 id="4-4-Cassandra-属于-AP"><a href="#4-4-Cassandra-属于-AP" class="headerlink" title="4.4 Cassandra 属于 AP"></a>4.4 Cassandra 属于 AP</h2><p>Apache Cassandra 是由 Apache 软件基金会维护的 开源 NoSQL 数据库。  Cassandra<br>是一个列式数据库，允许您在分布式网络上存储数据。  Cassandra 与 MongoDB 不同 ，Cassandra 拥有一个无主的架构。  因为<br>Cassandra 没有主节点，所以所有节点必须连续可用。  然而，Cassandra<br>允许客户机在任何时候向任何节点写入数据并尽快协调不一致，从而提供了最终的一致性。  按照 CAP 定理去分析， Cassandra 是一个 AP 数据库<br>，它提供高并发，但不能强一致性。</p>
+<h2 id="4-5-Eureka-属于-AP"><a href="#4-5-Eureka-属于-AP" class="headerlink" title="4.5 Eureka 属于 AP"></a>4.5 Eureka 属于 AP</h2><h3 id="首先看看-Eureka-可用性（A）"><a href="#首先看看-Eureka-可用性（A）" class="headerlink" title="首先看看 Eureka 可用性（A）"></a>首先看看 Eureka 可用性（A）</h3><p>Eureka 采用去中心化的架构，各个 Eureka Server 之间相互对等，没有主从之分。  这意味着即使有部分 Eureka Server<br>出现故障，其他的 Eureka Server 依然可以继续工作。  例如，在一个包含多个 Eureka Server 的数据中心中，如果一台 Eureka<br>Server 因为硬件故障或者网络问题无法工作，剩余的 Eureka Server<br>能够接手其工作，继续为服务提供者和消费者提供注册和发现服务，不会因为某个节点的故障而导致整个系统无法运行。<br>另外，在分布式环境中，网络可能会出现波动或者短暂的故障, Eureka 有一个重要的自我保护机制。  当 Eureka Server<br>在短时间内丢失大量的心跳连接（例如，由于网络抖动，很多客户端与服务端之间的心跳连接中断），它 <strong>不会立即清除这些看起来已经 “死掉” 的服务实例</strong><br>。而是进入自我保护状态，在这个状态下，Eureka Server 仍然会对外提供服务，包括已有的注册信息。  这就保证了在网络不稳定的情况下，Eureka Client 服务消费者仍然能够获取到可能还在正常运行的服务实例信息，尽可能地维持服务的可用性。</p>
+<h3 id="再-看看-Eureka-分区容错性（P）"><a href="#再-看看-Eureka-分区容错性（P）" class="headerlink" title="再 看看 Eureka 分区容错性（P）"></a>再 看看 Eureka 分区容错性（P）</h3><p>在面对网络分区的情况时，Eureka 更侧重于保证可用性。  例如，当网络分区导致部分 Eureka Server 和服务实例之间无法通信时，Eureka会允许每个分区继续工作。  每个分区内的服务实例可以在自己所属的分区内进行注册和发现服务。<br>这样就避免了因为网络分区而导致整个系统无法使用，体现了良好的分区容错性。<br>不过，这种情况下可能会出现数据不一致的情况，例如不同分区对于服务实例的状态（如是否可用）可能有不同的认知，但这是为了优先保证系统的可用性和分区容错性所做出的权衡。</p>
+<h3 id="最后，看看-Eureka-的一致性（C）的权衡"><a href="#最后，看看-Eureka-的一致性（C）的权衡" class="headerlink" title="最后，看看 Eureka 的一致性（C）的权衡"></a>最后，看看 Eureka 的一致性（C）的权衡</h3><p>Eureka 没有采用强一致性模型。  在服务注册和发现的过程中，Eureka 更关注服务的可用性。Eureka 允许在一定时间内不同 Eureka<br>Server 之间的数据存在差异。  例如，当一个服务实例刚刚注册到一个 Eureka Server 时，其他 Eureka Server<br>不会立即获取到这个信息，  例如，当一个服务实例状态发生改变（如从可用变为不可用），这个信息在所有 Eureka Server 中同步可能会有延迟。<br>牺牲数据的一致性，就是因为CAP定理来的，是为了提高系统的整体性能和可用性，使得 Eureka 更符合 AP 系统的特点。</p>
+<h2 id="4-6-Nacos-属于-AP-又-AP"><a href="#4-6-Nacos-属于-AP-又-AP" class="headerlink" title="4.6 Nacos 属于 AP 又 AP"></a>4.6 Nacos 属于 AP 又 AP</h2><p>Nacos 属于 AP 又 AP ？看上去 ，这个 违背了CAP 定理。  还有天理吗？其实，还有。  还有王法吗？其实，还有。</p>
+<h3 id="先看看-nacos-的-永久节点、-临时节点。"><a href="#先看看-nacos-的-永久节点、-临时节点。" class="headerlink" title="先看看 nacos 的 永久节点、 临时节点。"></a>先看看 nacos 的 永久节点、 临时节点。</h3><p><strong>client 永久节点</strong> 当  <code>client </code> 节点注册在 Nacos 时， 设置  <code>ephemeral = false </code><br>时，注册的节点为永久节点。  与临时节点不同，永久节点的信息会一直保存在 Nacos<br>的服务注册表中，除非通过明确的删除操作，否则不会因为服务实例的健康状态变化而自动移除。  这意味着即使服务实例出现故障（如网络中断、进程崩溃等），其在<br>Nacos 中的注册信息依然存在。  <strong>client 临时节点</strong> 在 Nacos 中，当  <code>client </code> 节点注册时设置  <code>ephemeral = true </code> ，表示该节点是一个临时节点。  临时节点主要用于服务发现场景下的临时服务实例注册。  临时节点 与永久节点（  <code>ephemeral = false </code> ）相对，临时节点的生命周期与服务实例的健康状态直接相关。<br>如果服务实例出现故障（如网络中断、进程崩溃等），Nacos 会自动将该临时节点从服务列表中删除。  默认的微服务实例， 是 <strong>client 临时节点</strong></p>
+<h3 id="Nacos-支持-CP-AP-模式，-其实和-CAP-不冲突。"><a href="#Nacos-支持-CP-AP-模式，-其实和-CAP-不冲突。" class="headerlink" title="Nacos 支持 CP+AP 模式， 其实和 CAP 不冲突。"></a>Nacos 支持 CP+AP 模式， 其实和 CAP 不冲突。</h3><p>Nacos 支持 CP+AP 模式，这意味着 Nacos 可以根据配置识别为 CP 模式或 AP 模式，默认情况下为 AP 模式。</p>
+<ul>
+<li>临时节点 AP：如果注册Nacos的client节点注册时ephemeral&#x3D;true，那么Nacos集群对这个client节点的 状态维护使用 AP模式，采用distro协议实现；</li>
+<li>永久节点 CP：而注册Nacos的client节点注册时ephemeral&#x3D;false，那么Nacos集群对这个节点的状态维护使用 CP模式，采用raft协议实现。</li>
+</ul>
+<p>根据client注册时的属性，AP，CP只能二选一 ，只是对不同的client节点效果不同.  总之， 同一个 节点， 要么CP、要么AP，只能二选一 。<br>因此，Nacos 能够很好地满足不同场景的业务需求。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="http://flowtime.asia">周五打工人</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="http://flowtime.asia/2025/03/11/CAP%E5%AE%9A%E7%90%86-%E5%93%AA%E4%BA%9B%E4%B8%AD%E9%97%B4%E4%BB%B6%E6%98%AFAP-%E5%93%AA%E4%BA%9B%E6%98%AFCP-%E4%B8%BA%E4%BB%80%E4%B9%88/">http://flowtime.asia/2025/03/11/CAP%E5%AE%9A%E7%90%86-%E5%93%AA%E4%BA%9B%E4%B8%AD%E9%97%B4%E4%BB%B6%E6%98%AFAP-%E5%93%AA%E4%BA%9B%E6%98%AFCP-%E4%B8%BA%E4%BB%80%E4%B9%88/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://flowtime.asia" target="_blank">繁华流年间</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/CAP/">CAP</a></div><div class="post_share"><div class="social-share" data-image="/img/liushui.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2025/03/08/elk%E5%9C%A3%E7%BB%8F%EF%BC%9AElasticsearch%E3%80%81Logstash%E3%80%81Kibana%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E7%B2%BE%E9%80%9A/" title="elk圣经：Elasticsearch、Logstash、Kibana从入门到精通"><img class="cover" src="/img/liushui.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">elk圣经：Elasticsearch、Logstash、Kibana从入门到精通</div></div></a></div></nav><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="twikoo-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/nav.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">周五打工人</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">48</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">39</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">无论你是追求知识的急先锋，还是对生活感悟充满好奇，亦或是渴望找到属于自己情感共鸣的灵魂，本博客都将竭诚欢迎你的加入。共同书写属于自己的精彩篇章。</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E8%83%8C%E6%99%AF%E4%BB%8B%E7%BB%8D"><span class="toc-number">1.</span> <span class="toc-text">1.背景介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-CAP%E5%AE%9A%E7%90%86"><span class="toc-number">2.</span> <span class="toc-text">2.CAP定理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-CAP-%E7%8C%9C%E6%83%B3-CAP%E8%AF%81%E6%98%8E-CAP%E5%AE%9A%E7%90%86"><span class="toc-number">2.1.</span> <span class="toc-text">2.1 CAP 猜想&#x2F;CAP证明&#x2F;CAP定理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-CAP%E5%AE%9A%E7%90%86-%E7%9A%84%E4%B8%89%E8%A6%81%E7%B4%A0%E4%BB%A5%E5%8F%8A-%E4%B8%89%E8%A6%81%E7%B4%A0%E4%B9%8B%E9%97%B4%E7%9A%84-%E5%85%B3%E7%B3%BB-%EF%BC%9A"><span class="toc-number">2.2.</span> <span class="toc-text">2.2 CAP定理 的三要素以及 三要素之间的 关系 ：</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-2-1-%E4%B8%80%E8%87%B4%E6%80%A7-Consistency"><span class="toc-number">2.2.1.</span> <span class="toc-text">2.2.1 一致性(Consistency)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-2-2-%E5%8F%AF%E7%94%A8%E6%80%A7-Availability"><span class="toc-number">2.2.2.</span> <span class="toc-text">2.2.2 可用性(Availability)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-2-3-%E5%88%86%E5%8C%BA%E5%AE%B9%E9%94%99%E6%80%A7-Partition-Tolerance"><span class="toc-number">2.2.3.</span> <span class="toc-text">2.2.3 分区容错性(Partition Tolerance)</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-4-CAP-%E4%B8%89%E8%A6%81%E7%B4%A0-%E4%B9%8B%E9%97%B4%E7%9A%84-%E5%86%B2%E7%AA%81%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="toc-number">2.3.</span> <span class="toc-text">2.2.4 CAP 三要素 之间的 冲突的关系</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-CAP%E5%AE%9A%E7%90%86%E7%9A%84%E5%AE%9E%E8%B7%B5%E6%84%8F%E4%B9%89%EF%BC%9A%E5%BC%BA%E4%B8%80%E8%87%B4%E6%80%A7-%E5%92%8C-%E9%AB%98%E5%B9%B6%E5%8F%91%E7%9A%84-%E9%80%89%E6%8B%A9"><span class="toc-number">3.</span> <span class="toc-text">3 CAP定理的实践意义：强一致性 和 高并发的 选择</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-CP%EF%BC%88-%E5%BC%BA%E4%B8%80%E8%87%B4%E6%80%A7%EF%BC%89-VS-%EF%BC%88%E9%AB%98%E5%8F%AF%E7%94%A8%E6%80%A7%EF%BC%89-AP"><span class="toc-number">3.1.</span> <span class="toc-text">3.1 CP（ 强一致性） VS （高可用性） AP</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E5%B8%B8%E7%94%A8%E4%B8%AD%E9%97%B4%E4%BB%B6%E7%9A%84-CAP-%E5%AE%9A%E7%90%86"><span class="toc-number">4.</span> <span class="toc-text">4. 常用中间件的 CAP 定理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-1-redis-Cluster-%E6%98%AF-ap-%E5%9E%8B"><span class="toc-number">5.</span> <span class="toc-text">4.1 redis Cluster 是 ap 型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%A6%96%E5%85%88-%E5%88%86%E6%9E%90%E4%B8%80%E4%B8%8B-redis-Cluster-%E7%9A%84-%E5%88%86%E5%8C%BA%E5%AE%B9%E9%94%99%E6%80%A7%EF%BC%88P%EF%BC%89-%E2%80%8D"><span class="toc-number">5.1.</span> <span class="toc-text">首先 分析一下 redis Cluster 的 分区容错性（P）  ‍</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%86%8D-%E6%9D%A5%E5%88%86%E6%9E%90%E4%B8%80%E4%B8%8B-redis-Cluster-%E7%9A%84-%E5%8F%AF%E7%94%A8%E6%80%A7%EF%BC%88A%EF%BC%89"><span class="toc-number">5.2.</span> <span class="toc-text">再 来分析一下 redis Cluster 的 可用性（A）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%80%E5%90%8E-%E5%88%86%E6%9E%90%E4%B8%80%E4%B8%8B-redis-Cluster-%E7%9A%84-%E4%B8%80%E8%87%B4%E6%80%A7%EF%BC%88C%EF%BC%89"><span class="toc-number">5.3.</span> <span class="toc-text">最后 分析一下 redis Cluster 的 一致性（C）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-2-zookeeper-%E6%98%AF-cp-%E5%9E%8B"><span class="toc-number">6.</span> <span class="toc-text">4.2 zookeeper 是 cp 型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%A6%96%E5%85%88-%E5%88%86%E6%9E%90%E4%B8%80%E4%B8%8B-zookeeper-%E7%9A%84-%E5%88%86%E5%8C%BA%E5%AE%B9%E9%94%99%E6%80%A7%EF%BC%88P%EF%BC%89"><span class="toc-number">6.1.</span> <span class="toc-text">首先 分析一下 zookeeper 的 分区容错性（P）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%86%8D-%E6%9D%A5%E5%88%86%E6%9E%90%E4%B8%80%E4%B8%8B-zookeeper-%E7%9A%84-%E5%8F%AF%E7%94%A8%E6%80%A7%EF%BC%88A%EF%BC%89"><span class="toc-number">6.2.</span> <span class="toc-text">再 来分析一下 zookeeper 的 可用性（A）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%80%E5%90%8E-%E5%88%86%E6%9E%90%E4%B8%80%E4%B8%8B-zookeeper-%E7%9A%84-%E4%B8%80%E8%87%B4%E6%80%A7%EF%BC%88C%EF%BC%89"><span class="toc-number">6.3.</span> <span class="toc-text">最后 分析一下 zookeeper 的 一致性（C）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-3-MongoDB-%E5%B1%9E%E4%BA%8E-CP"><span class="toc-number">7.</span> <span class="toc-text">4.3 MongoDB 属于 CP</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-4-Cassandra-%E5%B1%9E%E4%BA%8E-AP"><span class="toc-number">8.</span> <span class="toc-text">4.4 Cassandra 属于 AP</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-5-Eureka-%E5%B1%9E%E4%BA%8E-AP"><span class="toc-number">9.</span> <span class="toc-text">4.5 Eureka 属于 AP</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%A6%96%E5%85%88%E7%9C%8B%E7%9C%8B-Eureka-%E5%8F%AF%E7%94%A8%E6%80%A7%EF%BC%88A%EF%BC%89"><span class="toc-number">9.1.</span> <span class="toc-text">首先看看 Eureka 可用性（A）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%86%8D-%E7%9C%8B%E7%9C%8B-Eureka-%E5%88%86%E5%8C%BA%E5%AE%B9%E9%94%99%E6%80%A7%EF%BC%88P%EF%BC%89"><span class="toc-number">9.2.</span> <span class="toc-text">再 看看 Eureka 分区容错性（P）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%80%E5%90%8E%EF%BC%8C%E7%9C%8B%E7%9C%8B-Eureka-%E7%9A%84%E4%B8%80%E8%87%B4%E6%80%A7%EF%BC%88C%EF%BC%89%E7%9A%84%E6%9D%83%E8%A1%A1"><span class="toc-number">9.3.</span> <span class="toc-text">最后，看看 Eureka 的一致性（C）的权衡</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-6-Nacos-%E5%B1%9E%E4%BA%8E-AP-%E5%8F%88-AP"><span class="toc-number">10.</span> <span class="toc-text">4.6 Nacos 属于 AP 又 AP</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%88%E7%9C%8B%E7%9C%8B-nacos-%E7%9A%84-%E6%B0%B8%E4%B9%85%E8%8A%82%E7%82%B9%E3%80%81-%E4%B8%B4%E6%97%B6%E8%8A%82%E7%82%B9%E3%80%82"><span class="toc-number">10.1.</span> <span class="toc-text">先看看 nacos 的 永久节点、 临时节点。</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Nacos-%E6%94%AF%E6%8C%81-CP-AP-%E6%A8%A1%E5%BC%8F%EF%BC%8C-%E5%85%B6%E5%AE%9E%E5%92%8C-CAP-%E4%B8%8D%E5%86%B2%E7%AA%81%E3%80%82"><span class="toc-number">10.2.</span> <span class="toc-text">Nacos 支持 CP+AP 模式， 其实和 CAP 不冲突。</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2025/03/11/CAP%E5%AE%9A%E7%90%86-%E5%93%AA%E4%BA%9B%E4%B8%AD%E9%97%B4%E4%BB%B6%E6%98%AFAP-%E5%93%AA%E4%BA%9B%E6%98%AFCP-%E4%B8%BA%E4%BB%80%E4%B9%88/" title="CAP定理,哪些中间件是AP,哪些是CP,为什么"><img src="/img/liushui.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="CAP定理,哪些中间件是AP,哪些是CP,为什么"/></a><div class="content"><a class="title" href="/2025/03/11/CAP%E5%AE%9A%E7%90%86-%E5%93%AA%E4%BA%9B%E4%B8%AD%E9%97%B4%E4%BB%B6%E6%98%AFAP-%E5%93%AA%E4%BA%9B%E6%98%AFCP-%E4%B8%BA%E4%BB%80%E4%B9%88/" title="CAP定理,哪些中间件是AP,哪些是CP,为什么">CAP定理,哪些中间件是AP,哪些是CP,为什么</a><time datetime="2025-03-11T01:05:25.000Z" title="发表于 2025-03-11 09:05:25">2025-03-11</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/03/08/elk%E5%9C%A3%E7%BB%8F%EF%BC%9AElasticsearch%E3%80%81Logstash%E3%80%81Kibana%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E7%B2%BE%E9%80%9A/" title="elk圣经：Elasticsearch、Logstash、Kibana从入门到精通"><img src="/img/liushui.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="elk圣经：Elasticsearch、Logstash、Kibana从入门到精通"/></a><div class="content"><a class="title" href="/2025/03/08/elk%E5%9C%A3%E7%BB%8F%EF%BC%9AElasticsearch%E3%80%81Logstash%E3%80%81Kibana%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E7%B2%BE%E9%80%9A/" title="elk圣经：Elasticsearch、Logstash、Kibana从入门到精通">elk圣经：Elasticsearch、Logstash、Kibana从入门到精通</a><time datetime="2025-03-08T07:49:00.000Z" title="发表于 2025-03-08 15:49:00">2025-03-08</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/03/06/%E4%BA%BF%E7%BA%A7redis%E6%8E%92%E8%A1%8C%E6%A6%9C%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1/" title="亿级redis排行榜如何设计"><img src="/img/liushui.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="亿级redis排行榜如何设计"/></a><div class="content"><a class="title" href="/2025/03/06/%E4%BA%BF%E7%BA%A7redis%E6%8E%92%E8%A1%8C%E6%A6%9C%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1/" title="亿级redis排行榜如何设计">亿级redis排行榜如何设计</a><time datetime="2025-03-06T13:16:31.000Z" title="发表于 2025-03-06 21:16:31">2025-03-06</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/03/05/1000%E4%B8%87%E7%BA%A7%E5%A4%A7%E8%A1%A8-%E5%A6%82%E4%BD%95-%E5%8A%A0%E7%B4%A2%E5%BC%95/" title="1000万级大表, 如何加索引"><img src="/img/liushui.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="1000万级大表, 如何加索引"/></a><div class="content"><a class="title" href="/2025/03/05/1000%E4%B8%87%E7%BA%A7%E5%A4%A7%E8%A1%A8-%E5%A6%82%E4%BD%95-%E5%8A%A0%E7%B4%A2%E5%BC%95/" title="1000万级大表, 如何加索引">1000万级大表, 如何加索引</a><time datetime="2025-03-05T03:31:17.000Z" title="发表于 2025-03-05 11:31:17">2025-03-05</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/03/05/%E4%BA%BF%E7%BA%A7%E7%94%A8%E6%88%B7%E6%97%A5%E6%B4%BB%E6%9C%88%E6%B4%BB%EF%BC%8C%E5%A6%82%E4%BD%95%E7%BB%9F%E8%AE%A1/" title="亿级用户日活月活，如何统计"><img src="/img/liushui.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="亿级用户日活月活，如何统计"/></a><div class="content"><a class="title" href="/2025/03/05/%E4%BA%BF%E7%BA%A7%E7%94%A8%E6%88%B7%E6%97%A5%E6%B4%BB%E6%9C%88%E6%B4%BB%EF%BC%8C%E5%A6%82%E4%BD%95%E7%BB%9F%E8%AE%A1/" title="亿级用户日活月活，如何统计">亿级用户日活月活，如何统计</a><time datetime="2025-03-05T02:50:21.000Z" title="发表于 2025-03-05 10:50:21">2025-03-05</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2024 - 2025 By 周五打工人</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=4.13.0"></script><script src="/js/main.js?v=4.13.0"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"><script>(() => {
+  const getCount = () => {
+    const countELement = document.getElementById('twikoo-count')
+    if(!countELement) return
+    twikoo.getCommentsCount({
+      envId: 'https://mywaline-7unwzwfdi-motors-projects-a4d09e71.vercel.app/',
+      region: '',
+      urls: [window.location.pathname],
+      includeReply: false
+    }).then(res => {
+      countELement.textContent = res[0].count
+    }).catch(err => {
+      console.error(err)
+    })
+  }
+
+  const init = () => {
+    twikoo.init(Object.assign({
+      el: '#twikoo-wrap',
+      envId: 'https://mywaline-7unwzwfdi-motors-projects-a4d09e71.vercel.app/',
+      region: '',
+      onCommentLoaded: () => {
+        btf.loadLightbox(document.querySelectorAll('#twikoo .tk-content img:not(.tk-owo-emotion)'))
+      }
+    }, null))
+
+    
+  }
+
+  const loadTwikoo = () => {
+    if (typeof twikoo === 'object') setTimeout(init,0)
+    else getScript('https://cdn.jsdelivr.net/npm/twikoo@1.6.31/dist/twikoo.all.min.js').then(init)
+  }
+
+  if ('Twikoo' === 'Twikoo' || !false) {
+    if (false) btf.loadComment(document.getElementById('twikoo-wrap'), loadTwikoo)
+    else loadTwikoo()
+  } else {
+    window.loadOtherComment = loadTwikoo
+  }
+})()</script></div><canvas class="fireworks" mobile="false"></canvas><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/dist/fireworks.min.js"></script><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/dist/canvas-nest.min.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=4.13.0"></script></div></div></body></html>

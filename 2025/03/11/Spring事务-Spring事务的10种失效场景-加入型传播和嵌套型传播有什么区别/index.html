@@ -1,0 +1,689 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Spring事务,Spring事务的10种失效场景.加入型传播和嵌套型传播有什么区别 | 繁华流年间</title><meta name="author" content="周五打工人"><meta name="copyright" content="周五打工人"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="ffffff"><meta name="description" content="基础知识：Spring 两种事务管理方式Spring 支持两种事务管理方式：编程式事务和声明式事务。  事务分为 编程式事务 和声明式事务两种。  编程式事务指在代码中手动的管理事务的提交、回滚等操作，代码侵入性比较强。  声明式事务是通过配置来实现的，不需要在代码中显式地管理事务。   编程式事务是指在代码中显式地开启、提交或回滚事务。这种方式需要在代码中编写事务管理的相关逻辑，比较繁琐，但是灵">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spring事务,Spring事务的10种失效场景.加入型传播和嵌套型传播有什么区别">
+<meta property="og:url" content="http://flowtime.asia/2025/03/11/Spring%E4%BA%8B%E5%8A%A1-Spring%E4%BA%8B%E5%8A%A1%E7%9A%8410%E7%A7%8D%E5%A4%B1%E6%95%88%E5%9C%BA%E6%99%AF-%E5%8A%A0%E5%85%A5%E5%9E%8B%E4%BC%A0%E6%92%AD%E5%92%8C%E5%B5%8C%E5%A5%97%E5%9E%8B%E4%BC%A0%E6%92%AD%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB/index.html">
+<meta property="og:site_name" content="繁华流年间">
+<meta property="og:description" content="基础知识：Spring 两种事务管理方式Spring 支持两种事务管理方式：编程式事务和声明式事务。  事务分为 编程式事务 和声明式事务两种。  编程式事务指在代码中手动的管理事务的提交、回滚等操作，代码侵入性比较强。  声明式事务是通过配置来实现的，不需要在代码中显式地管理事务。   编程式事务是指在代码中显式地开启、提交或回滚事务。这种方式需要在代码中编写事务管理的相关逻辑，比较繁琐，但是灵">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://flowtime.asia/img/hubian.png">
+<meta property="article:published_time" content="2025-03-11T02:02:50.000Z">
+<meta property="article:modified_time" content="2025-03-11T03:49:28.749Z">
+<meta property="article:author" content="周五打工人">
+<meta property="article:tag" content="Spring事务">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://flowtime.asia/img/hubian.png"><link rel="shortcut icon" href="/img/index.jpg"><link rel="canonical" href="http://flowtime.asia/2025/03/11/Spring%E4%BA%8B%E5%8A%A1-Spring%E4%BA%8B%E5%8A%A1%E7%9A%8410%E7%A7%8D%E5%A4%B1%E6%95%88%E5%9C%BA%E6%99%AF-%E5%8A%A0%E5%85%A5%E5%9E%8B%E4%BC%A0%E6%92%AD%E5%92%8C%E5%B5%8C%E5%A5%97%E5%9E%8B%E4%BC%A0%E6%92%AD%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=4.13.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script async="async" src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><script>(adsbygoogle = window.adsbygoogle || []).push({
+  google_ad_client: 'ca-pub-3578075519463317',
+  enable_page_level_ads: 'true'
+});</script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.11.1/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Spring事务,Spring事务的10种失效场景.加入型传播和嵌套型传播有什么区别',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2025-03-11 11:49:28'
+}</script><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+    
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
+    
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+    
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', 'ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+        if (t === 'dark') activateDarkMode()
+        else if (t === 'light') activateLightMode()
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/transparent.css"><link rel="stylesheet" href="/css/footer.css"><meta name="generator" content="Hexo 7.2.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/nav.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">49</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">40</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/img/hubian.png')"><nav id="nav"><span id="blog-info"><a href="/" title="繁华流年间"></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Spring事务,Spring事务的10种失效场景.加入型传播和嵌套型传播有什么区别</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="fa-fw post-meta-icon far fa-calendar-alt"></i><span class="post-meta-label">发表于</span><time datetime="2025-03-11T02:02:50.000Z" title="发表于 2025-03-11 10:02:50">2025-03-11</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E9%9D%A2%E8%AF%95/">面试</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Spring事务,Spring事务的10种失效场景.加入型传播和嵌套型传播有什么区别"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="基础知识：Spring-两种事务管理方式"><a href="#基础知识：Spring-两种事务管理方式" class="headerlink" title="基础知识：Spring 两种事务管理方式"></a>基础知识：Spring 两种事务管理方式</h2><p>Spring 支持两种事务管理方式：编程式事务和声明式事务。</p>
+<p><img src="/./2025/03/11/Spring%E4%BA%8B%E5%8A%A1-Spring%E4%BA%8B%E5%8A%A1%E7%9A%8410%E7%A7%8D%E5%A4%B1%E6%95%88%E5%9C%BA%E6%99%AF-%E5%8A%A0%E5%85%A5%E5%9E%8B%E4%BC%A0%E6%92%AD%E5%92%8C%E5%B5%8C%E5%A5%97%E5%9E%8B%E4%BC%A0%E6%92%AD%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB/img.png"></p>
+<p>事务分为 编程式事务 和声明式事务两种。</p>
+<ul>
+<li><p>编程式事务指在代码中手动的管理事务的提交、回滚等操作，代码侵入性比较强。</p>
+</li>
+<li><p>声明式事务是通过配置来实现的，不需要在代码中显式地管理事务。</p>
+</li>
+</ul>
+<p>编程式事务是指在代码中显式地开启、提交或回滚事务。这种方式需要在代码中编写事务管理的相关逻辑，比较繁琐，但是灵活性较高，可以根据具体的业务需要进行定制。</p>
+<p>声明式事务是通过配置来实现的，不需要在代码中显式地管理事务。这种方式需要在配置文件中声明事务的属性，比如事务的传播行为、隔离级别等。声明式事务的好处是可以将事务管理的逻辑与业务逻辑分离，使得代码更加简洁、清晰，同时也方便了事务管理的统一配置和维护。</p>
+<p>在 Spring 中，声明式事务 是基于 AOP 面向切面的，它将具体业务与事务处理部分解耦，代码侵入性很低，声明式事务也有两种实现方式。</p>
+<p>Spring 提供了两种声明式事务的方式：</p>
+<ul>
+<li><p>基于 XML 配置</p>
+</li>
+<li><p>基于注解配置。</p>
+</li>
+</ul>
+<p>基于 XML 配置的方式需要在 Spring 配置文件中声明事务管理器和事务通知等相关信息，</p>
+<p>而基于注解配置的方式则可以在代码中通过注解来声明事务的属性，比如 @Transactional。一种是基于 TX 和 AOP 的 xml 配置文件方式，二种就是基于 @Transactional 注解了，实际开发中 @Transactional 用的比较多。</p>
+<h3 id="声明式事务1：基于-XML-配置文件进行配置"><a href="#声明式事务1：基于-XML-配置文件进行配置" class="headerlink" title="声明式事务1：基于 XML 配置文件进行配置"></a>声明式事务1：基于 XML 配置文件进行配置</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">&lt;beans xmlns\=&quot;http://www.springframework.org/schema/beans&quot;  </span><br><span class="line">	xmlns:xsi\=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;  </span><br><span class="line">	xmlns:p\=&quot;http://www.springframework.org/schema/p&quot;  </span><br><span class="line">	xmlns:context\=&quot;http://www.springframework.org/schema/context&quot;  </span><br><span class="line">	xmlns:aop\=&quot;http://www.springframework.org/schema/aop&quot;  </span><br><span class="line">	xmlns:tx\=&quot;http://www.springframework.org/schema/tx&quot;  </span><br><span class="line">	xsi:schemaLocation\=&quot;http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd  </span><br><span class="line">		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd  </span><br><span class="line">		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd  </span><br><span class="line">		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.1.xsd&quot;\&gt;  </span><br><span class="line">	&lt;!-- 开启扫描 --&gt;  </span><br><span class="line">	&lt;context:component-scan base-package\=&quot;com.dpb.\*&quot;\&gt;&lt;/context:component-scan\&gt;  </span><br><span class="line">  </span><br><span class="line">	&lt;!-- 配置数据源 --&gt;  </span><br><span class="line">	&lt;bean class\=&quot;org.springframework.jdbc.datasource.DriverManagerDataSource&quot; id\=&quot;dataSource&quot;\&gt;  </span><br><span class="line">		&lt;property name\=&quot;url&quot; value\=&quot;jdbc:oracle:thin:@localhost:1521:orcl&quot;/&gt;  </span><br><span class="line">		&lt;property name\=&quot;driverClassName&quot; value\=&quot;oracle.jdbc.driver.OracleDriver&quot;/&gt;  </span><br><span class="line">		&lt;property name\=&quot;username&quot; value\=&quot;pms&quot;/&gt;  </span><br><span class="line">		&lt;property name\=&quot;password&quot; value\=&quot;pms&quot;/&gt;  </span><br><span class="line">	&lt;/bean\&gt;  </span><br><span class="line">  </span><br><span class="line">	&lt;!-- 配置JdbcTemplate --&gt;  </span><br><span class="line">	&lt;bean class\=&quot;org.springframework.jdbc.core.JdbcTemplate&quot; &gt;  </span><br><span class="line">		&lt;constructor-arg name\=&quot;dataSource&quot; ref\=&quot;dataSource&quot;/&gt;  </span><br><span class="line">	&lt;/bean\&gt;  </span><br><span class="line">  </span><br><span class="line">	&lt;!--   </span><br><span class="line">	Spring中，使用XML配置事务三大步骤：    </span><br><span class="line">		1. 创建事务管理器    </span><br><span class="line">		2. 配置事务方法    </span><br><span class="line">		3. 配置AOP  </span><br><span class="line">	 --&gt;  </span><br><span class="line">	 &lt;bean class\=&quot;org.springframework.jdbc.datasource.DataSourceTransactionManager&quot; id\=&quot;transactionManager&quot;\&gt;  </span><br><span class="line">	 	&lt;property name\=&quot;dataSource&quot; ref\=&quot;dataSource&quot;/&gt;  </span><br><span class="line">	 &lt;/bean\&gt;  </span><br><span class="line">	 &lt;tx:advice id\=&quot;advice&quot; transaction-manager\=&quot;transactionManager&quot;\&gt;  </span><br><span class="line">	 	&lt;tx:attributes\&gt;  </span><br><span class="line">	 		&lt;tx:method name\=&quot;fun\*&quot; propagation\=&quot;REQUIRED&quot;/&gt;  </span><br><span class="line">	 	&lt;/tx:attributes\&gt;  </span><br><span class="line">	 &lt;/tx:advice\&gt;  </span><br><span class="line">	 &lt;!-- aop配置 --&gt;  </span><br><span class="line">	 &lt;aop:config\&gt;  </span><br><span class="line">		 &lt;aop:pointcut expression\=&quot;execution(\* \*..service.\*.\*(..))&quot; id\=&quot;tx&quot;/&gt;  </span><br><span class="line">	 	 &lt;aop:advisor advice-ref\=&quot;advice&quot; pointcut-ref\=&quot;tx&quot;/&gt;  </span><br><span class="line">	 &lt;/aop:config\&gt;  </span><br><span class="line">&lt;/beans\&gt;  </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="声明式事务2：基于注解的声明式配置"><a href="#声明式事务2：基于注解的声明式配置" class="headerlink" title="声明式事务2：基于注解的声明式配置"></a>声明式事务2：基于注解的声明式配置</h3><p>一般来说，更加推荐声明式事务比编程式事务，因为它可以使代码更加简洁、清晰，同时也方便了事务管理的统一配置和维护。</p>
+<p>所以，这里使用 声明式事务 进行演示，并且是使用 基于注解配置的 声明式事务。</p>
+<p>首先必须要添加 @EnableTransactionManagement 注解，保证事务注解生效</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">@EnableTransactionManagement  </span><br><span class="line">public class AnnotationMain &#123;  </span><br><span class="line">    public static void main(String\[\] args) &#123;  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;  </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>其次，在方法上添加 @Transactional 代表注解生效</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">@Transactional  </span><br><span class="line">public int insertUser(User user) &#123;  </span><br><span class="line">    userDao.insertUser();  </span><br><span class="line">    userDao.insertLog();  </span><br><span class="line">    return 1;  </span><br><span class="line">&#125;  </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>下面的案例，用到基于注解的声明式配置，具体的注解是 @Transactional。</p>
+<h2 id="Transactional-注解的使用"><a href="#Transactional-注解的使用" class="headerlink" title="@Transactional 注解的使用"></a>@Transactional 注解的使用</h2><p>@Transactional 可以作用在类上，当作用在类上的时候，表示所有该类的 public 方法都配置相同的事务属性信息。</p>
+<p>@Transactional 也可以作用在方法上，当方法上也配置了 @Transactional，方法的事务会覆盖类的事务配置信息。</p>
+<p>我们日常操作里，对于单个方法使用事物，经常是这样：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">@Transactional(rollbackFor = Exception.class)  </span><br><span class="line">  public Boolean add(UserInfo userInfo) &#123;  </span><br><span class="line">        </span><br><span class="line">      //... 业务处理  </span><br><span class="line">      //... 业务处理  </span><br><span class="line">      //... 业务处理  </span><br><span class="line"> </span><br><span class="line">     //手动抛异常 触发回滚等  </span><br><span class="line">      retrun xxx;  </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>或者说配合手动回滚使用，是这样：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">@Transactional(rollbackFor = Exception.class)  </span><br><span class="line">    public Boolean add(UserInfo userInfo) &#123;  </span><br><span class="line">          </span><br><span class="line">       try &#123;  </span><br><span class="line">            </span><br><span class="line">          //....业务逻辑处理  </span><br><span class="line">            </span><br><span class="line">          if(XXXX)&#123;  </span><br><span class="line">                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();  </span><br><span class="line">                return false;  </span><br><span class="line">          &#125;  </span><br><span class="line">          //....业务逻辑处理  </span><br><span class="line">            </span><br><span class="line">          if(xxxxx)&#123;  </span><br><span class="line">                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();  </span><br><span class="line">                 return false;  </span><br><span class="line">          &#125;  </span><br><span class="line">            </span><br><span class="line">   </span><br><span class="line">        &#125; catch (Exception e) &#123;  </span><br><span class="line">            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();  </span><br><span class="line">            return false;  </span><br><span class="line">        &#125;  </span><br><span class="line">    &#125;  </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>以上都是单个事物方法，理解起来很简单，相信大多数场景大家就这么用一下就没有过多去理会了。</p>
+<blockquote>
+<p>首先，我们通过看 @Transactional 的源码来和大家重新认识一下 @Transactional 的用法。</p>
+</blockquote>
+<h2 id="Transactional-注解-涉及到的-5大属性"><a href="#Transactional-注解-涉及到的-5大属性" class="headerlink" title="@Transactional 注解 涉及到的 5大属性"></a>@Transactional 注解 涉及到的 5大属性</h2><p>总体来说，事务属性包含了5个方面，如图所示：</p>
+<p><img src="/./2025/03/11/Spring%E4%BA%8B%E5%8A%A1-Spring%E4%BA%8B%E5%8A%A1%E7%9A%8410%E7%A7%8D%E5%A4%B1%E6%95%88%E5%9C%BA%E6%99%AF-%E5%8A%A0%E5%85%A5%E5%9E%8B%E4%BC%A0%E6%92%AD%E5%92%8C%E5%B5%8C%E5%A5%97%E5%9E%8B%E4%BC%A0%E6%92%AD%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB/img_1.png"></p>
+<p>@Transactional 源码</p>
+<p><img src="/./2025/03/11/Spring%E4%BA%8B%E5%8A%A1-Spring%E4%BA%8B%E5%8A%A1%E7%9A%8410%E7%A7%8D%E5%A4%B1%E6%95%88%E5%9C%BA%E6%99%AF-%E5%8A%A0%E5%85%A5%E5%9E%8B%E4%BC%A0%E6%92%AD%E5%92%8C%E5%B5%8C%E5%A5%97%E5%9E%8B%E4%BC%A0%E6%92%AD%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB/img_2.png"></p>
+<p><strong>transactionManager 和 value 是同一个配置项的两个别名：</strong></p>
+<p>大多数项目只需要一个事务管理器，但是在有些项目中为了提高效率、或者有多个完全不同又不相干的数据源，所以会有多个事务管理器，这里填的就是你想用的事务管理器的 Bean 的 id。</p>
+<p><strong>propagation属性:</strong> Spring 事务传播机制是指，包含多个事务的方法在相互调用时，事务是如何在这些方法间传播的。</p>
+<p>这个后面详细介绍。</p>
+<p><strong>isolation属性：</strong> 是事务的隔离级别，默认值为 Isolation.DEFAULT。</p>
+<p>这里有四个隔离级别，具体这四个级别是什么意思 ：</p>
+<ul>
+<li><p>Isolation.DEFAULT：使用底层数据库默认的隔离级别。</p>
+</li>
+<li><p>Isolation.READ_UNCOMMITTED</p>
+</li>
+<li><p>Isolation.READ_COMMITTED</p>
+</li>
+<li><p>Isolation.REPEATABLE_READ</p>
+</li>
+<li><p>Isolation.SERIALIZABLE</p>
+</li>
+</ul>
+<p>在Innodb里面默认用的是 RR 级别，</p>
+<p><strong>timeout属性：</strong> 事务的超时时间，默认值为-1。如果超过该时间限制但事务还没有完成，则自动回滚事务。</p>
+<p><strong>readOnly属性 ：</strong> 指定事务是否为只读事务，默认值为false；为了忽略那些不需要事务的方法，比如读取数据，可以设置 read-only 为 true。</p>
+<p><strong>rollbackFor属性 ：</strong> 用于指定能够触发事务回滚的 异常 类型，可以指定多个异常类型。</p>
+<h2 id="第一大属性：-Transactional-注解-的-传播机制"><a href="#第一大属性：-Transactional-注解-的-传播机制" class="headerlink" title="第一大属性：@Transactional 注解 的 传播机制"></a>第一大属性：@Transactional 注解 的 传播机制</h2><p>什么叫做事务的传播？</p>
+<p>Spring 事务传播机制是指，包含多个事务的方法在相互调用时，事务是如何在这些方法间传播的。</p>
+<p>给大家举个 生动的例子.</p>
+<p>比如，有三个 业务 方法，第一个业务 方法如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">class testOne    </span><br><span class="line">&#123;  </span><br><span class="line">    @Transactional(rollbackFor = Exception.class)  </span><br><span class="line">    public Boolean addOne(UserInfo userInfo) &#123;  </span><br><span class="line">          </span><br><span class="line">        //... 业务处理  </span><br><span class="line">        //... 业务处理  </span><br><span class="line">        //... 业务处理  </span><br><span class="line">        retrun xxx;  </span><br><span class="line">    &#125;  </span><br><span class="line">      </span><br><span class="line">&#125;  </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>第二个业务 方法如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">class testTwo    </span><br><span class="line">&#123;  </span><br><span class="line"> @Transactional(rollbackFor = Exception.class)  </span><br><span class="line">    public Boolean addTwo(UserInfo userInfo) &#123;  </span><br><span class="line">          </span><br><span class="line">        //... 业务处理  </span><br><span class="line">        //... 业务处理  </span><br><span class="line">        //... 业务处理  </span><br><span class="line">        retrun xxx;  </span><br><span class="line">    &#125;  </span><br><span class="line">      </span><br><span class="line">&#125;  </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>然后第三个 业务 方法如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">class testThree    </span><br><span class="line">&#123;  </span><br><span class="line">      </span><br><span class="line">    @Transactional(rollbackFor = Exception.class)  </span><br><span class="line">    public Boolean testThree(UserInfo userInfo) &#123;  </span><br><span class="line">          </span><br><span class="line">        addOne(xxxx);  </span><br><span class="line">        addTwo(xxxx);  </span><br><span class="line">        retrun xxx;  </span><br><span class="line">    &#125;  </span><br><span class="line">      </span><br><span class="line">&#125;  </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>那么， 三个 业务 方法 之间：</p>
+<ul>
+<li><p>是每一个 业务方法开启一个 新的独立的事务？</p>
+</li>
+<li><p>还是 第一个 业务 方法、 第二个 业务 方法 加入到 第三个 业务 方法 开启的事务？</p>
+</li>
+<li><p>还是 第一个 业务 方法、 第二个 业务 方法 各自开一个 NESTED 内嵌事务， 以局部事务的 加入到 第三个 业务 方法 开启的整体事务？</p>
+</li>
+</ul>
+<h3 id="Spring定义了七种传播行为"><a href="#Spring定义了七种传播行为" class="headerlink" title="Spring定义了七种传播行为"></a>Spring定义了七种传播行为</h3><p>使用spring声明式事务，自动在方法调用之前 (进入一个新的方法)，spring会根据事务属性去决定是否开一个事务，并在方法执行之后，决定事务提交或回滚事务。这就是事务的传播。</p>
+<p>Spring定义了七种传播行为：</p>
+<table>
+<thead>
+<tr>
+<th><strong>传播行为</strong></th>
+<th><strong>含义</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>PROPAGATION_REQUIRED</td>
+<td>表示当前方法必须运行在事务中。如果当前事务存在，方法将会在该事务中运行。否则，会启动一个新的事务</td>
+</tr>
+<tr>
+<td>PROPAGATION_SUPPORTS</td>
+<td>表示当前方法不需要事务上下文，但是如果存在当前事务的话，那么该方法会在这个事务中运行</td>
+</tr>
+<tr>
+<td>PROPAGATION_MANDATORY</td>
+<td>表示该方法必须在事务中运行，如果当前事务不存在，则会抛出一个异常</td>
+</tr>
+<tr>
+<td>PROPAGATION_REQUIRED_NEW</td>
+<td>表示当前方法必须运行在它自己的事务中。一个新的事务将被启动。如果存在当前事务，在该方法执行期间，当前事务会被挂起。如果使用JTATransactionManager的话，则需要访问TransactionManager</td>
+</tr>
+<tr>
+<td>PROPAGATION_NOT_SUPPORTED</td>
+<td>表示该方法不应该运行在事务中。如果存在当前事务，在该方法运行期间，当前事务将被挂起。如果使用JTATransactionManager的话，则需要访问TransactionManager</td>
+</tr>
+<tr>
+<td>PROPAGATION_NEVER</td>
+<td>表示当前方法不应该运行在事务上下文中。如果当前正有一个事务在运行，则会抛出异常</td>
+</tr>
+<tr>
+<td>PROPAGATION_NESTED</td>
+<td>表示如果当前已经存在一个事务，那么该方法将会在嵌套事务中运行。嵌套的事务可以独立于当前事务进行单独地提交或回滚。如果当前事务不存在，那么其行为与PROPAGATION_REQUIRED一样。注意各厂商对这种传播行为的支持是有所差异的。可以参考资源管理器的文档来确认它们是否支持嵌套事务</td>
+</tr>
+</tbody></table>
+<p>事务7种传播机制 对应的源码如下：</p>
+<p><img src="/./2025/03/11/Spring%E4%BA%8B%E5%8A%A1-Spring%E4%BA%8B%E5%8A%A1%E7%9A%8410%E7%A7%8D%E5%A4%B1%E6%95%88%E5%9C%BA%E6%99%AF-%E5%8A%A0%E5%85%A5%E5%9E%8B%E4%BC%A0%E6%92%AD%E5%92%8C%E5%B5%8C%E5%A5%97%E5%9E%8B%E4%BC%A0%E6%92%AD%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB/img_3.png"></p>
+<p><img src="/./2025/03/11/Spring%E4%BA%8B%E5%8A%A1-Spring%E4%BA%8B%E5%8A%A1%E7%9A%8410%E7%A7%8D%E5%A4%B1%E6%95%88%E5%9C%BA%E6%99%AF-%E5%8A%A0%E5%85%A5%E5%9E%8B%E4%BC%A0%E6%92%AD%E5%92%8C%E5%B5%8C%E5%A5%97%E5%9E%8B%E4%BC%A0%E6%92%AD%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB/img_4.png"></p>
+<p>Spring 事务传播机制分为 3 大类，总共 7 种级别，如下图所示：</p>
+<p><img src="/./2025/03/11/Spring%E4%BA%8B%E5%8A%A1-Spring%E4%BA%8B%E5%8A%A1%E7%9A%8410%E7%A7%8D%E5%A4%B1%E6%95%88%E5%9C%BA%E6%99%AF-%E5%8A%A0%E5%85%A5%E5%9E%8B%E4%BC%A0%E6%92%AD%E5%92%8C%E5%B5%8C%E5%A5%97%E5%9E%8B%E4%BC%A0%E6%92%AD%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB/img_5.png"></p>
+<p>当我们不指定的时候， 默认使用的是 Propagation.REQUIRED。</p>
+<h3 id="1-1-支持当前事务-的三种传播方式"><a href="#1-1-支持当前事务-的三种传播方式" class="headerlink" title="1.1 支持当前事务 的三种传播方式"></a>1.1 支持当前事务 的三种传播方式</h3><p>支持当前事务的传播机制有三种，分别是</p>
+<ul>
+<li><strong>第一种传播： 加入当前事务 REQUIRED</strong></li>
+</ul>
+<p>所谓的加入当前事务，是指如果当前存在事务，则加入该事务；如果当前没有事务，则创建一个新的事务。</p>
+<blockquote>
+<p>所谓 当前事务 ，其实是用词 稍有有点错误， 其实 指的是 上一层方法的事务 。</p>
+</blockquote>
+<p>含义：如果上一层方法 已经存在一个事务中，则加入到这个事务中； 如果上一层 方法没有事务，当前层方法 新建一个事务 。</p>
+<p>REQUIRED 加入当前事务 ， 这是 默认的 传播机制。</p>
+<ul>
+<li><strong>第二种 传播： 支持当前事务 SUPPORTS</strong></li>
+</ul>
+<p>支持一下当前 事务，是指如果当前存在事务，则加入该事务；如果当前没有事务， 就以非事务方式执行</p>
+<blockquote>
+<p>所谓 当前事务 ，其实是用词 稍有有点错误， 其实 指的是 上一层方法的事务 。</p>
+</blockquote>
+<p>含义：支持上一层 方法的 事务，如果上一层 方法没有事务， 那么，当前层方法 就以非事务方式执行</p>
+<ul>
+<li><strong>第三种 传播： MANDATORY 强制当前事务</strong></li>
+</ul>
+<p>强制一下当前 事务，是指如果当前存在事务，则加入该事务；如果当前没有事务， 就抛出 异常 。</p>
+<p>含义：如果 上一层 方法 没事务，那么，当前层方法 就抛出 异常 。</p>
+<h3 id="1-2-不支持当前事务的三种传播方式"><a href="#1-2-不支持当前事务的三种传播方式" class="headerlink" title="1.2 不支持当前事务的三种传播方式"></a>1.2 不支持当前事务的三种传播方式</h3><ul>
+<li><strong>第4种 传播： REQUIRES_NEW</strong></li>
+</ul>
+<p>含义：新建事务，如果当前存在事务，把当前事务挂起。</p>
+<ul>
+<li><strong>第5种 传播： NOT_SUPPORTED</strong></li>
+</ul>
+<p>含义：以非事务方式执行操作，如果当前存在事务，就把当前事务挂起。</p>
+<ul>
+<li><strong>第6种 传播： NEVER</strong></li>
+</ul>
+<p>含义： 以非事务方式执行，如果当前存在事务，则抛出异常。</p>
+<h3 id="1-3-NESTED-事务嵌套"><a href="#1-3-NESTED-事务嵌套" class="headerlink" title="1.3 NESTED 事务嵌套"></a>1.3 NESTED 事务嵌套</h3><ul>
+<li><strong>第7种 传播： NESTED 事务嵌套</strong></li>
+</ul>
+<p>含义： 如果当前存在事务，则在嵌套事务内执行。</p>
+<p>如果当前没有事务，则执行与 REQUIRED类似的操作, 创建一个新的事务。</p>
+<p>NESTED事务嵌套和 加入事务（REQUIRED）的主要区别在于 ：</p>
+<p>NESTED事务 的特点如下 :</p>
+<ul>
+<li><p>当存在外部事务时，NESTED会创建一个嵌套的子事务，这个子事务有自己的保存点（savepoint）。</p>
+</li>
+<li><p>如果嵌套事务中发生异常，它只会回滚到自己的保存点（savepoint），而不影响外部事务。</p>
+</li>
+<li><p>因此， NESTED事务可以实现部分事务的回滚，或者说 子事务部分回滚（ 只有嵌套事务内的部分操作会被回滚），而外部事务的其他部分可以继续执行。</p>
+</li>
+</ul>
+<p>加入事务（REQUIRED）的特点如下 :</p>
+<ul>
+<li><p>如果当前存在事务，则REQUIRED会加入到当前事务中，作为当前事务的一部分；</p>
+</li>
+<li><p>如果当前没有事务，则创建一个新的事务。</p>
+</li>
+<li><p>在REQUIRED传播级别下，如果遇到异常，整个事务（外部事务，包括嵌套之前的所有操作）将会回滚。</p>
+</li>
+</ul>
+<p>总结来说：</p>
+<ul>
+<li><p>NESTED事务允许在当前事务中创建一个新的子事务，这个子事务可以独立于外部事务进行回滚</p>
+</li>
+<li><p>而REQUIRED事务则会与外部事务一形成一个整体，同生共死，一起回滚。</p>
+</li>
+<li><p>NESTED事务通过保存点（savepoint）实现部分回滚，而REQUIRED事务则是整个事务的回滚。</p>
+</li>
+</ul>
+<h3 id="默认的传播行为：加入当前事务-REQUIRED"><a href="#默认的传播行为：加入当前事务-REQUIRED" class="headerlink" title="默认的传播行为：加入当前事务 REQUIRED"></a>默认的传播行为：加入当前事务 REQUIRED</h3><p>除了Propagation.REQUIRED， 另外两个常用的是 Propagation.REQUIRES_NEW 和 Propagation.NESTED。</p>
+<p>除了这个三个， 而另外四种我们基本是不会去使用的，所以小伙伴也没必要去了解。</p>
+<p>看代码，默认啥都不指定的时候，我们使用的就是PROPAGATION_REQUIRED这种方式。</p>
+<p>那么接下来就是关于 这种默认的事物传播机制 PROPAGATION_REQUIRED 我们需要关心的东西了。</p>
+<p>前面介绍了 加入当前事务 REQUIRED 的传播行为：</p>
+<ul>
+<li><p>是指如果当前存在事务，则加入该事务</p>
+</li>
+<li><p>如果当前没有事务，则创建一个新的事务。</p>
+</li>
+</ul>
+<p>假设，第一个业务类里面的方法 使用了 声明式事务 ：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">class testOne    </span><br><span class="line">&#123;  </span><br><span class="line">    @Transactional(rollbackFor = Exception.class)  </span><br><span class="line">    public Boolean addOne(UserInfo userInfo) &#123;  </span><br><span class="line">          </span><br><span class="line">        //... 业务处理  </span><br><span class="line">        //... 业务处理  </span><br><span class="line">        //... 业务处理  </span><br><span class="line">        retrun xxx;  </span><br><span class="line">    &#125;  </span><br><span class="line">      </span><br><span class="line">&#125;  </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>假设， 第二个业务类里面的方法，也使用了声明式事务：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">class testTwo    </span><br><span class="line">&#123;  </span><br><span class="line">    @Transactional(rollbackFor = Exception.class)  </span><br><span class="line">    public Boolean addTwo(UserInfo userInfo) &#123;  </span><br><span class="line">          </span><br><span class="line">        //... 业务处理  </span><br><span class="line">        //... 业务处理  </span><br><span class="line">        //... 业务处理  </span><br><span class="line">        retrun xxx;  </span><br><span class="line">    &#125;  </span><br><span class="line">      </span><br><span class="line">&#125;  </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>然后第三个业务类里面的方法没有使用声明式事务，去调用第一个和第二个，如：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">class testThree    </span><br><span class="line">&#123;  </span><br><span class="line">    @Transactional(rollbackFor = Exception.class)  </span><br><span class="line">    public Boolean testThree(UserInfo userInfo) &#123;  </span><br><span class="line">          </span><br><span class="line">        addOne(xxxx);  </span><br><span class="line">        addTwo(xxxx);  </span><br><span class="line">        retrun xxx;  </span><br><span class="line">    &#125;  </span><br><span class="line">      </span><br><span class="line">&#125;  </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>在testThree方法（对于addOne 和 addTwo 来说是个外部方法）上同样使用声明式事物，且也是默认指定传播机制PROPAGATION_REQUIRED。</p>
+<p>默认指定传播机制PROPAGATION_REQUIRED ， testThree 让testOne，testTwo 都加入到一个事务里面。</p>
+<p>这样addOne事物开启时，发现外部存在指定传播机制PROPAGATION_REQUIRED的事物，那么就会加入该事物；</p>
+<p>同样addTwo同理。</p>
+<h2 id="第二大属性：-Transactional-注解的-隔离属性"><a href="#第二大属性：-Transactional-注解的-隔离属性" class="headerlink" title="第二大属性：@Transactional 注解的 隔离属性"></a>第二大属性：@Transactional 注解的 隔离属性</h2><p>数据库有自己的隔离级别的定义，Spring也有自己的 隔离级别的定义</p>
+<h3 id="Spring中的隔离级别"><a href="#Spring中的隔离级别" class="headerlink" title="Spring中的隔离级别"></a>Spring中的隔离级别</h3><p>Spring事务由 Transactional 注解实现，隔离级别由它的参数 isolation 控制，Isolation 的 Eum 类中定义了“五个”表示隔离级别的值，如下。</p>
+<table>
+<thead>
+<tr>
+<th><strong>隔离级别</strong></th>
+<th><strong>含义</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ISOLATION_DEFAULT</td>
+<td>使用后端数据库默认的隔离级别</td>
+</tr>
+<tr>
+<td>ISOLATION_READ_UNCOMMITTED</td>
+<td>最低的隔离级别，允许读取尚未提交的数据变更，可能会导致脏读、幻读或不可重复读</td>
+</tr>
+<tr>
+<td>ISOLATION_READ_COMMITTED</td>
+<td>允许读取并发事务已经提交的数据，可以阻止脏读，但是幻读或不可重复读仍有可能发生</td>
+</tr>
+<tr>
+<td>ISOLATION_REPEATABLE_READ</td>
+<td>对同一字段的多次读取结果都是一致的，除非数据是被本身事务自己所修改，可以阻止脏读和不可重复读，但幻读仍有可能发生</td>
+</tr>
+<tr>
+<td>ISOLATION_SERIALIZABLE</td>
+<td>最高的隔离级别，完全服从ACID的隔离级别，确保阻止脏读、不可重复读以及幻读，也是最慢的事务隔离级别，因为它通常是通过完全锁定事务相关的数据库表来实现的</td>
+</tr>
+</tbody></table>
+<p>Spring中的隔离级别 和数据一致性问题的 关系：</p>
+<table>
+<thead>
+<tr>
+<th><strong>Isolation的值与隔离级别</strong></th>
+<th><strong>隔离级别的值</strong></th>
+<th><strong>脏读</strong></th>
+<th><strong>不可重复读</strong></th>
+<th><strong>幻读</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Isolation.<strong>DEFAULT</strong></td>
+<td>0</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr>
+<td>Isolation.<strong>READ_UNCOMMITTED</strong></td>
+<td>1</td>
+<td>√</td>
+<td>√</td>
+<td>√</td>
+</tr>
+<tr>
+<td>Isolation.<strong>READ_COMMITTED</strong></td>
+<td>2</td>
+<td>×</td>
+<td>√</td>
+<td>√</td>
+</tr>
+<tr>
+<td>Isolation.<strong>REPEATABLE_READ</strong></td>
+<td>4</td>
+<td>×</td>
+<td>×</td>
+<td>√</td>
+</tr>
+<tr>
+<td>Isolation.<strong>SERIALIZABLE</strong></td>
+<td>8</td>
+<td>×</td>
+<td>×</td>
+<td>×</td>
+</tr>
+</tbody></table>
+<h3 id="数据库隔离级别"><a href="#数据库隔离级别" class="headerlink" title="数据库隔离级别"></a>数据库隔离级别</h3><table>
+<thead>
+<tr>
+<th><strong>隔离级别</strong></th>
+<th><strong>隔离级别的值</strong></th>
+<th><strong>导致的问题</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Read-Uncommitted</td>
+<td>0</td>
+<td>导致脏读</td>
+</tr>
+<tr>
+<td>Read-Committed</td>
+<td>1</td>
+<td>避免脏读，允许不可重复读和幻读</td>
+</tr>
+<tr>
+<td>Repeatable-Read</td>
+<td>2</td>
+<td>避免脏读，不可重复读，允许幻读</td>
+</tr>
+<tr>
+<td>Serializable</td>
+<td>3</td>
+<td>串行化读，事务只能一个一个执行，避免了脏读、不可重复读、幻读。执行效率慢，使用时慎重</td>
+</tr>
+</tbody></table>
+<p>MySQL 默认为 RR ：PEATABLE_READ；</p>
+<p>Oracle，sql server 默认为 RC：READ_COMMITTED；</p>
+<p>READ_UNCOMMITTED 由于隔离级别较低，通常不会被使用。</p>
+<p>数据库隔离级别 和数据一致性问题 的 关系：</p>
+<table>
+<thead>
+<tr>
+<th><strong>隔离级别</strong></th>
+<th><strong>隔离级别的值</strong></th>
+<th><strong>脏读</strong></th>
+<th><strong>不可重复读</strong></th>
+<th><strong>幻读</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Read uncommitted（未提交读）</td>
+<td>0</td>
+<td>√</td>
+<td>√</td>
+<td>√</td>
+</tr>
+<tr>
+<td>Read committed（已提交读）</td>
+<td>1</td>
+<td>×</td>
+<td>√</td>
+<td>√</td>
+</tr>
+<tr>
+<td>Repeatable read（可重复读）</td>
+<td>2</td>
+<td>×</td>
+<td>×</td>
+<td>√</td>
+</tr>
+<tr>
+<td>Serializable（可串行化）</td>
+<td>3</td>
+<td>×</td>
+<td>×</td>
+<td>×</td>
+</tr>
+</tbody></table>
+<h4 id="Spring事务的隔离级别与-数据库隔离级别的关系："><a href="#Spring事务的隔离级别与-数据库隔离级别的关系：" class="headerlink" title="Spring事务的隔离级别与 数据库隔离级别的关系："></a>Spring事务的隔离级别与 数据库隔离级别的关系：</h4><p>Spring默认的隔离级别， 是 <strong>Isolation.DEFAULT</strong>。</p>
+<p>它的含义是：使用数据库默认的事务隔离级别。</p>
+<p>除此之外，另外Spring事务的隔离级别 四个与 JDBC 的隔离级别是相对应的，那个四个 Spring事务隔离级别，其实是在数据库隔离级别之上又进一步进行了封装。</p>
+<h3 id="如果-Spring事务的隔离级别与-数据库隔离级别的不一致会怎样"><a href="#如果-Spring事务的隔离级别与-数据库隔离级别的不一致会怎样" class="headerlink" title="如果 Spring事务的隔离级别与 数据库隔离级别的不一致会怎样?"></a>如果 Spring事务的隔离级别与 数据库隔离级别的不一致会怎样?</h3><p>以Spring事务为准的。</p>
+<p>Spring 事务管理涉及到了与数据库的交互 。</p>
+<p>JDBC 加载的流程 有四步：注册驱动，建立连接，发起请求，输出结果， 伪代码如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">Connection conn = null;  </span><br><span class="line">Statement stmt = null;  </span><br><span class="line">ResultSet rs = null;  </span><br><span class="line">try&#123;  </span><br><span class="line">    // 1.注册 JDBC 驱动  </span><br><span class="line">    Class.forName(&quot;com.mysql.jdbc.Driver&quot;);  </span><br><span class="line">    // 2.创建链接  </span><br><span class="line">    System.out.println(&quot;连接数据库...&quot;);  </span><br><span class="line">    conn = DriverManager.getConnection(&quot;jdbc:mysql://localhost:3306/my\_db&quot;,&quot;root&quot;,&quot;root&quot;);  </span><br><span class="line">    // 3.发起请求  </span><br><span class="line">    stmt = conn.createStatement();  </span><br><span class="line">    String sql = &quot;SELECT id, name, url FROM websites&quot;;  </span><br><span class="line">    rs = stmt.executeQuery(sql);  </span><br><span class="line">    // 4.输出结果  </span><br><span class="line">    System.out.print(&quot;查询结果：&quot; + rs);  </span><br><span class="line">    // 关闭资源（演示代码，不要纠结没有写在finally中）  </span><br><span class="line">    rs.close();  </span><br><span class="line">    stmt.close();  </span><br><span class="line">    conn.close();  </span><br><span class="line">&#125; catch (SQLException se)  </span><br><span class="line">    se.printStackTrace();  </span><br><span class="line">&#125;catch(Exception e)&#123;  </span><br><span class="line">    e.printStackTrace();  </span><br><span class="line">&#125;  </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>在创建连接阶段，JDBC 从数据库获取一个连接 Connection 对象</p>
+<p>Connection 对象不仅有连接数据库的方法，还有设置当前连接的事物隔离级别的方法， 源码如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">\*/  </span><br><span class="line">public interface Connection  extends Wrapper, AutoCloseable &#123;  </span><br><span class="line">  </span><br><span class="line">  ...   </span><br><span class="line">  </span><br><span class="line">  /\*\*  </span><br><span class="line">  </span><br><span class="line">\- 尝试将此连接对象的事务隔离级别更改为给定的级别  </span><br><span class="line">\- 接口连接中定义的常量是可能的事务隔离级别  </span><br><span class="line">\*/  </span><br><span class="line">  void setTransactionIsolation(int level) throws SQLException;  </span><br><span class="line">  </span><br><span class="line">  ...  </span><br><span class="line">&#125;  </span><br><span class="line">  </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>该方法的注释说明：尝试将此连接对象的事务隔离级别更改为给定的级别，如果在事务期间调用此方法，则结果由实现定义。</p>
+<p>所以，如果spring与数据库事务隔离级别不一致时，spring 会调用类似的方法， 设置 一下 当前链接的 事务隔离级别。</p>
+<h2 id="第三大属性：-Transactional-注解的-readOnly属性"><a href="#第三大属性：-Transactional-注解的-readOnly属性" class="headerlink" title="第三大属性：@Transactional 注解的 readOnly属性"></a>第三大属性：@Transactional 注解的 readOnly属性</h2><p><code>@Transactional</code>注解的readOnly 属性用于指定事务是否为只读事务。</p>
+<p>当<code>readOnly</code>属性设置为<code>true</code>时，表示该事务只涉及读取数据， 而不进行任何写操作（如INSERT、UPDATE、DELETE等）。这有助于数据库引擎优化事务处理，因为它知道不需要考虑事务的并发写操作。</p>
+<p>当使用 @Transaction 注解时，可以通过设置 <code>readOnly=true</code> 来指定这是一个只读事务，这样在事务执行期间就不会对数据进行修改，只会进行查询操作。</p>
+<p>以下是一个使用 @Transaction 只读示例的代码片段：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">@Service  </span><br><span class="line">public class UserService &#123;  </span><br><span class="line">  </span><br><span class="line">    @Autowired  </span><br><span class="line">    private UserRepository userRepository;  </span><br><span class="line">  </span><br><span class="line">    @Transactional(readOnly = true)  </span><br><span class="line">    public User getUserById(Long id) &#123;  </span><br><span class="line">        return userRepository.findById(id).orElse(null);  </span><br><span class="line">    &#125;  </span><br><span class="line">  </span><br><span class="line">    // 其他方法...  </span><br><span class="line">&#125;  </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>在上面的示例中，<code>getUserById</code> 方法被标记为只读事务，因此在执行期间只会进行查询操作。<strong>如果在方法中尝试进行修改操作，将会抛出异常。</strong></p>
+<p>从数据库层面来讲，设置<code>readOnly = true</code>会向数据库发送一个信号，告诉数据库这个事务是只读的。</p>
+<p>不同的数据库会根据这个提示进行优化。例如</p>
+<ul>
+<li><p>在一些数据库中，对于只读事务，数据库可以避免获取写锁，减少锁竞争，从而提高并发读取性能。</p>
+</li>
+<li><p>同时，数据库也可能会跳过一些与写操作相关的日志记录和事务处理逻辑，提高事务执行的效率。</p>
+</li>
+</ul>
+<h2 id="第四大属性：-Transactional-注解的-rollbackFor-回滚规则属性"><a href="#第四大属性：-Transactional-注解的-rollbackFor-回滚规则属性" class="headerlink" title="第四大属性：@Transactional 注解的 rollbackFor 回滚规则属性"></a>第四大属性：@Transactional 注解的 rollbackFor 回滚规则属性</h2><p>事务五边形的rollbackFor 回滚规则属性 ， 定义了哪些异常会导致事务回滚，而哪些异常不会。</p>
+<p>下面是一个简单的 Java 代码示例，演示了 <code>@Transactional</code> 回滚规则属性。</p>
+<p>首先是 不做配置，使用 rollbackFor 的默认值：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">@Service  </span><br><span class="line">public class UserService &#123;  </span><br><span class="line">      </span><br><span class="line">    @Autowired  </span><br><span class="line">    private UserRepository userRepository;  </span><br><span class="line">      </span><br><span class="line">    @Transactional  </span><br><span class="line">    public void createUser(User user) &#123;  </span><br><span class="line">        userRepository.save(user);  </span><br><span class="line">        if (user.getId() == null) &#123;  </span><br><span class="line">            throw new RuntimeException(&quot;Failed to create user&quot;);  </span><br><span class="line">        &#125;  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;  </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>在上面的示例中， 如果在方法执行过程中发生异常，事务会自动回滚，保证数据的一致性。</p>
+<p>如果用户创建失败，<code>createUser</code> 方法会抛出一个 <code>RuntimeException</code>异常，这会导致事务回滚，用户创建操作会被撤销。</p>
+<p>提示，@Transactional 使用有很多的 约束：</p>
+<ul>
+<li><p>约束1 ：<code>@Transactional</code> 注解只能应用于公共方法，因为只有公共方法才能被代理，从而实现事务管理。</p>
+</li>
+<li><p>约束2 ：默认情况下， <code>@Transactional</code> 注解 只对非受检 异常进行回滚，而对受检查异常不进行回滚。</p>
+</li>
+</ul>
+<blockquote>
+<p>非检查型异常 （Unchecked Exception&#x2F;非受检查异常）的是程序在<strong>编译时</strong>不会提示需要处理该异常，而是在运行时才会出现异常， 如 RuntimeException。</p>
+<p>检查型异常（Checked Exception）是指在 Java 中，编译器会强制要求对可能会抛出这些异常的代码进行异常处理，否则代码将无法通过编译。</p>
+</blockquote>
+<p>一般来说，在编写代码时应该尽量避免抛出非检查型异常（如 RuntimeException），因为这些异常的发生通常意味着程序存在严重的逻辑问题。</p>
+<p>如果是<strong>受检 异常（Checked Exception）</strong>, 进行回滚，可以在 <code>@Transactional</code> 注解中指定 <code>rollbackFor</code> 属性，例如</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">@Transactional(rollbackFor = Exception.class)  </span><br><span class="line">public void createUser(User user) &#123;  </span><br><span class="line">      userRepository.save(user);  </span><br><span class="line">       if (user.getId() == null) &#123;  </span><br><span class="line">            throw new RuntimeException(&quot;Failed to create user&quot;);  </span><br><span class="line">      &#125;  </span><br><span class="line">&#125;  </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>掌握了 @Transactional 的几个核心属性， 最后我们来说下 @Transactional 的失效场景。</p>
+<h2 id="Spring事务-的10种-失效场景"><a href="#Spring事务-的10种-失效场景" class="headerlink" title="Spring事务 的10种 失效场景"></a>Spring事务 的10种 失效场景</h2><p>Spring事务管理 是Java应用中确保数据库操作一致性和完整性的关键机制之一。</p>
+<p>然而，在实际开发中，有时候会遇到Spring事务失效的情况，导致期望的事务行为无法正常发生。</p>
+<p>本文将深入探讨九种常见的导致Spring事务失效的场景，帮助开发者更好地理解事务管理的细节和注意事项。</p>
+<h3 id="场景1：非Spring容器管理的-事务方法"><a href="#场景1：非Spring容器管理的-事务方法" class="headerlink" title="场景1：非Spring容器管理的 事务方法"></a>场景1：非Spring容器管理的 事务方法</h3><p>Spring事务是通过AOP（面向切面编程）来实现的，如果一个事务注解被应用到一个普通的Java类的方法上，并且该类不是通过Spring容器进行管理的，那么事务将不会生效。</p>
+<p>因为Spring无法拦截并管理这个类的方法调用。</p>
+<p>示例：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">public class TransactionalService &#123;  </span><br><span class="line">    @Transactional  </span><br><span class="line">    public void performTransaction() &#123;  </span><br><span class="line">        // 事务操作  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;  </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>在上述示例中，如果<code>TransactionalService</code>不是通过Spring容器进行管理，那么<code>@Transactional</code>注解将不会生效。</p>
+<h3 id="场景2：-在非公有方法上使用事务"><a href="#场景2：-在非公有方法上使用事务" class="headerlink" title="场景2： 在非公有方法上使用事务"></a>场景2： 在非公有方法上使用事务</h3><p>Spring事务默认只对公有方法上的事务注解生效。@Transactional 应用在非 public 修饰的方法上，@Transactional 将会失效。</p>
+<p>如果在一个非公有方法上使用事务注解，事务将不会生效。</p>
+<p>示例：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">@Transactional  </span><br><span class="line">private void performTransaction() &#123;     </span><br><span class="line">    // 非公有方法上使用事务，事务失效  </span><br><span class="line">&#125;  </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>在上述示例中，<code>performTransaction</code>是一个私有方法，事务注解不会生效。</p>
+<p>protected、private 修饰的方法上使用 @Transactional 注解，虽然事务无效，但不会有任何报错，这是我们很容犯错的一点。</p>
+<h3 id="场景3：异常被捕获-而不是-抛出"><a href="#场景3：异常被捕获-而不是-抛出" class="headerlink" title="场景3：异常被捕获 而不是 抛出"></a>场景3：异常被捕获 而不是 抛出</h3><p>有时候，开发者可能选择捕获掉一个异常，而不重新抛出或处理。</p>
+<p>这样的做法将导致事务失效，因为Spring事务管理依赖于异常来判断是否需要回滚事务。</p>
+<p>示例：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">@Transactional  </span><br><span class="line">public void handleException() &#123;  </span><br><span class="line">    try &#123;  </span><br><span class="line">        // 事务操作  </span><br><span class="line">        throw new RuntimeException(&quot;Simulate Exception&quot;);  </span><br><span class="line">    &#125; catch (Exception e) &#123;  </span><br><span class="line">        // 异常被忽略，事务失效  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;  </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>在上述示例中，异常被捕获但未重新抛出或处理，导致事务失效。</p>
+<h3 id="场景4：-对-受检查异常进行-异常拦截"><a href="#场景4：-对-受检查异常进行-异常拦截" class="headerlink" title="场景4： 对 受检查异常进行 异常拦截"></a>场景4： 对 受检查异常进行 异常拦截</h3><p>默认情况下， Spring事务只对<code>RuntimeException</code>（非受检查异常）及其子类进行回滚。</p>
+<p>如果一个受事务管理的方法抛出了 受检查异常（如Exception）， 默认情况下，事务将不会回滚。</p>
+<p>示例：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">@Transactional  </span><br><span class="line">public void performTransaction()    throws  Exception&#123;  </span><br><span class="line">       </span><br><span class="line">        // 事务操作  </span><br><span class="line">        throw new Exception(&quot;Unchecked Exception&quot;);  </span><br><span class="line">&#125;  </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>在上述示例中，抛出了一个 受检查异常， 导致事务失效。</p>
+<p>如果是 对 受检查异常进行捕获， 需要使用 rollbackFor 定制回滚 规则：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">@Transactional(rollbackFor = Exception.class)  </span><br><span class="line">public void createUser(User user)    throws  Exception&#123;  </span><br><span class="line">       </span><br><span class="line">        // 事务操作  </span><br><span class="line">        throw new Exception(&quot;Unchecked Exception&quot;);  </span><br><span class="line">      </span><br><span class="line">&#125;  </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="场景5：方法内部调用导致的事务失效"><a href="#场景5：方法内部调用导致的事务失效" class="headerlink" title="场景5：方法内部调用导致的事务失效"></a>场景5：方法内部调用导致的事务失效</h3><p>Spring事务默认只对外部方法调用进行代理，对于同一个类的内部方法调用是无法触发事务的。</p>
+<p>如果在一个事务方法内部调用另一个方法，而这个被调用的方法上标注了<code>@Transactional</code>注解，事务将不会生效。</p>
+<p>示例：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">@Transactional  </span><br><span class="line">public void outerTransaction() &#123;  </span><br><span class="line">    innerTransaction(); // 内部调用，事务失效  </span><br><span class="line">&#125;  </span><br><span class="line">   </span><br><span class="line">@Transactional  </span><br><span class="line">public void innerTransaction() &#123;  </span><br><span class="line">    // 内部事务操作  </span><br><span class="line">&#125;  </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>在上述示例中，<code>outerTransaction</code>方法内部调用了<code>innerTransaction</code>方法，但由于默认只对外部方法调用进行代理，导致<code>innerTransaction</code>方法上的事务失效。</p>
+<h3 id="场景6：-方法自调用导致的事务失效"><a href="#场景6：-方法自调用导致的事务失效" class="headerlink" title="场景6： 方法自调用导致的事务失效"></a>场景6： 方法自调用导致的事务失效</h3><p>类似于内部方法调用，如果一个事务方法内部自己调用自己，事务同样会失效。</p>
+<p>这是因为Spring使用代理机制来管理事务，自调用会绕过代理对象，导致事务不生效。</p>
+<p>示例：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">@Transactional  </span><br><span class="line">public void selfInvokingTransaction() &#123;  </span><br><span class="line">    // 自调用，事务失效  </span><br><span class="line">    selfInvokingTransaction();  </span><br><span class="line">    // 事务操作  </span><br><span class="line">&#125;  </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>在上述示例中，<code>selfInvokingTransaction</code>方法内部自己调用了自己，导致事务失效。</p>
+<h3 id="场景7：-在同一个类中，一个非事务方法调用另一个事务方法"><a href="#场景7：-在同一个类中，一个非事务方法调用另一个事务方法" class="headerlink" title="场景7： 在同一个类中，一个非事务方法调用另一个事务方法"></a>场景7： 在同一个类中，一个非事务方法调用另一个事务方法</h3><p>当在同一个类中，一个非事务方法调用了另一个事务方法时，事务将不会生效。</p>
+<p>这是因为Spring默认使用动态代理来管理事务，而动态代理只能拦截外部调用。</p>
+<p>示例：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">public void nonTransactionMethodA() &#123;  </span><br><span class="line">    transactionMethodB(); // 在同一个类中调用另一个事务方法，事务失效  </span><br><span class="line">&#125;  </span><br><span class="line">   </span><br><span class="line">@Transactional  </span><br><span class="line">public void transactionMethodB() &#123;  </span><br><span class="line">    // 事务操作  </span><br><span class="line">&#125;  </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>在上述示例中，<code>nonTransactionMethodA</code>调用了<code>transactionMethodB</code>，但事务不会生效。</p>
+<h3 id="场景8：-使用错误的事务传播行为"><a href="#场景8：-使用错误的事务传播行为" class="headerlink" title="场景8： 使用错误的事务传播行为"></a>场景8： 使用错误的事务传播行为</h3><p>Spring事务提供了不同的传播行为，如<code>REQUIRED</code>、<code>REQUIRES_NEW</code>等。</p>
+<p>使用错误的传播行为可能导致事务失效，因为传播行为决定了事务如何在方法调用链中传播。</p>
+<p>示例：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">@Transactional(propagation = Propagation.REQUIRES\_NEW)  </span><br><span class="line">public void performTransaction() &#123;  </span><br><span class="line">    // 使用错误的传播行为，可能导致事务失效  </span><br><span class="line">&#125;  </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>在上述示例中，如果使用了错误的传播行为，可能会导致事务失效。</p>
+<h3 id="场景9：-数据库引擎不支持事务"><a href="#场景9：-数据库引擎不支持事务" class="headerlink" title="场景9： 数据库引擎不支持事务"></a>场景9： 数据库引擎不支持事务</h3><p>数据库引擎不支持事务，Spring事务 失效。</p>
+<p>这一点很简单，myisam 引擎是不支持事务的，innodb 引擎支持事务。</p>
+<h3 id="场景10：数据源没有配置事务管理器"><a href="#场景10：数据源没有配置事务管理器" class="headerlink" title="场景10：数据源没有配置事务管理器"></a>场景10：数据源没有配置事务管理器</h3><p>数据源没有配置事务管理器，这个也很简单，要使用事务肯定要配事务管理器。</p>
+<p>Hibernate 用的是HibernateTransactionManager，</p>
+<p>JDBC 和 Mybatis 用的是 DataSourceTransactionManager。</p>
+<p>如果数据源没有配置事务管理器 ，Spring事务 失效。</p>
+<h2 id="Spring事务-的10种-失效场景总结"><a href="#Spring事务-的10种-失效场景总结" class="headerlink" title="Spring事务 的10种 失效场景总结"></a>Spring事务 的10种 失效场景总结</h2><p>开发者应当牢记这些场景，并在开发过程中注意避免出现事务失效的情况，以确保数据的一致性和完整性。  </p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="http://flowtime.asia">周五打工人</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="http://flowtime.asia/2025/03/11/Spring%E4%BA%8B%E5%8A%A1-Spring%E4%BA%8B%E5%8A%A1%E7%9A%8410%E7%A7%8D%E5%A4%B1%E6%95%88%E5%9C%BA%E6%99%AF-%E5%8A%A0%E5%85%A5%E5%9E%8B%E4%BC%A0%E6%92%AD%E5%92%8C%E5%B5%8C%E5%A5%97%E5%9E%8B%E4%BC%A0%E6%92%AD%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB/">http://flowtime.asia/2025/03/11/Spring%E4%BA%8B%E5%8A%A1-Spring%E4%BA%8B%E5%8A%A1%E7%9A%8410%E7%A7%8D%E5%A4%B1%E6%95%88%E5%9C%BA%E6%99%AF-%E5%8A%A0%E5%85%A5%E5%9E%8B%E4%BC%A0%E6%92%AD%E5%92%8C%E5%B5%8C%E5%A5%97%E5%9E%8B%E4%BC%A0%E6%92%AD%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://flowtime.asia" target="_blank">繁华流年间</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Spring%E4%BA%8B%E5%8A%A1/">Spring事务</a></div><div class="post_share"><div class="social-share" data-image="/img/hubian.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2025/03/11/CAP%E5%AE%9A%E7%90%86-%E5%93%AA%E4%BA%9B%E4%B8%AD%E9%97%B4%E4%BB%B6%E6%98%AFAP-%E5%93%AA%E4%BA%9B%E6%98%AFCP-%E4%B8%BA%E4%BB%80%E4%B9%88/" title="CAP定理,哪些中间件是AP,哪些是CP,为什么"><img class="cover" src="/img/hubian.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">CAP定理,哪些中间件是AP,哪些是CP,为什么</div></div></a></div></nav><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="twikoo-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/nav.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">周五打工人</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">49</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">40</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">无论你是追求知识的急先锋，还是对生活感悟充满好奇，亦或是渴望找到属于自己情感共鸣的灵魂，本博客都将竭诚欢迎你的加入。共同书写属于自己的精彩篇章。</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%EF%BC%9ASpring-%E4%B8%A4%E7%A7%8D%E4%BA%8B%E5%8A%A1%E7%AE%A1%E7%90%86%E6%96%B9%E5%BC%8F"><span class="toc-number">1.</span> <span class="toc-text">基础知识：Spring 两种事务管理方式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A3%B0%E6%98%8E%E5%BC%8F%E4%BA%8B%E5%8A%A11%EF%BC%9A%E5%9F%BA%E4%BA%8E-XML-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E8%BF%9B%E8%A1%8C%E9%85%8D%E7%BD%AE"><span class="toc-number">1.1.</span> <span class="toc-text">声明式事务1：基于 XML 配置文件进行配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A3%B0%E6%98%8E%E5%BC%8F%E4%BA%8B%E5%8A%A12%EF%BC%9A%E5%9F%BA%E4%BA%8E%E6%B3%A8%E8%A7%A3%E7%9A%84%E5%A3%B0%E6%98%8E%E5%BC%8F%E9%85%8D%E7%BD%AE"><span class="toc-number">1.2.</span> <span class="toc-text">声明式事务2：基于注解的声明式配置</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Transactional-%E6%B3%A8%E8%A7%A3%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="toc-number">2.</span> <span class="toc-text">@Transactional 注解的使用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Transactional-%E6%B3%A8%E8%A7%A3-%E6%B6%89%E5%8F%8A%E5%88%B0%E7%9A%84-5%E5%A4%A7%E5%B1%9E%E6%80%A7"><span class="toc-number">3.</span> <span class="toc-text">@Transactional 注解 涉及到的 5大属性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E5%A4%A7%E5%B1%9E%E6%80%A7%EF%BC%9A-Transactional-%E6%B3%A8%E8%A7%A3-%E7%9A%84-%E4%BC%A0%E6%92%AD%E6%9C%BA%E5%88%B6"><span class="toc-number">4.</span> <span class="toc-text">第一大属性：@Transactional 注解 的 传播机制</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Spring%E5%AE%9A%E4%B9%89%E4%BA%86%E4%B8%83%E7%A7%8D%E4%BC%A0%E6%92%AD%E8%A1%8C%E4%B8%BA"><span class="toc-number">4.1.</span> <span class="toc-text">Spring定义了七种传播行为</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-%E6%94%AF%E6%8C%81%E5%BD%93%E5%89%8D%E4%BA%8B%E5%8A%A1-%E7%9A%84%E4%B8%89%E7%A7%8D%E4%BC%A0%E6%92%AD%E6%96%B9%E5%BC%8F"><span class="toc-number">4.2.</span> <span class="toc-text">1.1 支持当前事务 的三种传播方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-%E4%B8%8D%E6%94%AF%E6%8C%81%E5%BD%93%E5%89%8D%E4%BA%8B%E5%8A%A1%E7%9A%84%E4%B8%89%E7%A7%8D%E4%BC%A0%E6%92%AD%E6%96%B9%E5%BC%8F"><span class="toc-number">4.3.</span> <span class="toc-text">1.2 不支持当前事务的三种传播方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-3-NESTED-%E4%BA%8B%E5%8A%A1%E5%B5%8C%E5%A5%97"><span class="toc-number">4.4.</span> <span class="toc-text">1.3 NESTED 事务嵌套</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%BB%98%E8%AE%A4%E7%9A%84%E4%BC%A0%E6%92%AD%E8%A1%8C%E4%B8%BA%EF%BC%9A%E5%8A%A0%E5%85%A5%E5%BD%93%E5%89%8D%E4%BA%8B%E5%8A%A1-REQUIRED"><span class="toc-number">4.5.</span> <span class="toc-text">默认的传播行为：加入当前事务 REQUIRED</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E5%A4%A7%E5%B1%9E%E6%80%A7%EF%BC%9A-Transactional-%E6%B3%A8%E8%A7%A3%E7%9A%84-%E9%9A%94%E7%A6%BB%E5%B1%9E%E6%80%A7"><span class="toc-number">5.</span> <span class="toc-text">第二大属性：@Transactional 注解的 隔离属性</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Spring%E4%B8%AD%E7%9A%84%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB"><span class="toc-number">5.1.</span> <span class="toc-text">Spring中的隔离级别</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB"><span class="toc-number">5.2.</span> <span class="toc-text">数据库隔离级别</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Spring%E4%BA%8B%E5%8A%A1%E7%9A%84%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB%E4%B8%8E-%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB%E7%9A%84%E5%85%B3%E7%B3%BB%EF%BC%9A"><span class="toc-number">5.2.1.</span> <span class="toc-text">Spring事务的隔离级别与 数据库隔离级别的关系：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E6%9E%9C-Spring%E4%BA%8B%E5%8A%A1%E7%9A%84%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB%E4%B8%8E-%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB%E7%9A%84%E4%B8%8D%E4%B8%80%E8%87%B4%E4%BC%9A%E6%80%8E%E6%A0%B7"><span class="toc-number">5.3.</span> <span class="toc-text">如果 Spring事务的隔离级别与 数据库隔离级别的不一致会怎样?</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E5%A4%A7%E5%B1%9E%E6%80%A7%EF%BC%9A-Transactional-%E6%B3%A8%E8%A7%A3%E7%9A%84-readOnly%E5%B1%9E%E6%80%A7"><span class="toc-number">6.</span> <span class="toc-text">第三大属性：@Transactional 注解的 readOnly属性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%9B%9B%E5%A4%A7%E5%B1%9E%E6%80%A7%EF%BC%9A-Transactional-%E6%B3%A8%E8%A7%A3%E7%9A%84-rollbackFor-%E5%9B%9E%E6%BB%9A%E8%A7%84%E5%88%99%E5%B1%9E%E6%80%A7"><span class="toc-number">7.</span> <span class="toc-text">第四大属性：@Transactional 注解的 rollbackFor 回滚规则属性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Spring%E4%BA%8B%E5%8A%A1-%E7%9A%8410%E7%A7%8D-%E5%A4%B1%E6%95%88%E5%9C%BA%E6%99%AF"><span class="toc-number">8.</span> <span class="toc-text">Spring事务 的10种 失效场景</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9C%BA%E6%99%AF1%EF%BC%9A%E9%9D%9ESpring%E5%AE%B9%E5%99%A8%E7%AE%A1%E7%90%86%E7%9A%84-%E4%BA%8B%E5%8A%A1%E6%96%B9%E6%B3%95"><span class="toc-number">8.1.</span> <span class="toc-text">场景1：非Spring容器管理的 事务方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9C%BA%E6%99%AF2%EF%BC%9A-%E5%9C%A8%E9%9D%9E%E5%85%AC%E6%9C%89%E6%96%B9%E6%B3%95%E4%B8%8A%E4%BD%BF%E7%94%A8%E4%BA%8B%E5%8A%A1"><span class="toc-number">8.2.</span> <span class="toc-text">场景2： 在非公有方法上使用事务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9C%BA%E6%99%AF3%EF%BC%9A%E5%BC%82%E5%B8%B8%E8%A2%AB%E6%8D%95%E8%8E%B7-%E8%80%8C%E4%B8%8D%E6%98%AF-%E6%8A%9B%E5%87%BA"><span class="toc-number">8.3.</span> <span class="toc-text">场景3：异常被捕获 而不是 抛出</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9C%BA%E6%99%AF4%EF%BC%9A-%E5%AF%B9-%E5%8F%97%E6%A3%80%E6%9F%A5%E5%BC%82%E5%B8%B8%E8%BF%9B%E8%A1%8C-%E5%BC%82%E5%B8%B8%E6%8B%A6%E6%88%AA"><span class="toc-number">8.4.</span> <span class="toc-text">场景4： 对 受检查异常进行 异常拦截</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9C%BA%E6%99%AF5%EF%BC%9A%E6%96%B9%E6%B3%95%E5%86%85%E9%83%A8%E8%B0%83%E7%94%A8%E5%AF%BC%E8%87%B4%E7%9A%84%E4%BA%8B%E5%8A%A1%E5%A4%B1%E6%95%88"><span class="toc-number">8.5.</span> <span class="toc-text">场景5：方法内部调用导致的事务失效</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9C%BA%E6%99%AF6%EF%BC%9A-%E6%96%B9%E6%B3%95%E8%87%AA%E8%B0%83%E7%94%A8%E5%AF%BC%E8%87%B4%E7%9A%84%E4%BA%8B%E5%8A%A1%E5%A4%B1%E6%95%88"><span class="toc-number">8.6.</span> <span class="toc-text">场景6： 方法自调用导致的事务失效</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9C%BA%E6%99%AF7%EF%BC%9A-%E5%9C%A8%E5%90%8C%E4%B8%80%E4%B8%AA%E7%B1%BB%E4%B8%AD%EF%BC%8C%E4%B8%80%E4%B8%AA%E9%9D%9E%E4%BA%8B%E5%8A%A1%E6%96%B9%E6%B3%95%E8%B0%83%E7%94%A8%E5%8F%A6%E4%B8%80%E4%B8%AA%E4%BA%8B%E5%8A%A1%E6%96%B9%E6%B3%95"><span class="toc-number">8.7.</span> <span class="toc-text">场景7： 在同一个类中，一个非事务方法调用另一个事务方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9C%BA%E6%99%AF8%EF%BC%9A-%E4%BD%BF%E7%94%A8%E9%94%99%E8%AF%AF%E7%9A%84%E4%BA%8B%E5%8A%A1%E4%BC%A0%E6%92%AD%E8%A1%8C%E4%B8%BA"><span class="toc-number">8.8.</span> <span class="toc-text">场景8： 使用错误的事务传播行为</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9C%BA%E6%99%AF9%EF%BC%9A-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%95%E6%93%8E%E4%B8%8D%E6%94%AF%E6%8C%81%E4%BA%8B%E5%8A%A1"><span class="toc-number">8.9.</span> <span class="toc-text">场景9： 数据库引擎不支持事务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9C%BA%E6%99%AF10%EF%BC%9A%E6%95%B0%E6%8D%AE%E6%BA%90%E6%B2%A1%E6%9C%89%E9%85%8D%E7%BD%AE%E4%BA%8B%E5%8A%A1%E7%AE%A1%E7%90%86%E5%99%A8"><span class="toc-number">8.10.</span> <span class="toc-text">场景10：数据源没有配置事务管理器</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Spring%E4%BA%8B%E5%8A%A1-%E7%9A%8410%E7%A7%8D-%E5%A4%B1%E6%95%88%E5%9C%BA%E6%99%AF%E6%80%BB%E7%BB%93"><span class="toc-number">9.</span> <span class="toc-text">Spring事务 的10种 失效场景总结</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2025/03/11/Spring%E4%BA%8B%E5%8A%A1-Spring%E4%BA%8B%E5%8A%A1%E7%9A%8410%E7%A7%8D%E5%A4%B1%E6%95%88%E5%9C%BA%E6%99%AF-%E5%8A%A0%E5%85%A5%E5%9E%8B%E4%BC%A0%E6%92%AD%E5%92%8C%E5%B5%8C%E5%A5%97%E5%9E%8B%E4%BC%A0%E6%92%AD%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB/" title="Spring事务,Spring事务的10种失效场景.加入型传播和嵌套型传播有什么区别"><img src="/img/hubian.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Spring事务,Spring事务的10种失效场景.加入型传播和嵌套型传播有什么区别"/></a><div class="content"><a class="title" href="/2025/03/11/Spring%E4%BA%8B%E5%8A%A1-Spring%E4%BA%8B%E5%8A%A1%E7%9A%8410%E7%A7%8D%E5%A4%B1%E6%95%88%E5%9C%BA%E6%99%AF-%E5%8A%A0%E5%85%A5%E5%9E%8B%E4%BC%A0%E6%92%AD%E5%92%8C%E5%B5%8C%E5%A5%97%E5%9E%8B%E4%BC%A0%E6%92%AD%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB/" title="Spring事务,Spring事务的10种失效场景.加入型传播和嵌套型传播有什么区别">Spring事务,Spring事务的10种失效场景.加入型传播和嵌套型传播有什么区别</a><time datetime="2025-03-11T02:02:50.000Z" title="发表于 2025-03-11 10:02:50">2025-03-11</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/03/11/CAP%E5%AE%9A%E7%90%86-%E5%93%AA%E4%BA%9B%E4%B8%AD%E9%97%B4%E4%BB%B6%E6%98%AFAP-%E5%93%AA%E4%BA%9B%E6%98%AFCP-%E4%B8%BA%E4%BB%80%E4%B9%88/" title="CAP定理,哪些中间件是AP,哪些是CP,为什么"><img src="/img/hubian.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="CAP定理,哪些中间件是AP,哪些是CP,为什么"/></a><div class="content"><a class="title" href="/2025/03/11/CAP%E5%AE%9A%E7%90%86-%E5%93%AA%E4%BA%9B%E4%B8%AD%E9%97%B4%E4%BB%B6%E6%98%AFAP-%E5%93%AA%E4%BA%9B%E6%98%AFCP-%E4%B8%BA%E4%BB%80%E4%B9%88/" title="CAP定理,哪些中间件是AP,哪些是CP,为什么">CAP定理,哪些中间件是AP,哪些是CP,为什么</a><time datetime="2025-03-11T01:05:25.000Z" title="发表于 2025-03-11 09:05:25">2025-03-11</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/03/08/elk%E5%9C%A3%E7%BB%8F%EF%BC%9AElasticsearch%E3%80%81Logstash%E3%80%81Kibana%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E7%B2%BE%E9%80%9A/" title="elk圣经：Elasticsearch、Logstash、Kibana从入门到精通"><img src="/img/liushui.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="elk圣经：Elasticsearch、Logstash、Kibana从入门到精通"/></a><div class="content"><a class="title" href="/2025/03/08/elk%E5%9C%A3%E7%BB%8F%EF%BC%9AElasticsearch%E3%80%81Logstash%E3%80%81Kibana%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E7%B2%BE%E9%80%9A/" title="elk圣经：Elasticsearch、Logstash、Kibana从入门到精通">elk圣经：Elasticsearch、Logstash、Kibana从入门到精通</a><time datetime="2025-03-08T07:49:00.000Z" title="发表于 2025-03-08 15:49:00">2025-03-08</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/03/06/%E4%BA%BF%E7%BA%A7redis%E6%8E%92%E8%A1%8C%E6%A6%9C%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1/" title="亿级redis排行榜如何设计"><img src="/img/liushui.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="亿级redis排行榜如何设计"/></a><div class="content"><a class="title" href="/2025/03/06/%E4%BA%BF%E7%BA%A7redis%E6%8E%92%E8%A1%8C%E6%A6%9C%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1/" title="亿级redis排行榜如何设计">亿级redis排行榜如何设计</a><time datetime="2025-03-06T13:16:31.000Z" title="发表于 2025-03-06 21:16:31">2025-03-06</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/03/05/1000%E4%B8%87%E7%BA%A7%E5%A4%A7%E8%A1%A8-%E5%A6%82%E4%BD%95-%E5%8A%A0%E7%B4%A2%E5%BC%95/" title="1000万级大表, 如何加索引"><img src="/img/hubian.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="1000万级大表, 如何加索引"/></a><div class="content"><a class="title" href="/2025/03/05/1000%E4%B8%87%E7%BA%A7%E5%A4%A7%E8%A1%A8-%E5%A6%82%E4%BD%95-%E5%8A%A0%E7%B4%A2%E5%BC%95/" title="1000万级大表, 如何加索引">1000万级大表, 如何加索引</a><time datetime="2025-03-05T03:31:17.000Z" title="发表于 2025-03-05 11:31:17">2025-03-05</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2024 - 2025 By 周五打工人</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=4.13.0"></script><script src="/js/main.js?v=4.13.0"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"><script>(() => {
+  const getCount = () => {
+    const countELement = document.getElementById('twikoo-count')
+    if(!countELement) return
+    twikoo.getCommentsCount({
+      envId: 'https://mywaline-7unwzwfdi-motors-projects-a4d09e71.vercel.app/',
+      region: '',
+      urls: [window.location.pathname],
+      includeReply: false
+    }).then(res => {
+      countELement.textContent = res[0].count
+    }).catch(err => {
+      console.error(err)
+    })
+  }
+
+  const init = () => {
+    twikoo.init(Object.assign({
+      el: '#twikoo-wrap',
+      envId: 'https://mywaline-7unwzwfdi-motors-projects-a4d09e71.vercel.app/',
+      region: '',
+      onCommentLoaded: () => {
+        btf.loadLightbox(document.querySelectorAll('#twikoo .tk-content img:not(.tk-owo-emotion)'))
+      }
+    }, null))
+
+    
+  }
+
+  const loadTwikoo = () => {
+    if (typeof twikoo === 'object') setTimeout(init,0)
+    else getScript('https://cdn.jsdelivr.net/npm/twikoo@1.6.31/dist/twikoo.all.min.js').then(init)
+  }
+
+  if ('Twikoo' === 'Twikoo' || !false) {
+    if (false) btf.loadComment(document.getElementById('twikoo-wrap'), loadTwikoo)
+    else loadTwikoo()
+  } else {
+    window.loadOtherComment = loadTwikoo
+  }
+})()</script></div><canvas class="fireworks" mobile="false"></canvas><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/dist/fireworks.min.js"></script><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/dist/canvas-nest.min.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=4.13.0"></script></div></div></body></html>
